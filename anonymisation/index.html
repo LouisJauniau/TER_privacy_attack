@@ -1,0 +1,1384 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../vue_generale/">
+      
+      
+        <link rel="next" href="../linkage_attack/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Anonymisation - Documentation TER</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#anonymisation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Documentation TER" class="md-header__button md-logo" aria-label="Documentation TER" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation TER
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Anonymisation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Documentation TER" class="md-nav__button md-logo" aria-label="Documentation TER" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentation TER
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vue_generale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vue générale du projet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anonymisation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anonymisation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#role-de-cette-etape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rôle de cette étape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script principal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#idee-generale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Idée générale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrees-de-lanonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrées de l'anonymisation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entrées de l&#39;anonymisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-le-dataset-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Le dataset source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-fichier-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le fichier de configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-les-hierarchies-de-generalisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Les hiérarchies de généralisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-dattributs-utilises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types d'attributs utilisés
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types d&#39;attributs utilisés">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quasi-identifiants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quasi-identifiants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribut-sensible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribut sensible
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributs-insensibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributs insensibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parametres-danonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paramètres d'anonymisation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Paramètres d&#39;anonymisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-anonymity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        k-anonymity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        l-diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-closeness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        t-closeness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-run_anopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de run_ano.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de run_ano.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-lecture-de-la-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Lecture de la configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-construction-de-la-configuration-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Construction de la configuration runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lancement-de-lanonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Lancement de l'anonymisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sauvegarde-des-sorties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sauvegarde des sorties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sorties-produites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorties produites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sorties produites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configuration-executee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Configuration exécutée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dataset-anonymise-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dataset anonymisé public
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dataset-anonymise-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Dataset anonymisé d'évaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Métriques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemple-de-logique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemple de logique
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-simplifie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schéma simplifié
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linkage_attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linkage attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structure_scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structure des scripts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats_fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formats des fichiers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#role-de-cette-etape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rôle de cette étape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#script-principal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script principal
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#idee-generale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Idée générale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entrees-de-lanonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Entrées de l'anonymisation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Entrées de l&#39;anonymisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-le-dataset-source" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Le dataset source
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-fichier-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le fichier de configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-les-hierarchies-de-generalisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Les hiérarchies de généralisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types-dattributs-utilises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Types d'attributs utilisés
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Types d&#39;attributs utilisés">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quasi-identifiants" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quasi-identifiants
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribut-sensible" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribut sensible
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributs-insensibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attributs insensibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parametres-danonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Paramètres d'anonymisation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Paramètres d&#39;anonymisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#k-anonymity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        k-anonymity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l-diversity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        l-diversity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#t-closeness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        t-closeness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suppression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Suppression
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-run_anopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de run_ano.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de run_ano.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-lecture-de-la-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Lecture de la configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-construction-de-la-configuration-runtime" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Construction de la configuration runtime
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-lancement-de-lanonymisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Lancement de l'anonymisation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-sauvegarde-des-sorties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Sauvegarde des sorties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sorties-produites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorties produites
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sorties produites">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-configuration-executee" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Configuration exécutée
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-dataset-anonymise-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Dataset anonymisé public
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-dataset-anonymise-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Dataset anonymisé d'évaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-metriques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Métriques
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exemple-de-logique" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemple de logique
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-simplifie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schéma simplifié
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="anonymisation">Anonymisation</h1>
+<h2 id="role-de-cette-etape">Rôle de cette étape</h2>
+<p>L'anonymisation est la première étape centrale du projet.</p>
+<p>Son rôle est de transformer un dataset original en une version publiée plus protectrice, tout en conservant un niveau d'utilité suffisant pour les analyses ultérieures.</p>
+<p>Dans ce projet, l'anonymisation sert de point de départ aux deux attaques étudiées ensuite :</p>
+<ul>
+<li>la linkage attack ;</li>
+<li>la membership inference attack (MIA).</li>
+</ul>
+<p>Autrement dit, avant de simuler un attaquant, il faut d'abord produire un dataset anonymisé.</p>
+<hr />
+<h2 id="script-principal">Script principal</h2>
+<p>Le script principal de cette étape est :</p>
+<ul>
+<li><code>scripts/run_ano.py</code></li>
+</ul>
+<p>C'est lui qui orchestre l'exécution complète d'une anonymisation à partir d'un fichier de configuration.</p>
+<hr />
+<h2 id="idee-generale">Idée générale</h2>
+<p>L'anonymisation suit une logique simple :</p>
+<ol>
+<li>lire une configuration JSON ;</li>
+<li>charger le dataset source ;</li>
+<li>identifier les attributs à traiter ;</li>
+<li>appliquer la configuration d'anonymisation ;</li>
+<li>produire plusieurs fichiers de sortie :</li>
+<li>la configuration effectivement utilisée ;</li>
+<li>le dataset anonymisé public ;</li>
+<li>le dataset anonymisé d'évaluation ;</li>
+<li>les métriques d'anonymisation.</li>
+</ol>
+<hr />
+<h2 id="entrees-de-lanonymisation">Entrées de l'anonymisation</h2>
+<p>L'étape d'anonymisation repose principalement sur trois types d'entrées.</p>
+<h3 id="1-le-dataset-source">1. Le dataset source</h3>
+<p>Le point de départ est un dataset tabulaire, par exemple :</p>
+<ul>
+<li><code>data/adult.csv</code></li>
+<li>ou <code>data/adult_with_record_id.csv</code></li>
+</ul>
+<p>Selon les besoins du projet, le dataset peut contenir un identifiant interne comme <code>record_id</code>, utile pour l'évaluation mais qui ne doit pas être exposé publiquement.</p>
+<h3 id="2-le-fichier-de-configuration">2. Le fichier de configuration</h3>
+<p>L'anonymisation est pilotée par un fichier JSON qui décrit les paramètres de l'expérience.</p>
+<p>Ce fichier contient notamment :</p>
+<ul>
+<li>le chemin du dataset ;</li>
+<li>les quasi-identifiants ;</li>
+<li>l'attribut sensible ;</li>
+<li>les attributs insensibles ;</li>
+<li>les hiérarchies à utiliser ;</li>
+<li>les paramètres d'anonymisation comme <code>k</code>, <code>l</code>, <code>t</code> ;</li>
+<li>la limite de suppression.</li>
+</ul>
+<h3 id="3-les-hierarchies-de-generalisation">3. Les hiérarchies de généralisation</h3>
+<p>Certains attributs disposent de hiérarchies CSV permettant de généraliser les valeurs.</p>
+<p>Exemples :</p>
+<ul>
+<li><code>hierarchies/age.csv</code></li>
+<li><code>hierarchies/sex.csv</code></li>
+<li><code>hierarchies/race.csv</code></li>
+<li><code>hierarchies/native-country.csv</code></li>
+</ul>
+<p>Ces hiérarchies indiquent comment passer d'une valeur précise à une valeur plus générale.</p>
+<p>Par exemple, un âge précis peut être remplacé par un intervalle, ou un pays par une région plus large.</p>
+<hr />
+<h2 id="types-dattributs-utilises">Types d'attributs utilisés</h2>
+<p>Pour comprendre l'anonymisation, il faut distinguer les rôles des colonnes.</p>
+<h3 id="quasi-identifiants">Quasi-identifiants</h3>
+<p>Les quasi-identifiants sont les attributs qui peuvent aider à ré-identifier un individu lorsqu'ils sont recoupés.</p>
+<p>Exemples fréquents dans le projet :</p>
+<ul>
+<li><code>age</code></li>
+<li><code>sex</code></li>
+<li><code>race</code></li>
+<li><code>marital-status</code></li>
+<li><code>native-country</code></li>
+</ul>
+<p>Ce sont principalement ces attributs qui sont généralisés ou supprimés.</p>
+<h3 id="attribut-sensible">Attribut sensible</h3>
+<p>L'attribut sensible est celui que l'on veut protéger du mieux possible.</p>
+<p>Dans le dataset Adult, il s'agit souvent de :</p>
+<ul>
+<li><code>income</code></li>
+</ul>
+<h3 id="attributs-insensibles">Attributs insensibles</h3>
+<p>Les attributs insensibles ne sont pas utilisés comme quasi-identifiants et ne servent pas directement à protéger l'identité.</p>
+<hr />
+<h2 id="parametres-danonymisation">Paramètres d'anonymisation</h2>
+<p>La configuration peut inclure plusieurs paramètres classiques.</p>
+<h3 id="k-anonymity">k-anonymity</h3>
+<p>Le paramètre <code>k</code> impose qu'un enregistrement ne puisse pas être distingué de moins de <code>k - 1</code> autres enregistrements sur les quasi-identifiants.</p>
+<h3 id="l-diversity">l-diversity</h3>
+<p>Le paramètre <code>l</code> impose une diversité minimale de l'attribut sensible dans les classes d'équivalence.</p>
+<h3 id="t-closeness">t-closeness</h3>
+<p>Le paramètre <code>t</code> contraint la distribution de l'attribut sensible dans chaque groupe à rester proche de la distribution globale.</p>
+<h3 id="suppression">Suppression</h3>
+<p>Une limite de suppression peut être fixée pour autoriser la suppression d'une partie des données lorsque la généralisation seule ne suffit pas.</p>
+<hr />
+<h2 id="deroulement-logique-de-run_anopy">Déroulement logique de <code>run_ano.py</code></h2>
+<p>Le script suit globalement la séquence suivante.</p>
+<h3 id="1-lecture-de-la-configuration">1. Lecture de la configuration</h3>
+<p>Le script commence par charger le fichier JSON de configuration.</p>
+<p>Cette configuration décrit l'expérience à exécuter.</p>
+<h3 id="2-construction-de-la-configuration-runtime">2. Construction de la configuration runtime</h3>
+<p>Le script construit ensuite une version complète et exploitable de la configuration.</p>
+<p>Cette étape sert notamment à :</p>
+<ul>
+<li>résoudre les chemins ;</li>
+<li>compléter les paramètres manquants ;</li>
+<li>figer exactement les valeurs utilisées pendant l'exécution.</li>
+</ul>
+<p>La configuration runtime est ensuite sauvegardée dans <code>outputs/configs/</code>.</p>
+<h3 id="3-lancement-de-lanonymisation">3. Lancement de l'anonymisation</h3>
+<p>Le script appelle ensuite le gestionnaire d'anonymisation du projet.</p>
+<p>Ce gestionnaire applique les règles définies dans la configuration :</p>
+<ul>
+<li>identification des quasi-identifiants ;</li>
+<li>chargement des hiérarchies ;</li>
+<li>application des contraintes de confidentialité ;</li>
+<li>production du dataset anonymisé.</li>
+</ul>
+<h3 id="4-sauvegarde-des-sorties">4. Sauvegarde des sorties</h3>
+<p>Une fois l'anonymisation terminée, le script enregistre les sorties utiles du run.</p>
+<hr />
+<h2 id="sorties-produites">Sorties produites</h2>
+<p>L'anonymisation produit plusieurs fichiers importants.</p>
+<h3 id="1-configuration-executee">1. Configuration exécutée</h3>
+<p>Dossier :</p>
+<ul>
+<li><code>outputs/configs/</code></li>
+</ul>
+<p>Cette configuration correspond à la version réellement utilisée pendant l'exécution.</p>
+<p>Elle est utile pour :</p>
+<ul>
+<li>reproduire une expérience ;</li>
+<li>vérifier les paramètres exacts ;</li>
+<li>documenter les résultats.</li>
+</ul>
+<h3 id="2-dataset-anonymise-public">2. Dataset anonymisé public</h3>
+<p>Dossier :</p>
+<ul>
+<li><code>outputs/anonymized/</code></li>
+</ul>
+<p>C'est la version censée représenter ce qui serait réellement publié.</p>
+<p>Elle peut exclure des colonnes internes comme <code>record_id</code>.</p>
+<p>C'est cette version qui représente la vue réaliste de l'attaquant.</p>
+<h3 id="3-dataset-anonymise-devaluation">3. Dataset anonymisé d'évaluation</h3>
+<p>Dossier :</p>
+<ul>
+<li><code>outputs/anonymized_eval/</code></li>
+</ul>
+<p>Cette version est réservée à l'évaluation interne.</p>
+<p>Elle conserve certaines informations utiles à la vérification des attaques, en particulier les identifiants internes.</p>
+<p>Elle ne doit pas être considérée comme un fichier publié à l'attaquant.</p>
+<h3 id="4-metriques">4. Métriques</h3>
+<p>Dossier :</p>
+<ul>
+<li><code>outputs/metrics/</code></li>
+</ul>
+<p>Ces fichiers résument les résultats de l'anonymisation.</p>
+<p>Ils peuvent contenir des indicateurs utiles pour comparer plusieurs expériences.</p>
+<h2 id="exemple-de-logique">Exemple de logique</h2>
+<p>On peut résumer l'étape d'anonymisation ainsi :</p>
+<ul>
+<li>on choisit un ensemble de quasi-identifiants ;</li>
+<li>on impose des contraintes de confidentialité ;</li>
+<li>on généralise ou supprime certaines valeurs ;</li>
+<li>on produit une version publiable du dataset ;</li>
+<li>on conserve une version interne pour l'évaluation.</li>
+</ul>
+<hr />
+<h2 id="schema-simplifie">Schéma simplifié</h2>
+<pre class="mermaid"><code>flowchart TD
+    A[Fichier de configuration JSON] --&gt; B[run_ano.py]
+    C[Dataset source] --&gt; B
+    D[Hiérarchies CSV] --&gt; B
+
+    B --&gt; E[Configuration runtime]
+    B --&gt; F[Dataset anonymisé public]
+    B --&gt; G[Dataset anonymisé d'évaluation]
+    B --&gt; H[Métriques]</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
