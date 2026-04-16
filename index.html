@@ -369,6 +369,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#point-important-sur-record_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur record_id
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-important-sur-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-important-sur-la-linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur la linkage attack
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -681,6 +714,39 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#point-important-sur-record_id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur record_id
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-important-sur-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#point-important-sur-la-linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Point important sur la linkage attack
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -700,45 +766,76 @@
 
 <h1 id="documentation-ter">Documentation TER</h1>
 <h2 id="objectif-de-cette-documentation">Objectif de cette documentation</h2>
-<p>Cette documentation a pour but de présenter le fonctionnement global du projet.</p>
+<p>Cette documentation présente le fonctionnement global du projet TER, depuis la préparation du dataset jusqu'à l'évaluation des attaques après anonymisation.</p>
+<p>L'objectif est de comprendre :</p>
+<ul>
+<li>comment le dataset est préparé ;</li>
+<li>comment l'anonymisation est exécutée ;</li>
+<li>comment la linkage attack et la membership inference attack (MIA) sont construites ;</li>
+<li>quels fichiers sont produits à chaque étape.</li>
+</ul>
 <hr />
 <h2 id="contexte-du-projet">Contexte du projet</h2>
 <p>Le projet étudie l'effet de l'anonymisation d'un dataset sur la protection de la vie privée.</p>
-<p>À partir d'un dataset original, on applique une anonymisation, puis on cherche à évaluer ce qu'un attaquant peut encore apprendre à partir des données publiées.</p>
-<p>Le travail se concentre principalement sur trois parties :</p>
+<p>À partir d'un dataset source, on produit une version anonymisée, puis on évalue ce qu'un attaquant peut encore apprendre à partir des données publiées.</p>
+<p>Le travail se concentre principalement sur trois blocs :</p>
 <ul>
 <li>l'anonymisation ;</li>
 <li>la <strong>linkage attack</strong> ;</li>
 <li>la <strong>membership inference attack (MIA)</strong>.</li>
 </ul>
-<p>Les scripts de benchmark existent dans le projet, mais ils ne constituent pas le cœur de cette documentation.</p>
+<p>Les scripts de benchmark existent aussi dans le projet, mais ils servent surtout à automatiser des séries d'expériences.</p>
 <hr />
 <h2 id="organisation-de-la-documentation">Organisation de la documentation</h2>
-<p>La documentation est organisée autour des pages suivantes :</p>
 <h3 id="vue-generale-du-projet">Vue générale du projet</h3>
-<p>Présente le pipeline global, l'objectif du projet et l'enchaînement des grandes étapes.</p>
+<p>Présente le pipeline global, les grandes étapes et la logique d'enchaînement entre préparation, anonymisation et attaques.</p>
 <h3 id="anonymisation">Anonymisation</h3>
-<p>Explique comment un dataset source est transformé en dataset anonymisé, avec production d'une version publique et d'une version d'évaluation.</p>
+<p>Explique comment un dataset source est transformé en dataset anonymisé, avec une version publique et une version d'évaluation.</p>
 <h3 id="linkage-attack">Linkage attack</h3>
-<p>Décrit comment un attaquant utilisant une base auxiliaire peut chercher des enregistrements compatibles dans le dataset anonymisé et en déduire un attribut sensible.</p>
+<p>Décrit comment une base auxiliaire attaquant est utilisée pour construire des classes d'équivalence, les réduire, puis inférer un attribut sensible.</p>
 <h3 id="membership-inference-attack-mia">Membership Inference Attack (MIA)</h3>
-<p>Décrit comment un attaquant peut essayer de prédire si une cible appartenait ou non au dataset ayant servi à produire les données publiées.</p>
+<p>Décrit comment des cibles IN et OUT sont construites, puis comment l'attaque décide si une cible appartenait ou non au dataset publié.</p>
 <h3 id="structure-des-scripts">Structure des scripts</h3>
-<p>Donne une vue claire de l'organisation du dossier <code>scripts/</code> et du rôle des principaux fichiers.</p>
+<p>Donne une vue d'ensemble du dossier <code>scripts/</code> et du rôle des principaux fichiers.</p>
 <h3 id="formats-des-fichiers-dentree-sortie">Formats des fichiers d'entrée / sortie</h3>
-<p>Présente les principaux fichiers du projet, leur rôle et leur place dans le pipeline.</p>
+<p>Présente les principales familles de fichiers manipulées par le projet et leur place dans le pipeline.</p>
 <hr />
 <h2 id="pipeline-global">Pipeline global</h2>
 <p>Le projet suit globalement la logique suivante :</p>
 <ol>
-<li>partir d'un dataset source ;</li>
-<li>charger une configuration d'anonymisation ;</li>
-<li>exécuter l'anonymisation ;</li>
+<li>préparer un dataset avec un identifiant interne stable <code>record_id</code> ;</li>
+<li>exécuter une anonymisation ;</li>
 <li>produire un dataset anonymisé public et un dataset anonymisé d'évaluation ;</li>
-<li>préparer les fichiers nécessaires aux attaques ;</li>
-<li>exécuter la linkage attack et la MIA ;</li>
-<li>analyser les résultats produits.</li>
+<li>préparer les fichiers nécessaires à la linkage attack et/ou à la MIA ;</li>
+<li>exécuter les attaques ;</li>
+<li>sauvegarder les résultats détaillés et les rapports HTML dans <code>outputs/</code>.</li>
 </ol>
+<hr />
+<h2 id="point-important-sur-record_id">Point important sur <code>record_id</code></h2>
+<p>Le projet utilise un identifiant interne stable, généralement <code>record_id</code>, pour relier proprement les différentes étapes.</p>
+<p>Cet identifiant :</p>
+<ul>
+<li>est utile pour l'évaluation interne ;</li>
+<li>est conservé dans <code>anonymized_eval</code> ;</li>
+<li>peut être retiré du dataset public avec <code>--public-drop-columns record_id</code>.</li>
+</ul>
+<p>Il ne doit donc pas être considéré comme une information publiée à l'attaquant.</p>
+<hr />
+<h2 id="point-important-sur-la-mia">Point important sur la MIA</h2>
+<p>Dans l'état actuel du projet, la MIA se fait en deux temps :</p>
+<ol>
+<li><code>make_mia_targets.py</code> prépare un <strong>published subset</strong> et un <strong>OUT holdout pool</strong> avant anonymisation ;</li>
+<li><code>make_mia_targets_post_ano.py</code> construit ensuite les <strong>vraies cibles finales</strong> après anonymisation, en ne prenant les cibles IN que parmi les enregistrements qui ont réellement survécu dans <code>anonymized_eval</code>.</li>
+</ol>
+<p>Cette séparation est importante pour garder une vérité terrain cohérente lorsque certaines lignes sont supprimées de l'export final.</p>
+<hr />
+<h2 id="point-important-sur-la-linkage-attack">Point important sur la linkage attack</h2>
+<p>Dans l'état actuel du projet, la linkage attack suit une logique en deux étages :</p>
+<ul>
+<li><strong>stade 1</strong> : filtrage avec les attributs que l'attaquant voit sous forme généralisée ou supprimée dans le dataset publié ;</li>
+<li><strong>stade 2</strong> : raffinement avec les attributs encore visibles en clair, soit en exact, soit éventuellement avec <code>privJedAI</code> en mode fuzzy.</li>
+</ul>
+<p>La documentation détaillée de cette logique se trouve dans la page dédiée à la linkage attack.</p>
 
 
 
