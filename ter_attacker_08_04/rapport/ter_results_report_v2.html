@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TER – Rapport de résultats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #151b23;
+    --panel-2: #1b2430;
+    --line: #293243;
+    --text: #e8ecf3;
+    --muted: #98a2b3;
+    --accent: #7aa2ff;
+    --accent-soft: rgba(122, 162, 255, 0.12);
+    --good: #2ecc71;
+    --good-soft: rgba(46, 204, 113, 0.14);
+    --warn: #f5b942;
+    --warn-soft: rgba(245, 185, 66, 0.14);
+    --danger: #ff7b7b;
+    --danger-soft: rgba(255, 123, 123, 0.14);
+    --radius: 18px;
+    --shadow: 0 10px 30px rgba(0,0,0,.18);
+    --font: "Inter", system-ui, sans-serif;
+    --mono: "JetBrains Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--text);
+    background:
+      radial-gradient(circle at top right, rgba(122,162,255,0.10), transparent 24%),
+      linear-gradient(180deg, #0b1016 0%, #0d1117 100%);
+    line-height: 1.65;
+  }
+  header {
+    padding: 52px 28px 36px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(135deg, rgba(122,162,255,.08), rgba(122,162,255,0) 45%);
+  }
+  .wrap { max-width: 1220px; margin: 0 auto; }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid rgba(122,162,255,.22);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 18px 0 12px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+  .lead {
+    max-width: 920px;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    background: rgba(13,17,23,.88);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding: 14px 28px;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  nav a:hover { color: var(--accent); }
+  main { padding: 28px; }
+  section { margin: 0 0 22px; }
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0));
+    background-color: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+  }
+  .section-title {
+    margin: 0 0 16px;
+    font-size: 1.55rem;
+    letter-spacing: -0.02em;
+  }
+  .section-subtitle {
+    margin: -4px 0 18px;
+    color: var(--muted);
+    font-size: .96rem;
+  }
+  .grid {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+  .metric {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px 16px 14px;
+  }
+  .metric .k {
+    color: var(--muted);
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .metric .v {
+    margin-top: 6px;
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .good { color: var(--good); }
+  .warn { color: var(--warn); }
+  .danger { color: var(--danger); }
+  .accent { color: var(--accent); }
+  .two {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .three {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1.2fr 1fr 1fr;
+  }
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: var(--accent-soft);
+    border-radius: 0 16px 16px 0;
+    padding: 14px 16px;
+    color: #dbe5ff;
+  }
+  .callout.good { background: var(--good-soft); color: #d8f8e5; border-left-color: var(--good); }
+  .callout.warn { background: var(--warn-soft); color: #fff2d1; border-left-color: var(--warn); }
+  .callout.danger { background: var(--danger-soft); color: #ffe1e1; border-left-color: var(--danger); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+  }
+  th, td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  th {
+    color: var(--accent);
+    font-size: .75rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    background: rgba(122,162,255,0.06);
+  }
+  code {
+    font-family: var(--mono);
+    font-size: .82rem;
+    color: var(--accent);
+    background: rgba(122,162,255,0.10);
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+  .small { color: var(--muted); font-size: .88rem; }
+  .chart-card {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .chart-wrap { position: relative; height: 340px; }
+  .cm {
+    display: grid;
+    grid-template-columns: 110px 1fr 1fr;
+    gap: 10px;
+    align-items: stretch;
+    font-size: .92rem;
+  }
+  .cm .label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .cm .cell {
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    padding: 16px;
+    min-height: 98px;
+    background: var(--panel-2);
+  }
+  .cm .cell strong {
+    display: block;
+    font-size: 1.6rem;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .cell.tp { background: rgba(46,204,113,.10); }
+  .cell.tn { background: rgba(122,162,255,.10); }
+  .cell.fp { background: rgba(255,123,123,.10); }
+  .cell.fn { background: rgba(245,185,66,.10); }
+  ul.clean {
+    margin: 8px 0 0 18px;
+    padding: 0;
+  }
+  ul.clean li { margin: 6px 0; }
+  footer {
+    padding: 22px 28px 36px;
+    color: var(--muted);
+    font-size: .84rem;
+    text-align: center;
+  }
+  @media (max-width: 980px) {
+    .two, .three { grid-template-columns: 1fr; }
+  }
+  @media print {
+    nav { display: none; }
+    body { background: white; color: black; }
+    .card, .metric, table, .chart-card { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">TER</div>
+    <h1>Rapport de résultats – anonymisation, linkage attack et membership inference attack</h1>
+    <p class="lead">
+      Rapport synthétisant les résultats obtenus sur le dataset Adult avec une anonymisation ARX (k=5, l=2), une linkage attack sur 1 532 cibles, et une membership inference attack (MIA) sur 3 256 cibles.
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <a href="#summary">Résumé</a>
+    <a href="#protocol">Protocole</a>
+    <a href="#anonymization">Anonymisation</a>
+    <a href="#linkage">Linkage</a>
+    <a href="#mia">MIA</a>
+    <a href="#fraction">Analyse IN vs OUT</a>
+    <a href="#conclusion">Conclusion</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="summary" class="card">
+  <h2 class="section-title">1. Résumé exécutif</h2>
+  <div class="grid">
+    <div class="metric"><div class="k">Dataset initial</div><div class="v">32 561</div></div>
+    <div class="metric"><div class="k">QI</div><div class="v" style="font-size:1rem">age, sex, race, marital-status</div></div>
+    <div class="metric"><div class="k">Attribut sensible</div><div class="v accent">income</div></div>
+    <div class="metric"><div class="k">Linkage : cibles</div><div class="v">1 532</div></div>
+    <div class="metric"><div class="k">MIA : cibles</div><div class="v">3 256</div></div>
+    <div class="metric"><div class="k">Ré-identification exacte</div><div class="v good">0,33&nbsp;%</div></div>
+    <div class="metric"><div class="k">MIA accuracy</div><div class="v warn">49,3&nbsp;%</div></div>
+    <div class="metric"><div class="k">Best acc. via fraction seule</div><div class="v warn">50,3&nbsp;%</div></div>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="callout good">
+      <strong>Conclusion principale :</strong> La protection contre la <strong>ré-identification directe</strong> est très forte : la linkage attack ne produit que cinq ré-identifications exactes uniques sur 1 532 cibles.
+    </div>
+    <div class="callout good">
+      <strong>Pour la MIA.</strong> Les résultats restent au niveau du hasard : l’attaque complète obtient <strong>49,3&nbsp;%</strong> d’accuracy,
+      et la variable “fraction de candidats compatibles” atteint au mieux <strong>50,3&nbsp;%</strong>. Cette variable représente l'accuracy maximale qu'on peut obtenir en choisissant la meilleure valeur de threshold.
+    </div>
+  </div>
+</section>
+
+<section id="protocol" class="card">
+  <h2 class="section-title">2. Protocole expérimental</h2>
+  <div class="two">
+    <div>
+      <h3 style="margin-top:0">Configuration d’anonymisation</h3>
+      <table>
+        <thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Backend</td><td>ARX</td></tr>
+          <tr><td>Quasi-identifiants</td><td><code>age</code>, <code>sex</code>, <code>race</code>, <code>marital-status</code></td></tr>
+          <tr><td>Attribut sensible</td><td><code>income</code></td></tr>
+          <tr><td>Contraintes</td><td><code>k = 5</code>, <code>l = 2</code>, <code>t = None</code></td></tr>
+          <tr><td>Suppression limit</td><td><code>0.1</code></td></tr>
+          <tr><td>Transformation retenue</td><td><code>age = niveau 2</code>, autres QI au niveau 0</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Configuration des attaques</h3>
+      <table>
+        <thead><tr><th>Attaque</th><th>Configuration</th></tr></thead>
+        <tbody>
+          <tr><td>Linkage</td><td>Connaissances attaquant : <code>age</code>, <code>sex</code>, <code>native-country</code> · 1 532 cibles · seed 42 · sans privJedAI</td></tr>
+          <tr><td>MIA</td><td>Connaissances attaquant : <code>age</code>, <code>sex</code>, <code>native-country</code> · 3 256 cibles équilibrées (1 628 IN / 1 628 OUT) · seed 42 · seuil utilisé : <code>max_compatible_fraction = 0.09</code></td></tr>
+          <tr><td>Préfiltrage</td><td><code>remove_clearly_contradictory_rows</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="anonymization" class="card">
+  <h2 class="section-title">3. Résultats d’anonymisation</h2>
+  <div class="three">
+    <div>
+      <table>
+        <thead><tr><th>Run</th><th>Avant</th><th>Suppr.</th><th>Après / survie</th></tr></thead>
+        <tbody>
+          <tr><td>Linkage (<code>adult_demo</code>)</td><td>32 561</td><td>1 918</td><td>30 643 survivants après retrait des lignes totalement supprimées</td></tr>
+          <tr><td>MIA (<code>adult.published</code>)</td><td>30 933</td><td>1 863</td><td>29 070 survivants après retrait des lignes totalement supprimées</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin-top:10px;">
+        Pour la MIA, le published set contient 30 933 lignes après retrait des 1 628 OUT du dataset d’origine, puis 1 863 lignes totalement supprimées sont éliminées dans la sortie d’évaluation, ce qui laisse 29 070 survivants.
+      </p>
+    </div>
+    <div class="metric"><div class="k">Classes d’équivalence linkage</div><div class="v">144</div><div class="small">taille moyenne 212,80 · min 5 · max 3 584</div></div>
+    <div class="metric"><div class="k">Classes d’équivalence MIA</div><div class="v">140</div><div class="small">taille moyenne 207,64 · min 5 · max 3 395</div></div>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="callout">
+      L’anonymisation repose presque entièrement sur la généralisation de l’âge en <strong>tranches de 10 ans</strong>. Les autres QI restent au niveau 0.
+      Le schéma de protection obtenu est donc essentiellement : <em>généralisation de <code>age</code> + suppression partielle</em>.
+    </div>
+  </div>
+</section>
+
+<section id="linkage" class="card">
+  <h2 class="section-title">4. Analyse de la linkage attack</h2>
+  <div class="grid">
+    <div class="metric"><div class="k">Cibles attaquées</div><div class="v">1 532</div></div>
+    <div class="metric"><div class="k">Ré-identification exacte unique</div><div class="v good">0,33&nbsp;%</div></div>
+    <div class="metric"><div class="k">Taille moyenne classe</div><div class="v">3 048</div></div>
+    <div class="metric"><div class="k">Taille médiane classe</div><div class="v">2 855</div></div>
+    <div class="metric"><div class="k">Taille max classe</div><div class="v">5 298</div></div>
+  </div>
+
+  <div class="two" style="margin-top:16px;">
+    <div>
+      <table>
+        <thead><tr><th>Indicateur linkage</th><th>Valeur</th><th>Lecture</th></tr></thead>
+        <tbody>
+          <tr><td>Unique exact reidentification rate</td><td>0,003264</td><td>≈ 5 cibles sur 1 532</td></tr>
+          <tr><td>Average equivalence class size</td><td>3 047,84</td><td>≈ 9,9&nbsp;% de la sortie linkage</td></tr>
+          <tr><td>Median equivalence class size</td><td>2 855</td><td>ambiguïté toujours très forte</td></tr>
+          <tr><td>Certainty sensitive inference rate</td><td>0,020235</td><td>≈ 31 cibles avec inférence certaine</td></tr>
+          <tr><td>Average true sensitive probability</td><td>0,67409</td><td>la vraie valeur sensible garde en moyenne 67,4&nbsp;% de masse</td></tr>
+          <tr><td>Median true sensitive probability</td><td>0,672518</td><td>la moitié des cibles ont une probabilité vraie ≤ / ≥ 67,25&nbsp;%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="callout warn">
+        En moyenne, la vraie valeur sensible de la cible pèse 67,4 % dans sa classe. L’attaquant peut souvent faire une prédiction majoritaire assez confiante sur l’attribut sensible.
+      </div>
+    </div>
+  </div>
+
+    <div style="margin-top:16px;">
+    <h3 style="margin-top:0">Performance par valeur de l’attribut sensible</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Valeur réelle de <code>income</code></th>
+          <th>Nombre de cibles</th>
+          <th>Part des cibles</th>
+          <th>Prédictions correctes</th>
+          <th>Taux de bonne prédiction</th>
+          <th>Avg. true sensitive prob.</th>
+          <th>Median true sensitive prob.</th>
+          <th>Certainty rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>&lt;=50K</code></td>
+          <td>1134</td>
+          <td>74,0&nbsp;%</td>
+          <td>1132 / 1134</td>
+          <td>99,82&nbsp;%</td>
+          <td>78,23&nbsp;%</td>
+          <td>81,56&nbsp;%</td>
+          <td>2,65&nbsp;%</td>
+        </tr>
+        <tr>
+          <td><code>&gt;50K</code></td>
+          <td>398</td>
+          <td>26,0&nbsp;%</td>
+          <td>10 / 398</td>
+          <td>2,51&nbsp;%</td>
+          <td>36,59&nbsp;%</td>
+          <td>37,10&nbsp;%</td>
+          <td>0,25&nbsp;%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn" style="margin-top:14px;">
+      Le taux global de bonne prédiction du sensitive attribute (74,54&nbsp;%) masque une forte asymétrie.
+      L’attaque prédit presque toujours <code>&lt;=50K</code>, ce qui donne une performance quasi parfaite sur la classe majoritaire,
+      mais très faible sur <code>&gt;50K</code>. Le risque d’inférence sensible existe donc surtout sous la forme
+      d’une prédiction majoritaire biaisée par le déséquilibre de distribution.
+    </div>
+  </div>
+</section>
+
+<section id="mia" class="card">
+  <h2 class="section-title">5. Analyse de la Membership Inference Attack (MIA)</h2>
+  <div class="grid">
+    <div class="metric"><div class="k">Cibles totales</div><div class="v">3 256</div></div>
+    <div class="metric"><div class="k">IN</div><div class="v">1 628</div></div>
+    <div class="metric"><div class="k">OUT</div><div class="v">1 628</div></div>
+    <div class="metric"><div class="k">Accuracy (TP + TN) / T</div><div class="v warn">49,3&nbsp;%</div></div>
+    <div class="metric"><div class="k">Precision TP / (TP + FP)</div><div class="v">49,3&nbsp;%</div></div>
+    <div class="metric"><div class="k">Recall membres TP / (TP + FN)</div><div class="v">44,8&nbsp;%</div></div>
+    <div class="metric"><div class="k">TNR non-membres TN / (TN + FP)</div><div class="v">53,8&nbsp;%</div></div>
+    <div class="metric"><div class="k">F1-score (quality of IN detection)</div><div class="v">46,9&nbsp;%</div></div>
+  </div>
+
+  <div class="two" style="margin-top:16px;">
+    <div>
+      <h3 style="margin-top:0">Matrice de confusion</h3>
+      <div class="cm">
+        <div></div>
+        <div class="label">Prédit IN</div>
+        <div class="label">Prédit OUT</div>
+        <div class="label">Réel IN</div>
+        <div class="cell tp"><strong>730</strong>TP · membres correctement détectés</div>
+        <div class="cell fn"><strong>898</strong>FN · membres manqués</div>
+        <div class="label">Réel OUT</div>
+        <div class="cell fp"><strong>752</strong>FP · faux membres</div>
+        <div class="cell tn"><strong>876</strong>TN · non-membres correctement rejetés</div>
+      </div>
+      <p class="small" style="margin-top:10px;">Balanced accuracy = 49,3&nbsp;% ; la corrélation entre prédiction et vérité terrain est pratiquement nulle.</p>
+    </div>
+    <div>
+      <table>
+        <thead><tr><th>Indicateur MIA</th><th>Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>TP / TN / FP / FN</td><td>730 / 876 / 752 / 898</td></tr>
+          <tr><td>Accuracy</td><td>0,4932</td></tr>
+          <tr><td>Precision</td><td>0,4926</td></tr>
+          <tr><td>Recall</td><td>0,4484</td></tr>
+          <tr><td>F1</td><td>0,4695</td></tr>
+          <tr><td>Avg. compatible candidates (IN)</td><td>2 898,36</td></tr>
+          <tr><td>Avg. compatible candidates (OUT)</td><td>2 796,51</td></tr>
+          <tr><td>Avg. compatible fraction (IN)</td><td>≈ 9,97&nbsp;% des 29 070 survivants</td></tr>
+          <tr><td>Avg. compatible fraction (OUT)</td><td>≈ 9,62&nbsp;% des 29 070 survivants</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="fraction" class="card">
+  <h2 class="section-title">6. Analyse de la distribution IN vs OUT par fraction de candidats compatibles</h2>
+  <p class="section-subtitle">Cette section analyse uniquement la variable “fraction de candidats compatibles”.</p>
+  <div class="grid">
+    <div class="metric"><div class="k">Test KS p-value</div><div class="v good">0,19</div></div>
+    <div class="metric"><div class="k">Best accuracy</div><div class="v warn">50,3&nbsp;%</div></div>
+    <div class="metric"><div class="k">Médiane IN</div><div class="v">9,3&nbsp;%</div></div>
+    <div class="metric"><div class="k">Médiane OUT</div><div class="v">9,3&nbsp;%</div></div>
+  </div>
+  <div class="two" style="margin-top:16px;">
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="histChart"></canvas></div>
+    </div>
+    <div>
+      <div class="callout">
+         KS p-value correspond au test de Kolmogorov-Smirnov à deux échantillons, parce qu’on compare la distribution des fractions compatibles pour les IN et pour les OUT.
+        <ul class="clean">
+          <li><strong>Si on a petite p-value (par exemple < 0,05) :</strong> les deux distributions semblent vraiment différentes.</li>
+          <li><strong>grande p-value :</strong> l’écart observé peut très bien être dû au hasard, donc on ne peut pas conclure qu’elles sont différentes.</li>
+        </ul>
+        Avec KS p = 0,19, on peut conclure que les distributions IN et OUT sont très proches.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="conclusion" class="card">
+  <h2 class="section-title">8. Conclusion générale</h2>
+  <div class="two">
+    <div>
+      <table>
+        <thead><tr><th>Dimension</th><th>Résultat</th><th>Évaluation</th></tr></thead>
+        <tbody>
+          <tr><td>Protection contre la ré-identification</td><td>0,33&nbsp;% de ré-identification exacte unique</td><td class="good">Très forte</td></tr>
+          <tr><td>Protection contre l’inférence d’appartenance</td><td>MIA ≈ hasard</td><td class="good">Forte</td></tr>
+          <tr><td>Protection contre l’inférence d’attribut sensible</td><td>dominance moyenne de 74,6&nbsp;% de la valeur sensible majoritaire</td><td class="warn">Partielle</td></tr>
+          <tr><td>Chevauchement IN / OUT</td><td>KS p = 0,19</td><td class="good">Très fort</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Rapport v2
+
+<script>
+const labels = ["0.3","0.9","1.6","2.2","2.8","3.4","4.0","4.7","5.3","5.9","6.5","7.1","7.8","8.4","9.0","9.6","10.2","10.9","11.5","12.1","12.7","13.3","14.0","14.6","15.2","15.8","16.4","17.1","17.7"];
+const inCounts = [170,15,22,40,0,62,67,0,0,85,0,119,0,0,312,0,0,0,0,0,0,0,214,227,0,0,0,295,0];
+const outCounts = [220,13,25,37,0,54,57,0,0,106,0,100,0,0,316,0,0,0,0,0,0,0,195,215,0,0,0,290,0];
+const textColor = '#98a2b3';
+const gridColor = 'rgba(255,255,255,0.08)';
+new Chart(document.getElementById('histChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'IN',
+        data: inCounts,
+        backgroundColor: 'rgba(122,162,255,0.58)',
+        borderColor: 'rgba(122,162,255,0.95)',
+        borderWidth: 1,
+      },
+      {
+        label: 'OUT',
+        data: outCounts,
+        backgroundColor: 'rgba(255,123,123,0.46)',
+        borderColor: 'rgba(255,123,123,0.95)',
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        title: { display: true, text: 'Fraction de candidats compatibles (%)', color: textColor, font: { size: 12, family: 'Inter' } },
+        ticks: { color: textColor, maxRotation: 0, autoSkip: true, maxTicksLimit: 9, font: { size: 11 } },
+        grid: { display: false }
+      },
+      y: {
+        title: { display: true, text: 'Nombre de cibles', color: textColor, font: { size: 12, family: 'Inter' } },
+        ticks: { color: textColor, font: { size: 11 } },
+        grid: { color: gridColor }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

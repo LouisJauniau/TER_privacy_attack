@@ -1,0 +1,82 @@
+"value_index_row_visits": 91929,
+
+Nombre de lignes parcourut pour chaque attribut connu par l'attaquant.
+Pour chaque attribut on index la position de chaque valeur unique.
+ex : 20-29 -> [0, 2]
+
+"match_cache_hits": 4494,
+
+Pour chaque cible on regarde pour chaque attribut sa projection dans le dataset anonymisé puis pour quelles lignes du dataset anonymisé cette projection est compatible. "match_cache_hits" est le nombre de fois où on avait déjà en cache les lignes compatibles pour cette projection.
+
+"match_cache_misses": 102,
+
+L'inverse de "match_cache_hits" : le nombre de fois où on avait pas déjà en cache les lignes compatibles pour cette projection.
+
+"compatible_value_tests": 2059,
+
+Pour chaque "match_cache_misses", on va comparer la compatibilité entre la valeur cible et les valeurs anonymisées distincts. Donc ici on a fait 2059 comparaisons.
+
+"targets_evaluated": 1532,
+
+Nombre de cible pour lesquels on :
+	récupère ses valeurs connues
+	calcule les mappings de compatibilité pour chaque attribut
+	construit le masque des lignes compatibles
+	extrait sa classe d’équivalence
+	calcule la prédiction sur l’attribut sensible.
+
+"array_cells_initialized": 328615532,
+
+array_cells_initialized correspond au nombre total de cellules de tableaux temporaires créées pour traiter les cibles, principalement les compteurs de match et les masques de filtrage.
+ex : [2, 2, 1, 1] -> chaque cellule représente une ligne du dataset anonymisé et le nombre d'attributs compatibles pour cette ligne.
+
+"attribute_positive_mask_cells": 140835228,
+
+Quand on veut savoir pour un attribut précis, quelles lignes du dataset sont compatibles avec la cible.
+ex : pour chaque cible, on créé :
+1 masque de 30 643 cellules pour age
+1 masque de 30 643 cellules pour sex
+1 masque de 30 643 cellules pour native-country
+
+"matching_row_visits": 75442959,
+
+C'est le nombre total de lignes récupérées via les index pour les valeurs anonymisées jugées compatibles.
+
+"mask_and_cells": 140835228,
+
+C'est le coût de combinaison de ces masques avec le masque global.
+
+"final_mask_reads": 46945076,
+
+Pour chaque cible, le script lit une fois le masque final de taille 30 643.
+ex : 46945076 / 1532 = 30643
+
+"equivalence_class_candidate_rows_output": 4669291,
+
+equivalence_class_candidate_rows_output correspond au nombre total de candidats finaux produits par l’attaque, c’est-à-dire la somme des tailles des classes d’équivalence de toutes les cibles.
+ex : 4669291 / 1532 = 3047,8 (taille moyenne de la classe d'équivalence)
+
+"estimated_total_operations": 737437302,
+
+Somme des 8 compteurs (sans : "match_cache_hits", "match_cache_misses", "targets_evaluated").
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

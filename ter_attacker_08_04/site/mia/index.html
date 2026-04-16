@@ -1,0 +1,1771 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../linkage_attack/">
+      
+      
+        <link rel="next" href="../structure_scripts/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>MIA - Documentation TER</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#membership-inference-attack-mia" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Documentation TER" class="md-header__button md-logo" aria-label="Documentation TER" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation TER
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              MIA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Documentation TER" class="md-nav__button md-logo" aria-label="Documentation TER" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentation TER
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Accueil
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vue_generale/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vue générale du projet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Anonymisation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linkage_attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linkage attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIA
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    MIA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#role-de-cette-etape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rôle de cette étape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#idee-generale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Idée générale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts-principaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts principaux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-cherche-a-predire-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que cherche à prédire la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difference-avec-la-linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Différence avec la linkage attack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Différence avec la linkage attack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linkage attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#donnees-utilisees-par-lattaque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Données utilisées par l'attaque
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Données utilisées par l&#39;attaque">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-les-cibles-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les cibles MIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-dataset-anonymise-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le dataset anonymisé public
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-le-dataset-anonymise-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Le dataset anonymisé d'évaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#construction-des-cibles-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Construction des cibles MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signification-des-cibles-in-et-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signification des cibles IN et OUT
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Signification des cibles IN et OUT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cibles-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cibles IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cibles-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cibles OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-sait-lattaquant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que sait l'attaquant
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notion-de-compatibilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notion de compatibilité
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notion de compatibilité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-simple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemple simple
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intuition-generale-de-la-decision-inout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intuition générale de la décision IN/OUT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-make_mia_targetspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de make_mia_targets.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de make_mia_targets.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chargement-du-dataset-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Chargement du dataset original
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-selection-des-individus-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Sélection des individus OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selection-des-individus-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Sélection des individus IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-construction-du-fichier-de-cibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Construction du fichier de cibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-run_mia_attackpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de run_mia_attack.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de run_mia_attack.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chargement-des-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Chargement des fichiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-lecture-des-attributs-connus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Lecture des attributs connus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-parcours-des-cibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Parcours des cibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-recherche-des-candidats-compatibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Recherche des candidats compatibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-calcul-dindicateurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Calcul d'indicateurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-prediction-in-ou-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Prédiction IN ou OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sauvegarde-des-resultats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Sauvegarde des résultats
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logique-de-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logique de décision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logique de décision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cas-favorable-a-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas favorable à OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-favorable-a-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas favorable à IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-ambigus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas ambigus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pourquoi-utiliser-aussi-le-dataset-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi utiliser aussi le dataset d'évaluation ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sorties-produites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorties produites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-mesure-reellement-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que mesure réellement la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-simplifie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schéma simplifié
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structure_scripts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structure des scripts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats_fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Formats des fichiers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#role-de-cette-etape" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rôle de cette étape
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#idee-generale" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Idée générale
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scripts-principaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts principaux
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-cherche-a-predire-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que cherche à prédire la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#difference-avec-la-linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Différence avec la linkage attack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Différence avec la linkage attack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkage-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linkage attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#donnees-utilisees-par-lattaque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Données utilisées par l'attaque
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Données utilisées par l&#39;attaque">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-les-cibles-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Les cibles MIA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-le-dataset-anonymise-public" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Le dataset anonymisé public
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-le-dataset-anonymise-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Le dataset anonymisé d'évaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#construction-des-cibles-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Construction des cibles MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#signification-des-cibles-in-et-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signification des cibles IN et OUT
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Signification des cibles IN et OUT">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cibles-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cibles IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cibles-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cibles OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-sait-lattaquant" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que sait l'attaquant
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notion-de-compatibilite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notion de compatibilité
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Notion de compatibilité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-simple" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemple simple
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intuition-generale-de-la-decision-inout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intuition générale de la décision IN/OUT
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-make_mia_targetspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de make_mia_targets.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de make_mia_targets.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chargement-du-dataset-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Chargement du dataset original
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-selection-des-individus-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Sélection des individus OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-selection-des-individus-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Sélection des individus IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-construction-du-fichier-de-cibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Construction du fichier de cibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-sauvegarde" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Sauvegarde
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deroulement-logique-de-run_mia_attackpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Déroulement logique de run_mia_attack.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Déroulement logique de run_mia_attack.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-chargement-des-fichiers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Chargement des fichiers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-lecture-des-attributs-connus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Lecture des attributs connus
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-parcours-des-cibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Parcours des cibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-recherche-des-candidats-compatibles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Recherche des candidats compatibles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-calcul-dindicateurs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Calcul d'indicateurs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-prediction-in-ou-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Prédiction IN ou OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-sauvegarde-des-resultats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Sauvegarde des résultats
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#logique-de-decision" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Logique de décision
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Logique de décision">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cas-favorable-a-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas favorable à OUT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-favorable-a-in" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas favorable à IN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cas-ambigus" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cas ambigus
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pourquoi-utiliser-aussi-le-dataset-devaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pourquoi utiliser aussi le dataset d'évaluation ?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sorties-produites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sorties produites
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ce-que-mesure-reellement-la-mia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ce que mesure réellement la MIA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schema-simplifie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schéma simplifié
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="membership-inference-attack-mia">Membership Inference Attack (MIA)</h1>
+<h2 id="role-de-cette-etape">Rôle de cette étape</h2>
+<p>La <strong>Membership Inference Attack (MIA)</strong> cherche à déterminer si une cible donnée appartenait ou non au dataset publié avant anonymisation.</p>
+<p>Autrement dit, l'attaquant ne cherche plus ici à retrouver directement une ligne précise ni à inférer en priorité un attribut sensible.<br />
+Il cherche à répondre à la question suivante :</p>
+<p><strong>"Cette personne faisait-elle partie du dataset utilisé pour produire les données anonymisées publiées ?"</strong></p>
+<p>Dans le cadre du projet, cette attaque permet donc d'évaluer un autre type de fuite de vie privée : la fuite d'<strong>appartenance</strong>.</p>
+<hr />
+<h2 id="idee-generale">Idée générale</h2>
+<p>La logique générale de la MIA est la suivante :</p>
+<ol>
+<li>on construit un ensemble de cibles ;</li>
+<li>certaines cibles sont réellement <strong>membres</strong> du dataset publié ;</li>
+<li>d'autres sont réellement <strong>non membres</strong> ;</li>
+<li>l'attaque compare les informations connues sur chaque cible aux enregistrements du dataset anonymisé ;</li>
+<li>à partir des correspondances possibles, elle prédit si la cible est probablement <strong>IN</strong> ou <strong>OUT</strong>.</li>
+</ol>
+<p>L'idée centrale est qu'un individu peut parfois être reconnu comme "ayant participé au dataset" même si son enregistrement exact n'est pas directement visible.</p>
+<hr />
+<h2 id="scripts-principaux">Scripts principaux</h2>
+<p>Les scripts principaux de cette étape sont :</p>
+<ul>
+<li><code>scripts/make_mia_targets.py</code></li>
+<li><code>scripts/run_mia_attack.py</code></li>
+</ul>
+<p>Le premier prépare les cibles utilisées pour l'attaque.<br />
+Le second exécute la MIA à partir de ces cibles et du dataset anonymisé.</p>
+<hr />
+<h2 id="ce-que-cherche-a-predire-la-mia">Ce que cherche à prédire la MIA</h2>
+<p>La sortie principale de la MIA est une prédiction binaire :</p>
+<ul>
+<li><strong>IN</strong> : la cible est prédite comme membre du dataset publié ;</li>
+<li><strong>OUT</strong> : la cible est prédite comme non membre.</li>
+</ul>
+<p>Dans les fichiers, cette information peut être représentée par une colonne du type :</p>
+<ul>
+<li><code>is_member = 1</code> pour IN</li>
+<li><code>is_member = 0</code> pour OUT</li>
+</ul>
+<p>Cette colonne sert de vérité terrain pour évaluer la qualité de l'attaque.</p>
+<hr />
+<h2 id="difference-avec-la-linkage-attack">Différence avec la linkage attack</h2>
+<p>Même si les deux attaques utilisent une logique de compatibilité, elles ne cherchent pas à répondre à la même question.</p>
+<h3 id="linkage-attack">Linkage attack</h3>
+<p>La linkage attack cherche surtout à savoir :</p>
+<ul>
+<li>quels enregistrements anonymisés sont compatibles avec une cible ;</li>
+<li>ce qu'on peut en déduire sur l'attribut sensible.</li>
+</ul>
+<h3 id="mia">MIA</h3>
+<p>La MIA cherche surtout à savoir :</p>
+<ul>
+<li>si la cible faisait partie ou non du dataset publié.</li>
+</ul>
+<p>Autrement dit :</p>
+<ul>
+<li>la linkage attack traite surtout le <strong>risque de liaison</strong> et d'<strong>inférence sensible</strong> ;</li>
+<li>la MIA traite le <strong>risque d'appartenance</strong>.</li>
+</ul>
+<hr />
+<h2 id="donnees-utilisees-par-lattaque">Données utilisées par l'attaque</h2>
+<p>La MIA repose sur trois ensembles de données principaux.</p>
+<h3 id="1-les-cibles-mia">1. Les cibles MIA</h3>
+<p>Ce fichier contient les individus testés par l'attaque.</p>
+<p>Chaque cible contient :</p>
+<ul>
+<li>un identifiant interne ;</li>
+<li>certains attributs connus par l'attaquant ;</li>
+<li>un label de vérité terrain indiquant si elle est membre ou non.</li>
+</ul>
+<p>Ce fichier est produit par <code>make_mia_targets.py</code>.</p>
+<h3 id="2-le-dataset-anonymise-public">2. Le dataset anonymisé public</h3>
+<p>C'est la version censée représenter ce que l'attaquant voit réellement.</p>
+<p>La MIA utilise ce dataset comme source principale d'information observable.</p>
+<h3 id="3-le-dataset-anonymise-devaluation">3. Le dataset anonymisé d'évaluation</h3>
+<p>Cette version est utilisée uniquement pour vérifier les résultats de l'attaque.</p>
+<p>Elle permet de conserver une logique d'évaluation interne sans exposer trop d'informations dans la version publique.</p>
+<hr />
+<h2 id="construction-des-cibles-mia">Construction des cibles MIA</h2>
+<p>Le script <code>make_mia_targets.py</code> prépare un ensemble de cibles avec une séparation entre individus IN et OUT.</p>
+<p>La logique générale est la suivante :</p>
+<ol>
+<li>partir du dataset original ;</li>
+<li>choisir un pourcentage d'individus <strong>OUT</strong> ;</li>
+<li>retirer ces individus du dataset qui sera ensuite publié ;</li>
+<li>construire aussi un échantillon <strong>IN</strong> à partir des individus restants ;</li>
+<li>regrouper les cibles IN et OUT dans un même fichier ;</li>
+<li>associer à chaque cible un label indiquant la vérité terrain.</li>
+</ol>
+<p>Cette étape est essentielle car elle définit précisément ce que l'attaque devra deviner.</p>
+<hr />
+<h2 id="signification-des-cibles-in-et-out">Signification des cibles IN et OUT</h2>
+<h3 id="cibles-in">Cibles IN</h3>
+<p>Ce sont des individus réellement présents dans le dataset qui a servi à produire le dataset anonymisé publié.</p>
+<h3 id="cibles-out">Cibles OUT</h3>
+<p>Ce sont des individus absents du dataset publié.</p>
+<p>Ils servent de contre-exemples pour vérifier si l'attaque a tendance à sur-prédire la présence d'une cible.</p>
+<hr />
+<h2 id="ce-que-sait-lattaquant">Ce que sait l'attaquant</h2>
+<p>Comme pour la linkage attack, l'attaquant ne connaît pas tout.</p>
+<p>Il connaît seulement un sous-ensemble d'attributs sur chaque cible, par exemple :</p>
+<ul>
+<li><code>age</code></li>
+<li><code>sex</code></li>
+<li><code>race</code></li>
+</ul>
+<p>Ces attributs sont appelés ici les <strong>known QIDs</strong>.</p>
+<p>L'attaque repose donc sur une hypothèse réaliste : l'attaquant possède quelques informations externes sur une personne et essaie de décider si cette personne faisait partie du dataset publié.</p>
+<hr />
+<h2 id="notion-de-compatibilite">Notion de compatibilité</h2>
+<p>La MIA repose elle aussi sur une logique de compatibilité.</p>
+<p>Pour une cible donnée, on cherche les lignes du dataset anonymisé qui restent cohérentes avec les attributs connus.</p>
+<h3 id="exemple-simple">Exemple simple</h3>
+<p>Si l'attaquant connaît :</p>
+<ul>
+<li><code>age = 27</code></li>
+<li><code>sex = Male</code></li>
+<li><code>race = White</code></li>
+</ul>
+<p>et qu'une ligne anonymisée contient :</p>
+<ul>
+<li><code>age = [20-29]</code></li>
+<li><code>sex = Male</code></li>
+<li><code>race = White</code></li>
+</ul>
+<p>alors cette ligne est compatible avec la cible.</p>
+<p>Plus une cible possède de candidats compatibles plausibles dans le dataset anonymisé, plus cela peut constituer un signal d'appartenance.</p>
+<hr />
+<h2 id="intuition-generale-de-la-decision-inout">Intuition générale de la décision IN/OUT</h2>
+<p>L'idée intuitive est la suivante :</p>
+<ul>
+<li>si une cible n'a <strong>aucun candidat compatible</strong>, cela suggère qu'elle est probablement <strong>OUT</strong> ;</li>
+<li>si une cible a <strong>un ou plusieurs candidats compatibles forts</strong>, cela suggère qu'elle est peut-être <strong>IN</strong> ;</li>
+<li>si elle a trop de candidats très vagues, la décision devient plus incertaine.</li>
+</ul>
+<p>La MIA repose donc sur des indices comme :</p>
+<ul>
+<li>le nombre de candidats compatibles ;</li>
+<li>la qualité de compatibilité ;</li>
+<li>parfois le meilleur score observé ;</li>
+<li>parfois la proportion du dataset compatible avec la cible.</li>
+</ul>
+<hr />
+<h2 id="deroulement-logique-de-make_mia_targetspy">Déroulement logique de <code>make_mia_targets.py</code></h2>
+<p>Le script suit globalement les étapes suivantes :</p>
+<h3 id="1-chargement-du-dataset-original">1. Chargement du dataset original</h3>
+<p>Le script lit le dataset de départ.</p>
+<h3 id="2-selection-des-individus-out">2. Sélection des individus OUT</h3>
+<p>Un pourcentage du dataset est tiré pour former les individus OUT.</p>
+<p>Ces individus seront absents du dataset publié.</p>
+<h3 id="3-selection-des-individus-in">3. Sélection des individus IN</h3>
+<p>Parmi les individus restants, un échantillon est prélevé pour former les cibles IN.</p>
+<h3 id="4-construction-du-fichier-de-cibles">4. Construction du fichier de cibles</h3>
+<p>Les deux groupes sont réunis dans un même fichier.</p>
+<p>Chaque ligne contient :</p>
+<ul>
+<li>les attributs connus par l'attaquant ;</li>
+<li>l'identifiant de la cible ;</li>
+<li>le label <code>is_member</code>.</li>
+</ul>
+<h3 id="5-sauvegarde">5. Sauvegarde</h3>
+<p>Le fichier est enregistré dans <code>outputs/mia_targets/</code>.</p>
+<hr />
+<h2 id="deroulement-logique-de-run_mia_attackpy">Déroulement logique de <code>run_mia_attack.py</code></h2>
+<p>Le script d'attaque suit globalement les étapes suivantes.</p>
+<h3 id="1-chargement-des-fichiers">1. Chargement des fichiers</h3>
+<p>Le script charge :</p>
+<ul>
+<li>la configuration d'expérience ;</li>
+<li>le fichier des cibles ;</li>
+<li>le dataset anonymisé public ;</li>
+<li>le dataset anonymisé d'évaluation.</li>
+</ul>
+<h3 id="2-lecture-des-attributs-connus">2. Lecture des attributs connus</h3>
+<p>Le script identifie les colonnes que l'attaquant est supposé connaître.</p>
+<p>Ces colonnes servent à tester la compatibilité.</p>
+<h3 id="3-parcours-des-cibles">3. Parcours des cibles</h3>
+<p>Chaque cible du fichier MIA est traitée séparément.</p>
+<h3 id="4-recherche-des-candidats-compatibles">4. Recherche des candidats compatibles</h3>
+<p>Le script parcourt le dataset anonymisé et conserve les lignes compatibles avec la cible.</p>
+<h3 id="5-calcul-dindicateurs">5. Calcul d'indicateurs</h3>
+<p>À partir des candidats trouvés, le script peut calculer plusieurs signaux utiles :</p>
+<ul>
+<li>nombre de candidats compatibles ;</li>
+<li>fraction compatible dans le dataset ;</li>
+<li>meilleur score de compatibilité ;</li>
+<li>autres indicateurs dérivés selon la configuration.</li>
+</ul>
+<h3 id="6-prediction-in-ou-out">6. Prédiction IN ou OUT</h3>
+<p>Le script transforme ensuite ces signaux en décision finale :</p>
+<ul>
+<li>prédiction IN</li>
+<li>ou prédiction OUT</li>
+</ul>
+<h3 id="7-sauvegarde-des-resultats">7. Sauvegarde des résultats</h3>
+<p>Les résultats sont enregistrés dans <code>outputs/attacks/</code>.</p>
+<hr />
+<h2 id="logique-de-decision">Logique de décision</h2>
+<p>La décision finale dépend de la stratégie utilisée dans le script, mais l'idée générale reste la même :</p>
+<h3 id="cas-favorable-a-out">Cas favorable à OUT</h3>
+<p>Si la cible ne correspond à aucune ligne compatible, ou seulement à des signaux très faibles, elle est plutôt prédite comme <strong>OUT</strong>.</p>
+<h3 id="cas-favorable-a-in">Cas favorable à IN</h3>
+<p>Si la cible possède une compatibilité forte avec une ou plusieurs lignes du dataset anonymisé, elle est plutôt prédite comme <strong>IN</strong>.</p>
+<h3 id="cas-ambigus">Cas ambigus</h3>
+<p>Si les signaux sont intermédiaires, la décision dépend des seuils choisis dans l'attaque.</p>
+<p>Par exemple, le script peut utiliser des paramètres comme :</p>
+<ul>
+<li>un nombre maximal de candidats compatibles toléré ;</li>
+<li>une fraction maximale du dataset compatible ;</li>
+<li>un score minimal pour considérer une cible comme plausible.</li>
+</ul>
+<hr />
+<h2 id="pourquoi-utiliser-aussi-le-dataset-devaluation">Pourquoi utiliser aussi le dataset d'évaluation ?</h2>
+<p>Comme pour la linkage attack, le dataset d'évaluation n'est pas utilisé pour aider l'attaquant.</p>
+<p>Il sert uniquement à vérifier les résultats en interne, par exemple pour :</p>
+<ul>
+<li>relier les prédictions aux vrais enregistrements ;</li>
+<li>confirmer les labels réels ;</li>
+<li>produire des métriques fiables.</li>
+</ul>
+<p>Cette séparation évite de confondre le scénario d'attaque avec le scénario d'évaluation.</p>
+<hr />
+<h2 id="sorties-produites">Sorties produites</h2>
+<p>La MIA génère généralement des fichiers dans <code>outputs/attacks/</code>, par exemple :</p>
+<ul>
+<li>des résultats détaillés par cible ;</li>
+<li>des résumés globaux ;</li>
+<li>des fichiers JSON ;</li>
+<li>des CSV contenant les prédictions et indicateurs.</li>
+</ul>
+<p>Ces sorties permettent d'analyser :</p>
+<ul>
+<li>combien de cibles IN ont été correctement reconnues ;</li>
+<li>combien de cibles OUT ont été faussement reconnues comme membres ;</li>
+<li>quelles cibles restent ambiguës ;</li>
+<li>quelles configurations d'anonymisation résistent mieux à l'attaque.</li>
+</ul>
+<hr />
+<h2 id="ce-que-mesure-reellement-la-mia">Ce que mesure réellement la MIA</h2>
+<p>La MIA ne mesure pas directement la ré-identification d'une personne.</p>
+<p>Elle mesure plutôt le risque suivant :</p>
+<p><strong>le simple fait d'appartenir au dataset peut-il encore être deviné après anonymisation ?</strong></p>
+<p>C'est une fuite importante dans de nombreux contextes sensibles.</p>
+<p>Par exemple, même sans connaître la valeur exacte d'un attribut sensible, apprendre qu'une personne était présente dans un dataset médical, administratif ou social peut déjà constituer une atteinte à la vie privée.</p>
+<hr />
+<h2 id="schema-simplifie">Schéma simplifié</h2>
+<pre class="mermaid"><code>flowchart TD
+    A[Dataset original] --&gt; B[make_mia_targets.py]
+    B --&gt; C[Cibles MIA IN/OUT]
+
+    D[Dataset anonymisé public] --&gt; E[run_mia_attack.py]
+    F[Dataset anonymisé d'évaluation] --&gt; E
+    C --&gt; E
+
+    E --&gt; G[Recherche des candidats compatibles]
+    G --&gt; H[Calcul des signaux de membership]
+    H --&gt; I[Prédiction IN ou OUT]
+    I --&gt; J[Résultats de l'attaque]</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

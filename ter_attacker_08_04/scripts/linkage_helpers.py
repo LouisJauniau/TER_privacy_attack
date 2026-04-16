@@ -12,9 +12,15 @@ from privjedai_utils import compute_privjedai_similarity, is_attr_clear_for_fuzz
 
 
 # Build an inverted index: for each attribute value, store the row indices where it appears.
-def build_value_indices(df: pd.DataFrame, attrs: list[str]) -> dict[str, dict[str, np.ndarray]]:
+def build_value_indices(
+    df: pd.DataFrame,
+    attrs: list[str],
+    op_counter: dict[str, int] | None = None,
+) -> dict[str, dict[str, np.ndarray]]:
     indices: dict[str, dict[str, np.ndarray]] = {}
     for attr in attrs:
+        if op_counter is not None:
+            op_counter["value_index_row_visits"] += int(len(df))
         per_value: dict[str, list[int]] = {}
         for idx, value in enumerate(df[attr].astype(str).tolist()):
             per_value.setdefault(str(value).strip(), []).append(idx)
@@ -81,6 +87,7 @@ def get_match_mapping_for_target_value(
     fuzzy_config: dict[str, Any] | None,
     fuzzy_pair_cache: dict[tuple[str, str], float],
     fuzzy_hash_cache: dict[str, frozenset[int]],
+    op_counter: dict[str, int] | None = None,
 ) -> dict[str, dict[str, Any]]:
     fuzzy_cache_tag = "no_fuzzy"
     if fuzzy_config is not None:
@@ -92,6 +99,9 @@ def get_match_mapping_for_target_value(
 
     cache_key = (attr, str(target_value).strip(), fuzzy_cache_tag)
     if cache_key not in match_cache:
+        if op_counter is not None:
+            op_counter["match_cache_misses"] += 1
+            op_counter["compatible_value_tests"] += int(len(possible_anonymized_values))
         attacker_attr_knowledge = attacker_knowledge.get(attr)
         mapping: dict[str, dict[str, Any]] = {}
         for anonymized_value in possible_anonymized_values:
@@ -106,7 +116,43 @@ def get_match_mapping_for_target_value(
             if result is not None:
                 mapping[str(anonymized_value).strip()] = result
         match_cache[cache_key] = mapping
+    else:
+        if op_counter is not None:
+            op_counter["match_cache_hits"] += 1
     return match_cache[cache_key]
+
+
+# Determine whether one clear-text attribute can refine an existing equivalence class.
+def refinement_match_result(
+    raw_value: str,
+    candidate_value: str,
+    *,
+    fuzzy_config: dict[str, Any] | None,
+    fuzzy_pair_cache: dict[tuple[str, str], float],
+    fuzzy_hash_cache: dict[str, frozenset[int]],
+) -> dict[str, Any] | None:
+    raw_value = str(raw_value).strip()
+    candidate_value = str(candidate_value).strip()
+
+    if raw_value == candidate_value:
+        return {"kind": "exact", "score": None}
+
+    if is_suppressed_value(candidate_value):
+        return None
+
+    if fuzzy_config is None:
+        return None
+
+    score = compute_privjedai_similarity(
+        raw_value,
+        candidate_value,
+        fuzzy_config=fuzzy_config,
+        pair_cache=fuzzy_pair_cache,
+        hash_cache=fuzzy_hash_cache,
+    )
+    if score >= float(fuzzy_config["threshold"]):
+        return {"kind": "privjedai_fuzzy", "score": float(score)}
+    return None
 
 
 # Compute the sensitive-value probability distribution inside one equivalence class.

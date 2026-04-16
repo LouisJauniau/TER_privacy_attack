@@ -1,0 +1,206 @@
+Le script make_auxiliary_base.py prépare la connaissance de l’attaquant
+	il part du dataset original non anonymisé
+	il lit le dataset original
+		Il charge le CSV brut avec pandas
+
+	il garantit l’existence d’un record_id avec ensure_record_id(..)
+		si record_id n'existe pas, il crée la colonne
+		il vérifie que la colonne est bien unique
+
+	il extrait la base auxiliaire avec sample_dataframe(..)
+		il choisit soit un nombre fixe de lignes
+		           soit une fraction du dataset
+		puis il garde que record_id et les attributs connus par l'attaquant (known_attrs)
+
+	il écrit :
+		le CSV auxiliaire
+		un JSON de métadonnées
+
+
+On lance ensuite run_linkage_attack.py 
+	le main() lit :
+		--config
+		--auxiliary
+		--anonymized
+		--anonymized_eval
+		--known-attrs
+		--target-id-col
+		--sensitive-attr
+		--n-targets
+		--seed
+		--output-root
+
+	le main() appelle run_linkage_attack_from_paths(..) pour charger les fichiers d'entrée
+		elle appelle load_runtime_config(config_path) (utilise load_json(..))
+			vérifie que la config contient les hiérarchies
+				la linkage attack va s’en servir pour reconstruire ce que l’attaquant peut déduire des hiérarchies, sans lui donner la hiérarchie complète comme connaissance directe
+		elle appelle read_csv_str(..)
+			cette fonction 	lit le CSV en chaînes de caractères
+					enlève les espaces parasites dans les noms de colonnes
+					enlève les espaces parasites dans les cellules
+			à la fin on a :
+				df_aux : base auxiliaire attaquant
+				df_public : dataset anonymisé public
+				df_eval = dataset anonymisé interne pour l’évaluation
+
+
+		elle appelle run_linkage_attack(..)
+			d'abord il choisit l'attribut sensible :
+				soit il prend --sensitive-attr		
+				soit il prend le premier sensible dans la runtime config
+
+			il résout n_targets avec resolve_n_targets(..)
+				si on a mis --n-targets all
+					alors il remplace all par la taille entière de df_aux
+				sinon il garde le nombre demandé
+
+			elle valide les entrées faites dans la commande : (_validate_inputs(..))
+				elle vérifie 	que known_attrs n’est pas vide
+						que record_id est bien dans df_aux
+						que record_id est bien dans df_eval
+						que les attributs connus existent dans df_aux
+						que les attributs connus existent dans df_public
+						que l’attribut sensible n’est pas dans known_attrs
+						que l’attribut sensible existe dans df_eval
+						que df_public et df_eval ont le même nombre de lignes
+						que leur ordre est compatible
+						que n_targets est valide
+
+			elle reconstruit ce que l’attaquant peut réellement voir : (build_attacker_knowledge(..))
+				Pour chaque attribut connu, il regarde la hiérarchie
+					Si l’attribut a une hiérarchie dans la runtime config, le script appelle build_attacker_projection_for_attr(..)
+						elle lit le fichier de hiérarchie avec load_hierarchy_rows(...)
+						regarde quelles valeurs apparaissent réellement dans le dataset anonymisé public
+						essaie de déduire le niveau visible le plus spécifique avec infer_last_visible_level(..)
+					Si un attribut n’a pas de hiérarchie
+						cet attribut est comparé tel quel (value -> value)
+
+			elle fabrique la table de travail d’évaluation
+				elle construit working_df qui part de df_public, puis y recopie depuis df_eval, record_id et l'attribut sensible
+				elle normalise tout en chaînes nettoyées dans working_df_str
+
+			elle choisit les cibles attaquées
+				elle prend la base auxiliaire df_aux et sélectionne aléatoirement resolved_n_targets individus dans la base
+				si on a mis --n-targets all, alors toutes les lignes de df_aux sont attaquées
+				chaque ligne choisie devient une cible
+
+			elle prépare une structure rapide pour chercher les candidats
+				avant de boucler sur les cibles, il construit build_value_indices(..)
+					cette fonction crée, pour chaque attribut connu une table valeur -> indices de lignes pour éviter de rescanner tout le dataset pour chaque comparaison (ex : Male → lignes [0, 4, 9, ...])
+
+			elle calcule les compatibilités pour chaque cible
+				pour chaque cible elle récupère le target_id et les known_values puis initialise plusieurs tableaux :
+					compatible_count
+					exact_count
+					generalized_count
+					suppressed_count
+					full_compatible_mask
+
+			pour chaque attribut connu, elle appelle get_match_mapping_for_target_value(..)
+				cette fonction met en cache un mapping :
+					valeur brute de la cible
+					type de compatibilité pour chaque valeur anonymisée possible
+
+				pour construire ce mapping, elle appelle attribute_match_kind(..)
+					Si la valeur brute est exactement égale à la valeur anonymisée
+						le type est exact
+					Si la valeur anonymisée est supprimée (* ou vide)
+						le type est suppressed
+					Si la valeur anonymisée correspond à la projection visible de la valeur brute dans la hiérarchie
+						le type est generalized
+					Sinon
+						la ligne n'est pas compatible pour cet attribut
+
+			ensuite pour chaque attribut, elle regarde dans value_indices quelles lignes portent une valeur compatible
+				elle marque ces lignes dans attr_positive_mask
+				elle incrémente aussi les compteurs :
+					compatible_count
+					exact_count
+					generalized_count
+					suppressed_count
+
+			puis elle met à jour full_compatible_mask
+				une ligne reste candidate seulement si elle est compatible sur tous les attributs connus
+
+			à la fin, elle construit compatible_df
+				compatible_df est la classe d’équivalence de la cible
+				elle contient tous les enregistrements compatibles avec la cible
+				il n’y a plus de logique de best score ni de best candidates
+
+			si l’option save_prefilter_debug est activée
+				elle sauvegarde pour chaque cible :
+					les indices des lignes gardées
+					les record_id gardés
+					les valeurs compatibles par attribut
+
+			elle vérifie ensuite si la vraie cible est encore présente dans le dataset anonymisé
+				target_present_in_anonymized = target_id dans df_eval
+
+			elle vérifie si la vraie ligne est dans la classe d’équivalence
+				true_record_in_equivalence_class = la vraie ligne appartient à compatible_df
+
+			elle vérifie si on a une réidentification exacte
+				exact_reidentified = la cible est présente et la classe d’équivalence contient exactement une seule ligne, qui est la vraie
+
+			elle calcule ensuite l’inférence du sensitive attribute à partir de la classe d’équivalence
+				elle appelle summarize_sensitive_prediction(..)
+					qui appelle compute_sensitive_distribution(..)
+						cette fonction compte combien de fois chaque valeur sensible apparaît dans la classe d’équivalence
+						puis transforme ces comptes en probabilités
+
+				si la classe d’équivalence est vide
+					aucune prédiction sensible n’est possible
+				si la classe d’équivalence contient un seul individu
+					le sensitive attribute de cet individu est retrouvé avec une probabilité de 100%
+				si la classe d’équivalence contient plusieurs individus mais une seule valeur sensible
+					le sensitive attribute est retrouvé avec une probabilité de 100%
+				si la classe d’équivalence contient plusieurs valeurs sensibles
+					le script calcule une distribution de probabilité
+
+			pour la cible, elle récupère aussi la vraie valeur sensible depuis df_eval
+				cela permet de calculer true_sensitive_probability
+				c’est la probabilité attribuée par la distribution à la vraie valeur sensible de la cible
+
+			elle sauvegarde ensuite une ligne dans per_target_rows avec par exemple :
+				target_id
+				target_present_in_anonymized
+				known_values
+				exposed_values
+				equivalence_class_size
+				true_record_in_equivalence_class
+				exact_reidentified
+				true_sensitive_value
+				predicted_sensitive_top_value
+				predicted_sensitive_top_probability
+				true_sensitive_probability
+				sensitive_value_certain
+				n_distinct_sensitive_values
+				sensitive_distribution_json
+
+			elle sauvegarde aussi tous les candidats de la classe d’équivalence dans equivalence_class_rows avec par exemple :
+				target_id
+				candidate_record_id
+				candidate_sensitive_value
+				candidate_matched_attr_count
+				candidate_exact_match_count
+				candidate_generalized_match_count
+				candidate_suppressed_match_count
+				candidate_is_true_record
+
+		à la fin elle écrit les fichiers de sortie :
+			targets.csv
+			equivalence_class_candidates.csv
+			attacker_knowledge.json
+			summary.json
+
+		elle calcule aussi les métriques globales de l’attaque comme par exemple :
+			target_survival_rate
+			nonempty_equivalence_class_rate
+			true_record_in_equivalence_class_rate
+			unique_exact_reidentification_rate
+			avg_equivalence_class_size
+			certainty_sensitive_inference_rate
+			avg_true_sensitive_probability
+			avg_top_sensitive_probability
+
+		elle ajoute ensuite une ligne récapitulative dans linkage_summary.csv

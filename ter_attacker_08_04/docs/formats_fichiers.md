@@ -9,7 +9,7 @@ L'objectif est de comprendre :
 - quels fichiers servent d'entrée ;
 - quels fichiers sont produits ;
 - à quoi ils servent dans le pipeline ;
-- quelle est la différence entre les versions publiques et les versions d'évaluation.
+- quelle est la différence entre les versions publiques, les versions d'évaluation et les fichiers intermédiaires.
 
 ---
 
@@ -17,86 +17,95 @@ L'objectif est de comprendre :
 
 Le projet manipule plusieurs familles de fichiers :
 
-- les **datasets source** ;
-- les **fichiers de configuration** ;
-- les **hiérarchies de généralisation** ;
-- les **fichiers intermédiaires** pour les attaques ;
-- les **fichiers de sortie** produits après anonymisation ou après attaque.
-
-On peut résumer la logique ainsi :
-
-1. on part d'un dataset source ;
-2. on utilise une configuration d'anonymisation ;
-3. on produit des datasets anonymisés et des métriques ;
-4. on prépare des fichiers spécifiques aux attaques ;
-5. on produit les résultats des attaques.
+- les datasets source ;
+- les datasets préparés avec `record_id` ;
+- les fichiers de configuration ;
+- les hiérarchies de généralisation ;
+- les fichiers intermédiaires pour la linkage attack ;
+- les fichiers intermédiaires pour la MIA ;
+- les fichiers de sortie d'anonymisation ;
+- les fichiers de sortie d'attaque ;
+- les rapports HTML.
 
 ---
 
-## 1. Fichiers d'entrée principaux
+## 1. Datasets source et datasets préparés
 
-## Dataset source
-
-Le dataset source est le point de départ de tout le projet.
+### Dataset source
 
 Exemples typiques :
 
 - `data/adult.csv`
 - `data/adult_with_record_id.csv`
 
-### Rôle
-Ces fichiers contiennent les données brutes avant anonymisation.
+#### Rôle
+Point de départ des expériences.
 
-### Format attendu
-Ce sont des fichiers tabulaires de type CSV, avec une ligne d'en-tête contenant les noms de colonnes.
-
-### Colonnes typiques
-Selon la version utilisée, on peut y trouver :
-
-- les quasi-identifiants ;
-- l'attribut sensible ;
-- d'autres attributs descriptifs ;
-- éventuellement un identifiant interne comme `record_id`.
-
+#### Format
+CSV avec en-tête.
 
 ---
 
-## Fichiers de configuration
+### Dataset préparé avec `record_id`
 
-Les expériences d'anonymisation sont pilotées par des fichiers JSON.
+Exemple typique :
 
-Exemple de dossier :
+- `data/adult_with_record_id.csv`
+
+Métadonnées associées :
+
+- `data/adult_with_record_id.json`
+
+#### Rôle
+Version stable du dataset utilisée par le pipeline courant.
+
+#### Contenu
+On y trouve :
+
+- `record_id`
+- les quasi-identifiants
+- l'attribut sensible
+- les autres colonnes du dataset
+
+#### Pourquoi il est important
+C'est ce fichier qui sert de base propre aux étapes suivantes.
+
+---
+
+## 2. Fichiers de configuration
+
+### Configuration de base
+
+Exemple :
+
+- `configs/adult_base.json`
+
+#### Rôle
+Décrire une expérience d'anonymisation de départ.
+
+---
+
+### Configuration runtime exécutée
+
+Dossier typique :
 
 - `outputs/configs/`
 
-### Rôle
-Ces fichiers décrivent une expérience d'anonymisation.
+Exemples possibles :
 
-### Contenu typique
-On y retrouve notamment :
+- `outputs/configs/qi_age-sex__k_5__l_2__t_None__supp_10__arx.json`
+- `outputs/configs/adult.runtime.json`
+- `outputs/configs/adult_base_with_record_id.json`
 
-- le chemin du dataset ;
-- les quasi-identifiants ;
-- l'attribut sensible ;
-- les attributs insensibles ;
-- les chemins vers les hiérarchies ;
-- les paramètres comme `k`, `l`, `t` ;
-- la limite de suppression ;
-- parfois d'autres paramètres utiles à l'exécution.
+#### Rôle
+Conserver exactement la configuration réellement utilisée pendant le run.
 
-### Remarque
-Dans le projet, il faut distinguer :
-
-- la **configuration de départ** ;
-- la **configuration runtime** réellement exécutée.
-
-La configuration runtime est souvent plus importante pour l'analyse, car elle reflète exactement ce qui a été lancé.
+#### Format
+JSON.
 
 ---
 
-## Hiérarchies de généralisation
-
-Les hiérarchies sont stockées dans des fichiers CSV séparés.
+## 3. Hiérarchies de généralisation
 
 Exemples typiques :
 
@@ -105,270 +114,384 @@ Exemples typiques :
 - `hierarchies/race.csv`
 - `hierarchies/native-country.csv`
 
-### Rôle
-Ces fichiers décrivent comment généraliser une valeur précise en valeurs plus larges.
+#### Rôle
+Décrire les niveaux successifs de généralisation pour les quasi-identifiants.
 
-### Format attendu
-Ce sont des CSV dans lesquels chaque ligne représente une valeur source et ses niveaux successifs de généralisation.
-
-### Exemple conceptuel
-Une valeur précise comme un âge ou un pays peut être reliée à :
-
-- une catégorie intermédiaire ;
-- puis une catégorie plus générale.
-
-### Utilisation
-Ces fichiers sont utilisés pendant l'anonymisation.
+#### Format
+CSV où chaque ligne relie une valeur source à ses niveaux de généralisation.
 
 ---
 
-## 2. Fichiers produits par l'anonymisation
+## 4. Fichiers produits par l'anonymisation
 
-L'anonymisation produit plusieurs types de fichiers importants.
-
----
-
-## Configuration runtime
-
-Dossier typique :
-
-- `outputs/configs/`
-
-### Rôle
-Conserver une trace exacte des paramètres réellement utilisés pendant l'exécution.
-
-### Pourquoi c'est utile
-Ce fichier permet :
-
-- de reproduire une expérience ;
-- de comprendre précisément quelles colonnes ont été utilisées ;
-- de vérifier les paramètres d'anonymisation ;
-- d'éviter les ambiguïtés entre configuration théorique et configuration exécutée.
-
-### Format
-Un fichier JSON.
-
----
-
-## Dataset anonymisé public
+### Dataset anonymisé public
 
 Dossier typique :
 
 - `outputs/anonymized/`
 
-### Rôle
-Représenter le dataset publié après anonymisation.
+Exemple :
 
-### Point de vue
-C'est la version censée être visible par l'attaquant.
+- `outputs/anonymized/<experiment_id>.csv`
 
-### Format
-CSV.
+#### Rôle
+Représenter la version publiée du dataset.
 
-### Contenu
-On y trouve les colonnes utiles à la publication, après généralisation ou suppression.
-
-Certaines colonnes internes, comme `record_id`, peuvent être supprimées de cette version.
-
+#### Point important
+Des colonnes comme `record_id` peuvent être retirées de cette version.
 
 ---
 
-## Dataset anonymisé d'évaluation
+### Dataset anonymisé d'évaluation
 
 Dossier typique :
 
 - `outputs/anonymized_eval/`
 
-### Rôle
-Conserver une version interne du dataset anonymisé pour l'évaluation des attaques.
+Exemple :
 
-### Point de vue
-Ce fichier n'est pas censé être publié à l'attaquant.
+- `outputs/anonymized_eval/<experiment_id>.csv`
 
-### Format
-CSV.
+#### Rôle
+Conserver une version interne permettant de relier les lignes à `record_id`.
 
-### Contenu
-Il ressemble au dataset anonymisé public, mais peut conserver des colonnes internes utiles à l'évaluation, comme `record_id`.
-
-### Pourquoi ce fichier est important
-Il permet notamment de :
-
-- vérifier les correspondances réelles ;
-- savoir si une cible a bien été retrouvée ;
-- calculer des métriques internes fiables.
+#### Point important
+Cette version n'est pas censée être visible par l'attaquant.
 
 ---
 
-## 3. Fichiers préparés pour les attaques
+### Métriques d'anonymisation
 
-## Base auxiliaire pour la linkage attack
+Dossier typique :
+
+- `outputs/metrics/`
+
+Exemple :
+
+- `outputs/metrics/<experiment_id>.json`
+
+#### Rôle
+Résumer le résultat d'un run d'anonymisation.
+
+#### Contenu typique
+On peut y trouver :
+
+- les chemins des exports ;
+- les colonnes retirées du public ;
+- les statistiques de suppression ;
+- le nombre de lignes retirées parce que tous les QI valaient `*`.
+
+---
+
+### Résumé CSV des runs
+
+Fichier typique :
+
+- `outputs/benchmark_summary.csv`
+
+#### Rôle
+Agréger plusieurs runs d'anonymisation dans un même tableau.
+
+---
+
+## 5. Fichiers de préparation de la linkage attack
+
+### Base auxiliaire
 
 Dossier typique :
 
 - `outputs/auxiliary/`
 
-### Rôle
-Contenir les informations connues par l'attaquant pour la linkage attack.
+Exemple de nom par défaut :
 
-### Format
+- `outputs/auxiliary/<dataset>__aux__known_<attrs>__released_only__n_<n>.csv`
+- `outputs/auxiliary/<dataset>__aux__known_<attrs>__all_records__n_<n>.csv`
+
+#### Rôle
+Contenir les cibles et les attributs connus par l'attaquant.
+
+#### Format
 CSV.
-
-### Contenu
-On y trouve :
-
-- un identifiant interne de cible ;
-- uniquement les colonnes que l'attaquant est supposé connaître ;
-- un sous-ensemble d'individus du dataset original.
-
-### Utilité
-Cette base sert d'entrée à `run_linkage_attack.py`.
-
 
 ---
 
-## Cibles de la MIA
+### Métadonnées de la base auxiliaire
+
+Même nom de base, avec extension `.json`.
+
+Exemple :
+
+- `outputs/auxiliary/<...>.json`
+
+#### Rôle
+Conserver :
+
+- le dataset source utilisé ;
+- les attributs connus ;
+- la taille de l'échantillon ;
+- le mode de population cible ;
+- éventuellement le lien avec `released_eval`.
+
+---
+
+## 6. Fichiers de sortie de la linkage attack
+
+Chaque run produit généralement un dossier :
+
+- `outputs/attacks/linkage/<attack_id>/`
+
+### `summary.json`
+
+#### Rôle
+Résumé global de l'attaque.
+
+#### Contient notamment
+- la liste des attributs connus ;
+- la séparation stade 1 / stade 2 ;
+- les tailles de classes ;
+- les métriques d'inférence sensible ;
+- `operation_counter`.
+
+---
+
+### `targets.csv`
+
+#### Rôle
+Résultats détaillés par cible.
+
+#### Contenu typique
+- taille de classe de stade 1 ;
+- taille de classe finale ;
+- réduction ;
+- présence du vrai record ;
+- distribution de l'attribut sensible.
+
+---
+
+### `equivalence_class_candidates.csv`
+
+#### Rôle
+Lister les candidats finaux retenus dans les classes d'équivalence.
+
+#### Format
+Une ligne par couple :
+
+- cible ;
+- candidat final.
+
+---
+
+### `attacker_knowledge.json`
+
+#### Rôle
+Décrire la vision attaquant des attributs connus.
+
+#### Contenu typique
+Pour chaque attribut :
+- `visible_level`
+- `observed_values`
+- `projection`
+
+---
+
+### `prefilter_debug/` (optionnel)
+
+#### Rôle
+Conserver des exports de debug intermédiaires pour certaines cibles.
+
+---
+
+### Rapport HTML
+
+Nom typique :
+
+- `outputs/attacks/linkage/<attack_id>/<attack_id>__report.html`
+
+#### Rôle
+Présenter les principaux résultats sous une forme lisible.
+
+---
+
+### Résumé agrégé des attaques linkage
+
+Fichier typique :
+
+- `outputs/attacks/linkage/linkage_summary.csv`
+
+#### Rôle
+Agréger plusieurs runs de linkage dans un même tableau.
+
+---
+
+## 7. Fichiers de préparation de la MIA
+
+### Published subset
+
+Dossier typique :
+
+- `outputs/prepared_data/`
+
+Exemple :
+
+- `outputs/prepared_data/<name>.published.csv`
+
+#### Rôle
+Sous-ensemble du dataset original qui sera anonymisé pour la MIA.
+
+---
+
+### OUT holdout pool
+
+Dossier typique :
+
+- `outputs/prepared_data/`
+
+Exemple :
+
+- `outputs/prepared_data/<name>.out.csv`
+
+#### Rôle
+Pool d'individus absents du dataset publié.
+
+---
+
+### Métadonnées de split MIA
+
+Exemple :
+
+- `outputs/prepared_data/<name>.published.json`
+
+#### Rôle
+Conserver :
+
+- le chemin du published subset ;
+- le chemin du OUT pool ;
+- la taille attendue du pool IN ;
+- la seed ;
+- la taille de l'attacker knowledge base.
+
+---
+
+### Attacker base MIA
+
+Exemple :
+
+- `outputs/prepared_data/<name>.attacker_base.csv`
+
+#### Rôle
+Base de connaissance attaquant construite après anonymisation, contenant à la fois des candidats OUT et des candidats IN survivants.
+
+---
+
+### Cibles MIA post-anonymisation
 
 Dossier typique :
 
 - `outputs/mia_targets/`
 
-### Rôle
-Contenir les individus testés par la membership inference attack.
+Exemple :
 
-### Format
-CSV.
+- `outputs/mia_targets/<name>.targets_post_ano.csv`
 
-### Contenu
-On y trouve :
+Métadonnées associées :
 
-- un identifiant de cible ;
-- les attributs connus par l'attaquant ;
-- une colonne indiquant si la cible est réellement membre ou non, par exemple `is_member`.
+- `outputs/mia_targets/<name>.targets_post_ano.json`
 
-### Utilité
-Ce fichier sert d'entrée à `run_mia_attack.py`.
+#### Rôle
+Contenir les cibles finales équilibrées IN/OUT avec le label `is_member`.
 
 ---
 
-## 4. Fichiers produits par les attaques
+## 8. Fichiers de sortie de la MIA
 
-Les attaques produisent leurs résultats dans un sous-dossier de :
+Chaque run produit généralement un dossier :
 
-- `outputs/attacks/`
+- `outputs/attacks/mia/<attack_id>/`
 
-Le détail exact peut varier selon le script, mais la logique générale reste la même.
+### `summary.json`
 
----
+#### Rôle
+Résumé global de l'attaque MIA.
 
-## Résultats de linkage attack
-
-Dossier typique :
-
-- `outputs/attacks/linkage/`
-
-### Formats possibles
-- CSV
-- JSON
-- résumés par cible
-- `summary.json`
-
-### Contenu typique
-On peut y trouver :
-
-- le nombre de candidats compatibles par cible ;
-- l'existence ou non d'un vrai match ;
-- la taille de la classe d'équivalence ;
-- la distribution prédite de l'attribut sensible ;
-- des indicateurs agrégés sur l'ensemble de l'attaque.
-
-### Utilité
-Ces fichiers servent à analyser le risque de liaison et le risque d'inférence sensible.
+#### Contient notamment
+- les `known_qids` ;
+- les attributs de stade 1 et de stade 2 ;
+- la matrice de confusion ;
+- accuracy, precision, recall, F1 ;
+- les tailles moyennes de classes.
 
 ---
 
-## Résultats de MIA
+### `targets.csv`
 
-Dossier typique :
+#### Rôle
+Résultats détaillés par cible.
 
-- `outputs/attacks/mia/`
-
-### Formats possibles
-- CSV
-- JSON
-- `summary.json`
-- résultats détaillés par cible
-
-### Contenu typique
-On peut y trouver :
-
-- la vérité terrain `is_member` ;
-- la prédiction IN ou OUT ;
-- le nombre de candidats compatibles ;
-- le meilleur score ;
-- la fraction compatible dans le dataset ;
-- des statistiques globales de performance.
-
-### Utilité
-Ces fichiers servent à analyser le risque de fuite d'appartenance.
+#### Contenu typique
+- vérité terrain ;
+- prédiction finale ;
+- taille de classe de stade 1 ;
+- nombre final de candidats compatibles ;
+- fraction compatible ;
+- raison textuelle de la décision.
 
 ---
 
-## 5. Format logique des colonnes les plus importantes
+### Rapport HTML
 
-Cette section ne fixe pas tous les noms exacts possibles, mais rappelle le rôle des colonnes les plus importantes.
+Nom typique :
 
-## `record_id`
+- `outputs/attacks/mia/<attack_id>/<attack_id>__report.html`
 
-### Rôle
-Identifiant interne d'un enregistrement.
-
-### Utilisation
-Très utile pour l'évaluation interne.
-
-### Attention
-Il ne doit pas être considéré comme une information réellement publiée à l'attaquant.
+#### Rôle
+Présenter les résultats de la MIA sous une forme lisible.
 
 ---
 
-## `income` ou autre attribut sensible
+### Résumé agrégé des MIA
 
-### Rôle
-Attribut sensible à protéger.
+Fichier typique :
 
-### Utilisation
-- pendant l'anonymisation, il intervient dans certaines contraintes ;
-- pendant la linkage attack, il peut être la cible d'inférence.
+- `outputs/attacks/mia/mia_summary.csv`
 
----
-
-## `is_member`
-
-### Rôle
-Label de vérité terrain pour la MIA.
-
-### Valeurs typiques
-- `1` : la cible est membre ;
-- `0` : la cible n'est pas membre.
-
-### Utilité
-Permet d'évaluer la qualité des prédictions de la MIA.
+#### Rôle
+Agréger plusieurs runs MIA dans un même tableau.
 
 ---
 
-## Attributs connus par l'attaquant
+## 9. Différence entre fichiers publics, internes et intermédiaires
+
+### Fichiers publics
+Ils représentent la vue plausible de l'attaquant.
 
 Exemples :
+- `outputs/anonymized/...`
 
-- `age`
-- `sex`
-- `race`
-- `marital-status`
-- `native-country`
+### Fichiers internes d'évaluation
+Ils servent à évaluer les attaques sans être publiés.
 
-### Rôle
-Servir de base à la comparaison entre une cible et les lignes du dataset anonymisé.
+Exemples :
+- `outputs/anonymized_eval/...`
 
-### Utilisation
-- dans la base auxiliaire pour la linkage attack ;
-- dans les cibles MIA pour la membership inference attack.
+### Fichiers intermédiaires
+Ils servent à préparer les attaques ou à documenter le pipeline.
+
+Exemples :
+- `outputs/prepared_data/...`
+- `outputs/auxiliary/...`
+- `outputs/mia_targets/...`
+
+---
+
+## Résumé
+
+Le projet manipule donc plusieurs niveaux de fichiers :
+
+1. les fichiers source ;
+2. les fichiers préparés ;
+3. les fichiers d'anonymisation ;
+4. les fichiers de préparation des attaques ;
+5. les résultats détaillés des attaques ;
+6. les rapports HTML.
+
+Comprendre la place de chaque famille de fichiers est essentiel pour bien suivre le pipeline complet.

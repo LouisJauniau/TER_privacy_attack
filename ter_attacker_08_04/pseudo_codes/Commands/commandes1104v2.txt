@@ -1,0 +1,29 @@
+python .\scripts\prepare_dataset_with_record_id.py `
+  --original .\data\adult.csv `
+  --output-root .\outputs `
+  --full-output .\data\adult_with_record_id.csv `
+  --base-config .\configs\adult_base.json `
+  --config-output .\outputs\configs\adult_demo_with_record_id.json
+
+
+python .\scripts\make_auxiliary_base.py `
+  --full-dataset .\data\adult_with_record_id.csv `
+  --known-attrs age,sex,native-country `
+  --sample-size 500 `
+  --seed 42 `
+  --sensitive-attr income `
+  --released-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --output-root .\outputs `
+  --aux-output .\outputs\auxiliary\adult_aux_demo.csv
+
+
+python .\scripts\make_auxiliary_base.py `
+  --full-dataset .\data\adult_with_record_id.csv `
+  --known-attrs age,sex,native-country `
+  --sample-frac 0.10 `
+  --seed 42 `
+  --sensitive-attr income `
+  --released-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --output-root .\outputs `
+  --aux-output .\outputs\auxiliary\adult_aux_demo.csv
+

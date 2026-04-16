@@ -3,11 +3,10 @@
   "hierarchy_dir": "hierarchies",
   "identifiers": [],
   "quasi_identifiers": [
-    "age",
+    "native-country",
     "sex",
     "race",
-    "marital-status",
-    "native-country"
+    "marital-status"
   ],
   "sensitive_attributes": [
     "income"
@@ -21,6 +20,7 @@
     "relationship",
     "capital-gain",
     "capital-loss",
+    "age",
     "hours-per-week"
   ],
   "k": 5,

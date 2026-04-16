@@ -1,7 +1,7 @@
-# Run one linkage attack against an anonymized dataset.
-# Attacker-known attributes are independent from the anonymization QI choice.
-# Compatibility is binary: a record is either compatible with the target or not.
-# Sensitive attribute inference is then computed from the target's equivalence class.
+# Run one strict linkage attack against an anonymized dataset.
+# In this strict setting, every target is guaranteed to be published in the
+# anonymized release. The script therefore treats target presence and true-record
+# retention as internal consistency checks rather than output metrics.
 
 from __future__ import annotations
 
@@ -16,18 +16,127 @@ import pandas as pd
 from attack_common import (
     append_attack_summary,
     build_attacker_knowledge,
+    is_suppressed_value,
     load_runtime_config,
     read_csv_str,
 )
 from common import ensure_dir, parse_csv_list, save_json
 from linkage_helpers import (
     build_value_indices,
-    compute_sensitive_distribution,
     get_match_mapping_for_target_value,
+    refinement_match_result,
     summarize_sensitive_prediction,
 )
 from privjedai_utils import build_privjedai_fuzzy_config
+from generate_linkage_attack_report import build_report
 
+
+def make_operation_counter() -> dict[str, int]:
+    return {
+        "value_index_row_visits": 0,
+        "match_cache_hits": 0,
+        "match_cache_misses": 0,
+        "compatible_value_tests": 0,
+        "targets_evaluated": 0,
+        "qid_stage1_cache_hits": 0,
+        "qid_stage1_cache_misses": 0,
+        "array_cells_initialized": 0,
+        "attribute_positive_mask_cells": 0,
+        "matching_row_visits": 0,
+        "mask_and_cells": 0,
+        "final_mask_reads": 0,
+        "equivalence_class_candidate_rows_output": 0,
+        "refinement_candidate_row_visits": 0,
+        "refinement_exact_tests": 0,
+        "refinement_fuzzy_tests": 0,
+        "refinement_mask_cells": 0,
+        "reduced_equivalence_class_candidate_rows_output": 0,
+    }
+
+
+def estimate_total_operations(op_counter: dict[str, int]) -> int:
+    return int(
+        op_counter["value_index_row_visits"]
+        + op_counter["compatible_value_tests"]
+        + op_counter["array_cells_initialized"]
+        + op_counter["attribute_positive_mask_cells"]
+        + op_counter["matching_row_visits"]
+        + op_counter["mask_and_cells"]
+        + op_counter["final_mask_reads"]
+        + op_counter["equivalence_class_candidate_rows_output"]
+        + op_counter["refinement_candidate_row_visits"]
+        + op_counter["refinement_exact_tests"]
+        + op_counter["refinement_fuzzy_tests"]
+        + op_counter["refinement_mask_cells"]
+        + op_counter["reduced_equivalence_class_candidate_rows_output"]
+    )
+
+
+HIDDEN_OPERATION_COUNTER_KEYS = {
+    "match_cache_hits",
+    "match_cache_misses",
+    "compatible_value_tests",
+    "qid_stage1_cache_hits",
+    "qid_stage1_cache_misses",
+    "operation_model",
+}
+
+
+def build_public_operation_counter(op_counter: dict[str, int]) -> dict[str, int]:
+    public_counter = {
+        key: value
+        for key, value in op_counter.items()
+        if key not in HIDDEN_OPERATION_COUNTER_KEYS
+    }
+    public_counter["estimated_total_operations"] = estimate_total_operations(op_counter)
+    return public_counter
+
+
+def _maybe_generate_linkage_report(
+    *,
+    output_root: Path,
+    summary_path: Path,
+    attack_id: str,
+    report_title: str | None = None,
+) -> Path | None:
+    """Generate the HTML linkage report for the current attack if possible."""
+    project_root = output_root.parent if output_root.name == 'outputs' else output_root
+    attack_dir = summary_path.parent
+    targets_csv = attack_dir / 'targets.csv'
+
+    summary = json.loads(summary_path.read_text(encoding='utf-8'))
+    experiment_id = str(summary.get('attack_id', attack_id)).split('__known_')[0]
+
+    metrics_json = project_root / 'outputs' / 'metrics' / f'{experiment_id}.json'
+    if not metrics_json.exists():
+        metrics_json = None
+
+    config_json = None
+    config_path_in_summary = summary.get('config_path')
+    if config_path_in_summary:
+        candidate = Path(str(config_path_in_summary))
+        if candidate.exists():
+            config_json = candidate
+        else:
+            basename_candidate = project_root / 'outputs' / 'configs' / candidate.name
+            if basename_candidate.exists():
+                config_json = basename_candidate
+
+    if config_json is None:
+        fallback = project_root / 'outputs' / 'configs' / f'{experiment_id}.json'
+        if fallback.exists():
+            config_json = fallback
+
+    report_path = attack_dir / f'{attack_id}__report.html'
+    return build_report(
+        project_root=project_root,
+        summary_json=summary_path,
+        metrics_json=metrics_json,
+        config_json=config_json,
+        targets_csv=targets_csv,
+        output_path=report_path,
+        title=report_title,
+    )
 
 # Parse --n-targets that can be either an integer or 'all'.
 def parse_n_targets_arg(raw: str) -> int | str:
@@ -140,52 +249,123 @@ def _maybe_build_fuzzy_config(
     )
 
 
-# Compute one target's equivalence class and all derived reporting fields.
-def _evaluate_target(
+# Ensure all sampled targets are truly part of the anonymized release.
+def _validate_strict_target_set(
     *,
-    target: pd.Series,
+    sampled_targets: pd.DataFrame,
     target_id_col: str,
-    sensitive_attr: str,
+    id_to_eval_index: dict[str, int],
+) -> None:
+    sampled_ids = sampled_targets[target_id_col].astype(str).str.strip().tolist()
+    missing_ids = [target_id for target_id in sampled_ids if target_id not in id_to_eval_index]
+    if missing_ids:
+        preview = ", ".join(missing_ids[:10])
+        raise ValueError(
+            "Strict linkage expects every sampled target to be present in anonymized_eval, "
+            f"but {len(missing_ids)} target(s) were missing. Example ids: {preview}"
+        )
+
+
+def _split_attack_attributes(
+    *,
+    runtime: dict[str, Any],
     known_attrs: list[str],
+    attacker_knowledge: dict[str, dict[str, Any]],
+) -> tuple[list[str], list[str], list[str]]:
+    # Stage split is attacker-view based, not config-based.
+    # Stage 1: attributes that appear generalized/suppressed in the release
+    #          (visible_level != 0) and therefore should be used to build the
+    #          initial equivalence class.
+    # Stage 2: attributes that remain visible in clear text (visible_level == 0)
+    #          and can refine the stage-1 class with exact or fuzzy matching.
+    filter_attrs: list[str] = []
+    refine_attrs: list[str] = []
+    unknown_visibility_attrs: list[str] = []
+
+    for attr in known_attrs:
+        attr_knowledge = attacker_knowledge.get(attr)
+        if attr_knowledge is None or "visible_level" not in attr_knowledge:
+            unknown_visibility_attrs.append(attr)
+            continue
+
+        visible_level = int(attr_knowledge.get("visible_level", 0))
+        if visible_level == 0:
+            refine_attrs.append(attr)
+        else:
+            filter_attrs.append(attr)
+
+    return filter_attrs, refine_attrs, unknown_visibility_attrs
+
+
+def _project_qid_filter_value(
+    *,
+    attr: str,
+    raw_value: str,
+    attacker_knowledge: dict[str, dict[str, Any]],
+) -> str:
+    attr_knowledge = attacker_knowledge.get(attr, {})
+    projection = attr_knowledge.get("projection", {})
+    return str(projection.get(str(raw_value).strip(), str(raw_value).strip())).strip()
+
+
+def _make_qid_stage1_cache_key(
+    *,
+    known_values: dict[str, str],
+    qid_filter_attrs: list[str],
+    attacker_knowledge: dict[str, dict[str, Any]],
+) -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (
+            attr,
+            _project_qid_filter_value(
+                attr=attr,
+                raw_value=known_values[attr],
+                attacker_knowledge=attacker_knowledge,
+            ),
+        )
+        for attr in qid_filter_attrs
+    )
+
+
+def _build_qid_stage1_cache_entry(
+    *,
+    qid_known_values: dict[str, str],
+    qid_filter_attrs: list[str],
     attacker_knowledge: dict[str, dict[str, Any]],
     working_df_str: pd.DataFrame,
     value_indices: dict[str, dict[str, np.ndarray]],
     attr_unique_values: dict[str, list[str]],
     match_cache: dict[tuple[str, str, str], dict[str, dict[str, Any]]],
-    fuzzy_config: dict[str, Any] | None,
     fuzzy_pair_cache: dict[tuple[str, str], float],
     fuzzy_hash_cache: dict[str, frozenset[int]],
-    save_prefilter_debug: bool,
-    prefilter_debug_dir: Path | None,
-    id_to_eval_index: dict[str, int],
+    op_counter: dict[str, int] | None = None,
 ) -> dict[str, Any]:
     n_rows = len(working_df_str)
-    target_id = str(target[target_id_col]).strip()
-    known_values = {attr: str(target[attr]).strip() for attr in known_attrs}
+    qid_compatible_count = np.zeros(n_rows, dtype=np.int16)
+    qid_exact_count = np.zeros(n_rows, dtype=np.int16)
+    qid_generalized_count = np.zeros(n_rows, dtype=np.int16)
+    qid_suppressed_count = np.zeros(n_rows, dtype=np.int16)
+    qid_full_compatible_mask = np.ones(n_rows, dtype=bool)
+    if op_counter is not None:
+        op_counter["array_cells_initialized"] += int(4 * n_rows)
 
-    compatible_count = np.zeros(n_rows, dtype=np.int16)
-    exact_count = np.zeros(n_rows, dtype=np.int16)
-    generalized_count = np.zeros(n_rows, dtype=np.int16)
-    suppressed_count = np.zeros(n_rows, dtype=np.int16)
-    fuzzy_count = np.zeros(n_rows, dtype=np.int16)
-    fuzzy_score_sum = np.zeros(n_rows, dtype=np.float32)
-
-    full_compatible_mask = np.ones(n_rows, dtype=bool)
-    compatible_values_debug: dict[str, dict[str, dict[str, Any]]] = {}
-
-    for attr in known_attrs:
+    qid_compatible_values_debug: dict[str, dict[str, dict[str, Any]]] = {}
+    for attr in qid_filter_attrs:
         mapping = get_match_mapping_for_target_value(
             attr=attr,
-            target_value=known_values[attr],
+            target_value=qid_known_values[attr],
             possible_anonymized_values=attr_unique_values[attr],
             attacker_knowledge=attacker_knowledge,
             match_cache=match_cache,
-            fuzzy_config=fuzzy_config,
+            fuzzy_config=None,
             fuzzy_pair_cache=fuzzy_pair_cache,
             fuzzy_hash_cache=fuzzy_hash_cache,
+            op_counter=op_counter,
         )
-        compatible_values_debug[attr] = mapping
+        qid_compatible_values_debug[attr] = mapping
         attr_positive_mask = np.zeros(n_rows, dtype=bool)
+        if op_counter is not None:
+            op_counter["attribute_positive_mask_cells"] += int(n_rows)
 
         for anonymized_value, result in mapping.items():
             row_ids = value_indices[attr].get(anonymized_value)
@@ -193,53 +373,215 @@ def _evaluate_target(
                 continue
 
             kind = str(result["kind"])
-            score = result.get("score")
+            if op_counter is not None:
+                op_counter["matching_row_visits"] += int(len(row_ids))
             attr_positive_mask[row_ids] = True
-            compatible_count[row_ids] += 1
+            qid_compatible_count[row_ids] += 1
 
             if kind == "exact":
-                exact_count[row_ids] += 1
+                qid_exact_count[row_ids] += 1
             elif kind == "generalized":
-                generalized_count[row_ids] += 1
+                qid_generalized_count[row_ids] += 1
             elif kind == "suppressed":
-                suppressed_count[row_ids] += 1
+                qid_suppressed_count[row_ids] += 1
+
+        qid_full_compatible_mask &= attr_positive_mask
+        if op_counter is not None:
+            op_counter["mask_and_cells"] += int(n_rows)
+
+    if op_counter is not None:
+        op_counter["final_mask_reads"] += int(n_rows)
+
+    qid_kept_indices = np.flatnonzero(qid_full_compatible_mask).astype(np.int32)
+    return {
+        "qid_kept_indices": qid_kept_indices,
+        "qid_matched_attr_count": qid_compatible_count[qid_kept_indices].astype(np.int16, copy=False),
+        "qid_exact_match_count": qid_exact_count[qid_kept_indices].astype(np.int16, copy=False),
+        "qid_generalized_match_count": qid_generalized_count[qid_kept_indices].astype(np.int16, copy=False),
+        "qid_suppressed_match_count": qid_suppressed_count[qid_kept_indices].astype(np.int16, copy=False),
+        "qid_compatible_values_debug": qid_compatible_values_debug,
+    }
+
+
+def _materialize_qid_df_from_cache_entry(
+    *,
+    cache_entry: dict[str, Any],
+    working_df_str: pd.DataFrame,
+) -> pd.DataFrame:
+    qid_kept_indices = cache_entry["qid_kept_indices"]
+    qid_df = working_df_str.iloc[qid_kept_indices].copy()
+    qid_df["qid_matched_attr_count"] = cache_entry["qid_matched_attr_count"]
+    qid_df["qid_exact_match_count"] = cache_entry["qid_exact_match_count"]
+    qid_df["qid_generalized_match_count"] = cache_entry["qid_generalized_match_count"]
+    qid_df["qid_suppressed_match_count"] = cache_entry["qid_suppressed_match_count"]
+    return qid_df
+
+
+# Compute one target's equivalence class and all derived reporting fields.
+def _evaluate_target(
+    *,
+    target: pd.Series,
+    target_id_col: str,
+    sensitive_attr: str,
+    known_attrs: list[str],
+    qid_filter_attrs: list[str],
+    refine_attrs: list[str],
+    attacker_knowledge: dict[str, dict[str, Any]],
+    working_df_str: pd.DataFrame,
+    value_indices: dict[str, dict[str, np.ndarray]],
+    attr_unique_values: dict[str, list[str]],
+    match_cache: dict[tuple[str, str, str], dict[str, dict[str, Any]]],
+    qid_stage1_cache: dict[tuple[tuple[str, str], ...], dict[str, Any]],
+    fuzzy_config: dict[str, Any] | None,
+    fuzzy_pair_cache: dict[tuple[str, str], float],
+    fuzzy_hash_cache: dict[str, frozenset[int]],
+    save_prefilter_debug: bool,
+    prefilter_debug_dir: Path | None,
+    id_to_eval_index: dict[str, int],
+    use_privjedai_fuzzy: bool,
+    op_counter: dict[str, int] | None = None,
+) -> dict[str, Any]:
+    n_rows = len(working_df_str)
+    if op_counter is not None:
+        op_counter["targets_evaluated"] += 1
+
+    target_id = str(target[target_id_col]).strip()
+    known_values = {attr: str(target[attr]).strip() for attr in known_attrs}
+    qid_known_values = {attr: known_values[attr] for attr in qid_filter_attrs}
+    refine_known_values = {attr: known_values[attr] for attr in refine_attrs}
+
+    if target_id not in id_to_eval_index:
+        raise ValueError(f"Strict linkage violation: target '{target_id}' is missing from anonymized_eval.")
+
+    qid_stage1_key = _make_qid_stage1_cache_key(
+        known_values=known_values,
+        qid_filter_attrs=qid_filter_attrs,
+        attacker_knowledge=attacker_knowledge,
+    )
+    if qid_stage1_key not in qid_stage1_cache:
+        if op_counter is not None:
+            op_counter["qid_stage1_cache_misses"] += 1
+        qid_stage1_cache[qid_stage1_key] = _build_qid_stage1_cache_entry(
+            qid_known_values=qid_known_values,
+            qid_filter_attrs=qid_filter_attrs,
+            attacker_knowledge=attacker_knowledge,
+            working_df_str=working_df_str,
+            value_indices=value_indices,
+            attr_unique_values=attr_unique_values,
+            match_cache=match_cache,
+            fuzzy_pair_cache=fuzzy_pair_cache,
+            fuzzy_hash_cache=fuzzy_hash_cache,
+            op_counter=op_counter,
+        )
+    else:
+        if op_counter is not None:
+            op_counter["qid_stage1_cache_hits"] += 1
+
+    qid_cache_entry = qid_stage1_cache[qid_stage1_key]
+    qid_compatible_values_debug = qid_cache_entry["qid_compatible_values_debug"]
+    qid_kept_indices = qid_cache_entry["qid_kept_indices"]
+    qid_df = _materialize_qid_df_from_cache_entry(
+        cache_entry=qid_cache_entry,
+        working_df_str=working_df_str,
+    )
+
+    qid_candidate_count = int(len(qid_df))
+    if op_counter is not None:
+        op_counter["equivalence_class_candidate_rows_output"] += qid_candidate_count
+
+    true_record_in_qid_class = bool(qid_candidate_count > 0 and (qid_df[target_id_col] == target_id).any())
+    if not true_record_in_qid_class:
+        raise ValueError(
+            "Strict linkage invariant violated: the true target record is absent from its QI equivalence class "
+            f"for target '{target_id}'."
+        )
+
+    refined_df = qid_df.copy()
+    refine_input_count = int(len(refined_df))
+    if refine_input_count > 0:
+        refine_exact_count = np.zeros(refine_input_count, dtype=np.int16)
+        refine_fuzzy_count = np.zeros(refine_input_count, dtype=np.int16)
+        refine_fuzzy_score_sum = np.zeros(refine_input_count, dtype=np.float32)
+        refine_full_mask = np.ones(refine_input_count, dtype=bool)
+        if op_counter is not None:
+            op_counter["array_cells_initialized"] += int(3 * refine_input_count)
+    else:
+        refine_exact_count = np.zeros(0, dtype=np.int16)
+        refine_fuzzy_count = np.zeros(0, dtype=np.int16)
+        refine_fuzzy_score_sum = np.zeros(0, dtype=np.float32)
+        refine_full_mask = np.ones(0, dtype=bool)
+
+    for attr in refine_attrs:
+        attr_positive_mask = np.zeros(refine_input_count, dtype=bool)
+        if op_counter is not None:
+            op_counter["refinement_mask_cells"] += int(refine_input_count)
+
+        candidate_values = refined_df[attr].astype(str).str.strip().tolist()
+        target_value = refine_known_values[attr]
+        for idx, candidate_value in enumerate(candidate_values):
+            if op_counter is not None:
+                op_counter["refinement_candidate_row_visits"] += 1
+                op_counter["refinement_exact_tests"] += 1
+            if fuzzy_config is not None and target_value != candidate_value and not is_suppressed_value(candidate_value):
+                if op_counter is not None:
+                    op_counter["refinement_fuzzy_tests"] += 1
+            result = refinement_match_result(
+                target_value,
+                candidate_value,
+                fuzzy_config=fuzzy_config,
+                fuzzy_pair_cache=fuzzy_pair_cache,
+                fuzzy_hash_cache=fuzzy_hash_cache,
+            )
+            if result is None:
+                continue
+
+            attr_positive_mask[idx] = True
+            kind = str(result["kind"])
+            score = result.get("score")
+            if kind == "exact":
+                refine_exact_count[idx] += 1
             elif kind == "privjedai_fuzzy":
-                fuzzy_count[row_ids] += 1
+                refine_fuzzy_count[idx] += 1
                 if score is not None:
-                    fuzzy_score_sum[row_ids] += float(score)
+                    refine_fuzzy_score_sum[idx] += float(score)
 
-        full_compatible_mask &= attr_positive_mask
+        refine_full_mask &= attr_positive_mask
 
-    compatible_df = working_df_str.loc[full_compatible_mask].copy()
-    compatible_df["matched_attr_count"] = compatible_count[full_compatible_mask]
-    compatible_df["exact_match_count"] = exact_count[full_compatible_mask]
-    compatible_df["generalized_match_count"] = generalized_count[full_compatible_mask]
-    compatible_df["suppressed_match_count"] = suppressed_count[full_compatible_mask]
-    compatible_df["privjedai_fuzzy_match_count"] = fuzzy_count[full_compatible_mask]
-    compatible_df["privjedai_fuzzy_score_sum"] = fuzzy_score_sum[full_compatible_mask]
-    fuzzy_score_mean = np.full(int(np.sum(full_compatible_mask)), np.nan, dtype=np.float32)
+    refined_df = refined_df.loc[refine_full_mask].copy()
+    refined_df["refine_exact_match_count"] = refine_exact_count[refine_full_mask]
+    refined_df["refine_privjedai_fuzzy_match_count"] = refine_fuzzy_count[refine_full_mask]
+    refined_df["refine_privjedai_fuzzy_score_sum"] = refine_fuzzy_score_sum[refine_full_mask]
+    refine_fuzzy_score_mean = np.full(int(np.sum(refine_full_mask)), np.nan, dtype=np.float32)
     np.divide(
-        fuzzy_score_sum[full_compatible_mask],
-        fuzzy_count[full_compatible_mask],
-        out=fuzzy_score_mean,
-        where=fuzzy_count[full_compatible_mask] > 0,
+        refine_fuzzy_score_sum[refine_full_mask],
+        refine_fuzzy_count[refine_full_mask],
+        out=refine_fuzzy_score_mean,
+        where=refine_fuzzy_count[refine_full_mask] > 0,
     )
-    compatible_df["privjedai_fuzzy_score_mean"] = fuzzy_score_mean
+    refined_df["refine_privjedai_fuzzy_score_mean"] = refine_fuzzy_score_mean
+    refined_df["total_matched_attr_count"] = (
+        refined_df["qid_matched_attr_count"].fillna(0).astype(int)
+        + refined_df["refine_exact_match_count"].fillna(0).astype(int)
+        + refined_df["refine_privjedai_fuzzy_match_count"].fillna(0).astype(int)
+    )
 
-    compatible_candidate_count = int(len(compatible_df))
-    target_present_in_anonymized = target_id in id_to_eval_index
-    true_record_in_compatible = bool(
-        target_present_in_anonymized
-        and compatible_candidate_count > 0
-        and (compatible_df[target_id_col] == target_id).any()
+    refined_candidate_count = int(len(refined_df))
+    if op_counter is not None:
+        op_counter["reduced_equivalence_class_candidate_rows_output"] += refined_candidate_count
+
+    true_record_in_refined_class = bool(refined_candidate_count > 0 and (refined_df[target_id_col] == target_id).any())
+    unique_reidentified = bool(refined_candidate_count == 1 and true_record_in_refined_class)
+    false_unique_match = bool(refined_candidate_count == 1 and not true_record_in_refined_class)
+    has_any_fuzzy_candidate = bool(
+        use_privjedai_fuzzy
+        and refined_candidate_count > 0
+        and (refined_df["refine_privjedai_fuzzy_match_count"] > 0).any()
     )
-    exact_reidentified = bool(target_present_in_anonymized and compatible_candidate_count == 1 and true_record_in_compatible)
-    has_any_fuzzy_candidate = bool(compatible_candidate_count > 0 and (compatible_df["privjedai_fuzzy_match_count"] > 0).any())
     true_record_fuzzy_kept = bool(
-        target_present_in_anonymized
-        and compatible_candidate_count > 0
+        use_privjedai_fuzzy
+        and refined_candidate_count > 0
         and (
-            compatible_df.loc[compatible_df[target_id_col] == target_id, "privjedai_fuzzy_match_count"]
+            refined_df.loc[refined_df[target_id_col] == target_id, "refine_privjedai_fuzzy_match_count"]
             .fillna(0)
             .astype(int)
             .gt(0)
@@ -247,104 +589,133 @@ def _evaluate_target(
         )
     )
 
-    prediction = summarize_sensitive_prediction(compatible_df, sensitive_attr)
-    true_sensitive_value = None
-    true_sensitive_probability = None
-    if target_present_in_anonymized:
-        target_eval_idx = id_to_eval_index[target_id]
-        true_sensitive_value = str(working_df_str.iloc[target_eval_idx][sensitive_attr]).strip()
-        true_sensitive_probability = prediction["distribution"].get(true_sensitive_value)
+    prediction = summarize_sensitive_prediction(refined_df, sensitive_attr)
+    target_eval_idx = id_to_eval_index[target_id]
+    true_sensitive_value = str(working_df_str.iloc[target_eval_idx][sensitive_attr]).strip()
+    true_sensitive_probability = prediction["distribution"].get(true_sensitive_value)
 
-    exposed_values = {
-        attr: attacker_knowledge[attr].get("projection", {}).get(known_values[attr], known_values[attr])
-        for attr in known_attrs
+    qid_exposed_values = {
+        attr: attacker_knowledge[attr].get("projection", {}).get(qid_known_values[attr], qid_known_values[attr])
+        for attr in qid_filter_attrs
     }
 
     prefilter_artifacts: dict[str, Any] = {}
     if save_prefilter_debug and prefilter_debug_dir is not None:
-        kept_indices = np.flatnonzero(full_compatible_mask)
-        kept_debug_df = pd.DataFrame({
-            "row_index": kept_indices.astype(int),
-            "record_id": working_df_str.loc[full_compatible_mask, target_id_col].astype(str).tolist(),
+        qid_kept_debug_df = pd.DataFrame({
+            "row_index": qid_kept_indices.astype(int),
+            "record_id": working_df_str.loc[qid_full_compatible_mask, target_id_col].astype(str).tolist(),
         })
-        kept_debug_path = prefilter_debug_dir / f"target_{target_id}__kept_rows.csv"
-        kept_debug_df.to_csv(kept_debug_path, index=False)
+        qid_kept_debug_path = prefilter_debug_dir / f"target_{target_id}__qid_kept_rows.csv"
+        qid_kept_debug_df.to_csv(qid_kept_debug_path, index=False)
 
-        compatible_values_by_attr: dict[str, list[str]] = {}
-        compatible_kinds_by_attr: dict[str, dict[str, str]] = {}
-        compatible_scores_by_attr: dict[str, dict[str, float]] = {}
-        for attr in known_attrs:
-            compatible_values_by_attr[attr] = sorted(compatible_values_debug[attr].keys())
-            compatible_kinds_by_attr[attr] = {key: str(payload["kind"]) for key, payload in compatible_values_debug[attr].items()}
-            compatible_scores_by_attr[attr] = {
-                key: round(float(payload["score"]), 6)
-                for key, payload in compatible_values_debug[attr].items()
-                if payload.get("score") is not None
+        refined_kept_ids = refined_df[target_id_col].astype(str).tolist()
+        refined_kept_debug_path = prefilter_debug_dir / f"target_{target_id}__refined_kept_rows.csv"
+        pd.DataFrame({
+            "record_id": refined_kept_ids,
+        }).to_csv(refined_kept_debug_path, index=False)
+
+        qid_compatible_values_by_attr: dict[str, list[str]] = {}
+        qid_compatible_kinds_by_attr: dict[str, dict[str, str]] = {}
+        for attr in qid_filter_attrs:
+            qid_compatible_values_by_attr[attr] = sorted(qid_compatible_values_debug[attr].keys())
+            qid_compatible_kinds_by_attr[attr] = {
+                key: str(payload["kind"])
+                for key, payload in qid_compatible_values_debug[attr].items()
             }
 
         debug_payload = {
             "target_id": target_id,
             "known_attrs": known_attrs,
+            "qid_filter_attrs": qid_filter_attrs,
+            "refine_attrs": refine_attrs,
             "known_values": known_values,
-            "exposed_values": exposed_values,
-            "compatible_values_by_attr": compatible_values_by_attr,
-            "compatible_kinds_by_attr": compatible_kinds_by_attr,
-            "compatible_scores_by_attr": compatible_scores_by_attr,
-            "kept_row_indices": kept_indices.astype(int).tolist(),
-            "kept_record_ids": working_df_str.loc[full_compatible_mask, target_id_col].astype(str).tolist(),
-            "kept_count": int(len(kept_indices)),
+            "qid_exposed_values": qid_exposed_values,
+            "qid_compatible_values_by_attr": qid_compatible_values_by_attr,
+            "qid_compatible_kinds_by_attr": qid_compatible_kinds_by_attr,
+            "qid_kept_row_indices": qid_kept_indices.astype(int).tolist(),
+            "qid_kept_record_ids": working_df_str.loc[qid_full_compatible_mask, target_id_col].astype(str).tolist(),
+            "qid_kept_count": int(len(qid_kept_indices)),
+            "refined_kept_record_ids": refined_kept_ids,
+            "refined_kept_count": int(len(refined_kept_ids)),
         }
         debug_json_path = prefilter_debug_dir / f"target_{target_id}__filter.json"
         save_json(debug_json_path, debug_payload)
         prefilter_artifacts = {
-            "kept_debug_path": kept_debug_path,
+            "qid_kept_debug_path": qid_kept_debug_path,
+            "refined_kept_debug_path": refined_kept_debug_path,
             "debug_json_path": debug_json_path,
         }
 
+    reduction_absolute = qid_candidate_count - refined_candidate_count
+    reduction_rate = None if qid_candidate_count == 0 else float(reduction_absolute) / float(qid_candidate_count)
+
     per_target_row = {
         "target_id": target_id,
-        "target_present_in_anonymized": target_present_in_anonymized,
-        "known_attrs": "|".join(known_attrs),
         "known_values": " | ".join(f"{attr}={known_values[attr]}" for attr in known_attrs),
-        "exposed_values": " | ".join(f"{attr}={exposed_values[attr]}" for attr in known_attrs),
-        "equivalence_class_size": compatible_candidate_count,
-        "equivalence_class_candidates_with_privjedai_fuzzy": int((compatible_df["privjedai_fuzzy_match_count"] > 0).sum()) if compatible_candidate_count > 0 else 0,
-        "true_record_in_equivalence_class": true_record_in_compatible,
-        "true_record_used_privjedai_fuzzy": true_record_fuzzy_kept,
-        "exact_reidentified": exact_reidentified,
+        "qid_filter_values": " | ".join(f"{attr}={qid_known_values[attr]}" for attr in qid_filter_attrs),
+        "refine_values": " | ".join(f"{attr}={refine_known_values[attr]}" for attr in refine_attrs) if refine_attrs else "",
+        "qid_exposed_values": " | ".join(f"{attr}={qid_exposed_values[attr]}" for attr in qid_filter_attrs),
+        "qid_equivalence_class_size": qid_candidate_count,
+        "stage1_equivalence_class_size": qid_candidate_count,
+        "reduced_equivalence_class_size": refined_candidate_count,
+        "stage2_equivalence_class_size": refined_candidate_count,
+        "equivalence_class_size": refined_candidate_count,
+        "equivalence_class_reduction": reduction_absolute,
+        "equivalence_class_reduction_rate": None if reduction_rate is None else round(reduction_rate, 6),
+        "true_record_in_qid_class": true_record_in_qid_class,
+        "true_record_in_reduced_class": true_record_in_refined_class,
+        "unique_reidentified": unique_reidentified,
+        "false_unique_match": false_unique_match,
         "true_sensitive_value": true_sensitive_value,
         "predicted_sensitive_top_value": prediction["top_value"],
         "predicted_sensitive_top_probability": None if prediction["top_probability"] is None else round(float(prediction["top_probability"]), 6),
         "true_sensitive_probability": None if true_sensitive_probability is None else round(float(true_sensitive_probability), 6),
         "sensitive_value_certain": prediction["is_certain"],
         "n_distinct_sensitive_values": prediction["n_distinct_sensitive_values"],
-        "sensitive_distribution_json": json.dumps({key: round(float(value), 6) for key, value in prediction["distribution"].items()}, ensure_ascii=False),
+        "sensitive_distribution_json": json.dumps(
+            {key: round(float(value), 6) for key, value in prediction["distribution"].items()},
+            ensure_ascii=False,
+        ),
     }
+    if use_privjedai_fuzzy:
+        per_target_row["reduced_candidates_with_privjedai_fuzzy"] = int(
+            (refined_df["refine_privjedai_fuzzy_match_count"] > 0).sum()
+        ) if refined_candidate_count > 0 else 0
+        per_target_row["true_record_used_privjedai_fuzzy"] = true_record_fuzzy_kept
 
     equivalence_class_rows = []
-    for _, candidate in compatible_df.iterrows():
-        equivalence_class_rows.append(
-            {
-                "target_id": target_id,
-                "candidate_record_id": str(candidate[target_id_col]),
-                "candidate_sensitive_value": str(candidate[sensitive_attr]),
-                "candidate_matched_attr_count": int(candidate["matched_attr_count"]),
-                "candidate_exact_match_count": int(candidate["exact_match_count"]),
-                "candidate_generalized_match_count": int(candidate["generalized_match_count"]),
-                "candidate_suppressed_match_count": int(candidate["suppressed_match_count"]),
-                "candidate_privjedai_fuzzy_match_count": int(candidate["privjedai_fuzzy_match_count"]),
-                "candidate_privjedai_fuzzy_score_sum": None if pd.isna(candidate["privjedai_fuzzy_score_sum"]) else round(float(candidate["privjedai_fuzzy_score_sum"]), 6),
-                "candidate_privjedai_fuzzy_score_mean": None if pd.isna(candidate["privjedai_fuzzy_score_mean"]) else round(float(candidate["privjedai_fuzzy_score_mean"]), 6),
-                "candidate_is_true_record": str(candidate[target_id_col]) == target_id,
-            }
-        )
+    for _, candidate in refined_df.iterrows():
+        row = {
+            "target_id": target_id,
+            "candidate_record_id": str(candidate[target_id_col]),
+            "candidate_sensitive_value": str(candidate[sensitive_attr]),
+            "candidate_qid_matched_attr_count": int(candidate["qid_matched_attr_count"]),
+            "candidate_qid_exact_match_count": int(candidate["qid_exact_match_count"]),
+            "candidate_qid_generalized_match_count": int(candidate["qid_generalized_match_count"]),
+            "candidate_qid_suppressed_match_count": int(candidate["qid_suppressed_match_count"]),
+            "candidate_refine_exact_match_count": int(candidate["refine_exact_match_count"]),
+            "candidate_refine_privjedai_fuzzy_match_count": int(candidate["refine_privjedai_fuzzy_match_count"]),
+            "candidate_total_matched_attr_count": int(candidate["total_matched_attr_count"]),
+            "candidate_is_true_record": str(candidate[target_id_col]) == target_id,
+        }
+        if use_privjedai_fuzzy:
+            row.update(
+                {
+                    "candidate_refine_privjedai_fuzzy_score_sum": None if pd.isna(candidate["refine_privjedai_fuzzy_score_sum"]) else round(float(candidate["refine_privjedai_fuzzy_score_sum"]), 6),
+                    "candidate_refine_privjedai_fuzzy_score_mean": None if pd.isna(candidate["refine_privjedai_fuzzy_score_mean"]) else round(float(candidate["refine_privjedai_fuzzy_score_mean"]), 6),
+                }
+            )
+        equivalence_class_rows.append(row)
 
     return {
         "target_id": target_id,
-        "compatible_candidate_count": compatible_candidate_count,
-        "target_present_in_anonymized": target_present_in_anonymized,
-        "true_record_in_compatible": true_record_in_compatible,
-        "exact_reidentified": exact_reidentified,
+        "qid_candidate_count": qid_candidate_count,
+        "compatible_candidate_count": refined_candidate_count,
+        "refined_candidate_count": refined_candidate_count,
+        "unique_reidentified": unique_reidentified,
+        "false_unique_match": false_unique_match,
+        "true_record_in_qid_class": true_record_in_qid_class,
+        "true_record_in_refined_class": true_record_in_refined_class,
         "has_any_fuzzy_candidate": has_any_fuzzy_candidate,
         "true_record_fuzzy_kept": true_record_fuzzy_kept,
         "prediction": prediction,
@@ -382,6 +753,8 @@ def run_linkage_attack(
     privjedai_bloom_num_hashes: int = 15,
     privjedai_bloom_qgrams: int = 4,
     privjedai_bloom_hashing_type: str = "salted_qgrams",
+    generate_report: bool = True,
+    report_title: str | None = None,
 ) -> dict[str, Any]:
     sensitive_attr = sensitive_attr or (runtime.get("sensitive_attributes") or [None])[0]
     if not sensitive_attr:
@@ -412,6 +785,12 @@ def run_linkage_attack(
     )
 
     attacker_knowledge = build_attacker_knowledge(runtime=runtime, known_attrs=known_attrs, df_public=df_public)
+    qid_filter_attrs, refine_attrs, skipped_refine_attrs = _split_attack_attributes(
+        runtime=runtime,
+        known_attrs=known_attrs,
+        attacker_knowledge=attacker_knowledge,
+    )
+    op_counter = make_operation_counter()
 
     working_df = df_public.copy().reset_index(drop=True)
     working_df[target_id_col] = df_eval[target_id_col].astype(str).reset_index(drop=True)
@@ -430,6 +809,11 @@ def run_linkage_attack(
     sampled_targets[target_id_col] = sampled_targets[target_id_col].astype(str).str.strip()
 
     id_to_eval_index = {str(record_id): idx for idx, record_id in enumerate(working_df_str[target_id_col].tolist())}
+    _validate_strict_target_set(
+        sampled_targets=sampled_targets,
+        target_id_col=target_id_col,
+        id_to_eval_index=id_to_eval_index,
+    )
 
     output_root = ensure_dir(Path(output_root).resolve())
     attack_root = ensure_dir(output_root / "attacks" / "linkage")
@@ -439,23 +823,25 @@ def run_linkage_attack(
     prefilter_debug_dir = ensure_dir(attack_dir / "prefilter_debug") if save_prefilter_debug else None
 
     match_cache: dict[tuple[str, str, str], dict[str, dict[str, Any]]] = {}
+    qid_stage1_cache: dict[tuple[tuple[str, str], ...], dict[str, Any]] = {}
     fuzzy_pair_cache: dict[tuple[str, str], float] = {}
     fuzzy_hash_cache: dict[str, frozenset[int]] = {}
 
     per_target_rows: list[dict[str, Any]] = []
     equivalence_class_rows: list[dict[str, Any]] = []
-    target_presence_flags: list[bool] = []
+    qid_candidate_counts: list[int] = []
     compatible_candidate_counts: list[int] = []
-    true_in_compatible_flags: list[bool] = []
-    unique_exact_flags: list[bool] = []
+    unique_reidentified_flags: list[bool] = []
+    false_unique_match_flags: list[bool] = []
+    true_record_kept_after_refinement_flags: list[bool] = []
     certainty_sensitive_flags: list[bool] = []
     true_sensitive_probabilities: list[float] = []
     top_sensitive_probabilities: list[float] = []
     targets_with_any_fuzzy_candidate: list[bool] = []
     targets_with_true_record_fuzzy_kept: list[bool] = []
 
-    attr_unique_values = {attr: sorted({str(v).strip() for v in working_df_str[attr].astype(str).tolist()}) for attr in known_attrs}
-    value_indices = build_value_indices(working_df_str, known_attrs)
+    attr_unique_values = {attr: sorted({str(v).strip() for v in working_df_str[attr].astype(str).tolist()}) for attr in qid_filter_attrs}
+    value_indices = build_value_indices(working_df_str, qid_filter_attrs, op_counter=op_counter)
 
     for _, target in sampled_targets.iterrows():
         result = _evaluate_target(
@@ -463,22 +849,28 @@ def run_linkage_attack(
             target_id_col=target_id_col,
             sensitive_attr=sensitive_attr,
             known_attrs=known_attrs,
+            qid_filter_attrs=qid_filter_attrs,
+            refine_attrs=refine_attrs,
             attacker_knowledge=attacker_knowledge,
             working_df_str=working_df_str,
             value_indices=value_indices,
             attr_unique_values=attr_unique_values,
             match_cache=match_cache,
+            qid_stage1_cache=qid_stage1_cache,
             fuzzy_config=fuzzy_config,
             fuzzy_pair_cache=fuzzy_pair_cache,
             fuzzy_hash_cache=fuzzy_hash_cache,
             save_prefilter_debug=save_prefilter_debug,
             prefilter_debug_dir=prefilter_debug_dir,
             id_to_eval_index=id_to_eval_index,
+            use_privjedai_fuzzy=use_privjedai_fuzzy,
+            op_counter=op_counter,
         )
+        qid_candidate_counts.append(result["qid_candidate_count"])
         compatible_candidate_counts.append(result["compatible_candidate_count"])
-        target_presence_flags.append(result["target_present_in_anonymized"])
-        true_in_compatible_flags.append(result["true_record_in_compatible"])
-        unique_exact_flags.append(result["exact_reidentified"])
+        unique_reidentified_flags.append(result["unique_reidentified"])
+        false_unique_match_flags.append(result["false_unique_match"])
+        true_record_kept_after_refinement_flags.append(result["true_record_in_refined_class"])
         targets_with_any_fuzzy_candidate.append(result["has_any_fuzzy_candidate"])
         targets_with_true_record_fuzzy_kept.append(result["true_record_fuzzy_kept"])
         if result["prediction"]["is_certain"] is not None:
@@ -504,6 +896,19 @@ def run_linkage_attack(
     median_true_sensitive_probability = float(np.median(true_sensitive_probabilities)) if true_sensitive_probabilities else None
     avg_top_sensitive_probability = float(np.mean(top_sensitive_probabilities)) if top_sensitive_probabilities else None
 
+    avg_qid_equivalence_class_size = float(np.mean(qid_candidate_counts)) if qid_candidate_counts else None
+    median_qid_equivalence_class_size = float(np.median(qid_candidate_counts)) if qid_candidate_counts else None
+    avg_reduction_rate = (
+        float(np.mean([(before - after) / before for before, after in zip(qid_candidate_counts, compatible_candidate_counts) if before > 0]))
+        if qid_candidate_counts
+        else None
+    )
+    unique_reidentification_rate = round(sum(unique_reidentified_flags) / len(unique_reidentified_flags), 6)
+    false_unique_match_rate = round(sum(false_unique_match_flags) / len(false_unique_match_flags), 6)
+    true_record_kept_after_refinement_rate = round(
+        sum(true_record_kept_after_refinement_flags) / len(true_record_kept_after_refinement_flags), 6
+    )
+
     summary = {
         "attack_id": attack_id,
         "config_path": str(config_path) if config_path else "",
@@ -511,6 +916,11 @@ def run_linkage_attack(
         "anonymized_public_path": str(anonymized_path) if anonymized_path else "",
         "anonymized_eval_path": str(anonymized_eval_path) if anonymized_eval_path else "",
         "known_attrs": known_attrs,
+        "qid_filter_attrs": qid_filter_attrs,
+        "stage1_filter_attrs": qid_filter_attrs,
+        "refine_attrs": refine_attrs,
+        "stage2_refine_attrs": refine_attrs,
+        "skipped_refine_attrs": skipped_refine_attrs,
         "target_id_col": target_id_col,
         "sensitive_attr": sensitive_attr,
         "n_targets": int(resolved_n_targets),
@@ -521,21 +931,17 @@ def run_linkage_attack(
         "prefilter_debug_dir": str(prefilter_debug_dir) if prefilter_debug_dir is not None else None,
         "attacker_visible_levels": {attr: int(attacker_knowledge[attr]["visible_level"]) for attr in known_attrs},
         "use_privjedai_fuzzy": bool(use_privjedai_fuzzy),
-        "privjedai_fuzzy_threshold": None if fuzzy_config is None else float(fuzzy_config["threshold"]),
-        "privjedai_fuzzy_metric": None if fuzzy_config is None else str(fuzzy_config["metric"]),
-        "privjedai_bloom_size": None if fuzzy_config is None else int(fuzzy_config["bloom_size"]),
-        "privjedai_bloom_num_hashes": None if fuzzy_config is None else int(fuzzy_config["num_hashes"]),
-        "privjedai_bloom_qgrams": None if fuzzy_config is None else int(fuzzy_config["qgrams"]),
-        "privjedai_bloom_hashing_type": None if fuzzy_config is None else str(fuzzy_config["hashing_type"]),
-        "target_survival_rate": round(sum(target_presence_flags) / len(target_presence_flags), 6),
-        "nonempty_equivalence_class_rate": round(sum(count > 0 for count in compatible_candidate_counts) / len(compatible_candidate_counts), 6),
-        "true_record_in_equivalence_class_rate": round(sum(true_in_compatible_flags) / len(true_in_compatible_flags), 6),
-        "unique_exact_reidentification_rate": round(sum(unique_exact_flags) / len(unique_exact_flags), 6),
+        "n_distinct_stage1_groups": int(len(qid_stage1_cache)),
+        "operation_counter": build_public_operation_counter(op_counter),
+        "unique_reidentification_rate": unique_reidentification_rate,
+        "avg_qid_equivalence_class_size": None if avg_qid_equivalence_class_size is None else round(avg_qid_equivalence_class_size, 6),
+        "avg_stage1_equivalence_class_size": None if avg_qid_equivalence_class_size is None else round(avg_qid_equivalence_class_size, 6),
+        "median_qid_equivalence_class_size": None if median_qid_equivalence_class_size is None else round(median_qid_equivalence_class_size, 6),
+        "median_stage1_equivalence_class_size": None if median_qid_equivalence_class_size is None else round(median_qid_equivalence_class_size, 6),
         "avg_equivalence_class_size": round(float(np.mean(compatible_candidate_counts)), 6),
         "median_equivalence_class_size": round(float(np.median(compatible_candidate_counts)), 6),
+        "avg_reduction_rate": None if avg_reduction_rate is None else round(avg_reduction_rate, 6),
         "max_equivalence_class_size": int(np.max(compatible_candidate_counts)) if compatible_candidate_counts else 0,
-        "targets_with_any_privjedai_fuzzy_candidate_rate": round(sum(targets_with_any_fuzzy_candidate) / len(targets_with_any_fuzzy_candidate), 6),
-        "targets_with_true_record_kept_by_privjedai_fuzzy_rate": round(sum(targets_with_true_record_fuzzy_kept) / len(targets_with_true_record_fuzzy_kept), 6),
         "certainty_sensitive_inference_rate": None if certainty_sensitive_rate is None else round(certainty_sensitive_rate, 6),
         "avg_true_sensitive_probability": None if avg_true_sensitive_probability is None else round(avg_true_sensitive_probability, 6),
         "median_true_sensitive_probability": None if median_true_sensitive_probability is None else round(median_true_sensitive_probability, 6),
@@ -543,45 +949,86 @@ def run_linkage_attack(
         "targets_csv": str(per_target_path),
         "equivalence_class_candidates_csv": str(equivalence_class_path),
     }
+    if use_privjedai_fuzzy and fuzzy_config is not None:
+        summary.update(
+            {
+                "privjedai_fuzzy_threshold": float(fuzzy_config["threshold"]),
+                "privjedai_fuzzy_metric": str(fuzzy_config["metric"]),
+                "privjedai_bloom_size": int(fuzzy_config["bloom_size"]),
+                "privjedai_bloom_num_hashes": int(fuzzy_config["num_hashes"]),
+                "privjedai_bloom_qgrams": int(fuzzy_config["qgrams"]),
+                "privjedai_bloom_hashing_type": str(fuzzy_config["hashing_type"]),
+                "targets_with_any_privjedai_fuzzy_candidate_rate": round(sum(targets_with_any_fuzzy_candidate) / len(targets_with_any_fuzzy_candidate), 6),
+                "targets_with_true_record_kept_by_privjedai_fuzzy_rate": round(sum(targets_with_true_record_fuzzy_kept) / len(targets_with_true_record_fuzzy_kept), 6),
+            }
+        )
     save_json(summary_path, summary)
 
-    append_attack_summary(
-        attack_root / "linkage_summary.csv",
-        {
-            "attack_id": attack_id,
-            "config_path": str(config_path) if config_path else "",
-            "anonymized_public_path": str(anonymized_path) if anonymized_path else "",
-            "anonymized_eval_path": str(anonymized_eval_path) if anonymized_eval_path else "",
-            "auxiliary_path": str(auxiliary_path) if auxiliary_path else "",
-            "known_attrs": "|".join(known_attrs),
-            "sensitive_attr": sensitive_attr,
-            "n_targets": resolved_n_targets,
-            "n_targets_requested": n_targets_label,
-            "seed": seed,
-            "attacker_visible_levels": "|".join(f"{attr}:{attacker_knowledge[attr]['visible_level']}" for attr in known_attrs),
-            "use_privjedai_fuzzy": bool(use_privjedai_fuzzy),
-            "privjedai_fuzzy_threshold": None if fuzzy_config is None else float(fuzzy_config["threshold"]),
-            "privjedai_fuzzy_metric": None if fuzzy_config is None else str(fuzzy_config["metric"]),
-            "target_survival_rate": summary["target_survival_rate"],
-            "nonempty_equivalence_class_rate": summary["nonempty_equivalence_class_rate"],
-            "true_record_in_equivalence_class_rate": summary["true_record_in_equivalence_class_rate"],
-            "unique_exact_reidentification_rate": summary["unique_exact_reidentification_rate"],
-            "avg_equivalence_class_size": summary["avg_equivalence_class_size"],
-            "targets_with_any_privjedai_fuzzy_candidate_rate": summary["targets_with_any_privjedai_fuzzy_candidate_rate"],
-            "targets_with_true_record_kept_by_privjedai_fuzzy_rate": summary["targets_with_true_record_kept_by_privjedai_fuzzy_rate"],
-            "certainty_sensitive_inference_rate": summary["certainty_sensitive_inference_rate"],
-            "avg_true_sensitive_probability": summary["avg_true_sensitive_probability"],
-            "avg_top_sensitive_probability": summary["avg_top_sensitive_probability"],
-            "summary_json": str(summary_path),
-        },
-    )
+    report_path: Path | None = None
+    if generate_report:
+        try:
+            report_path = _maybe_generate_linkage_report(
+                output_root=output_root,
+                summary_path=summary_path,
+                attack_id=attack_id,
+                report_title=report_title,
+            )
+        except Exception as exc:
+            print(f"[WARN] Linkage HTML report generation failed: {exc}")
+
+    summary_row = {
+        "attack_id": attack_id,
+        "config_path": str(config_path) if config_path else "",
+        "anonymized_public_path": str(anonymized_path) if anonymized_path else "",
+        "anonymized_eval_path": str(anonymized_eval_path) if anonymized_eval_path else "",
+        "auxiliary_path": str(auxiliary_path) if auxiliary_path else "",
+        "known_attrs": "|".join(known_attrs),
+        "qid_filter_attrs": "|".join(qid_filter_attrs),
+        "refine_attrs": "|".join(refine_attrs),
+        "sensitive_attr": sensitive_attr,
+        "n_targets": resolved_n_targets,
+        "n_targets_requested": n_targets_label,
+        "seed": seed,
+        "attacker_visible_levels": "|".join(f"{attr}:{attacker_knowledge[attr]['visible_level']}" for attr in known_attrs),
+        "use_privjedai_fuzzy": bool(use_privjedai_fuzzy),
+        "n_distinct_stage1_groups": summary["n_distinct_stage1_groups"],
+        "estimated_total_operations": summary["operation_counter"]["estimated_total_operations"],
+        "unique_reidentification_rate": summary["unique_reidentification_rate"],
+        "false_unique_match_rate": false_unique_match_rate,
+        "avg_qid_equivalence_class_size": summary["avg_qid_equivalence_class_size"],
+        "avg_equivalence_class_size": summary["avg_equivalence_class_size"],
+        "avg_reduction_rate": summary["avg_reduction_rate"],
+        "certainty_sensitive_inference_rate": summary["certainty_sensitive_inference_rate"],
+        "avg_true_sensitive_probability": summary["avg_true_sensitive_probability"],
+        "avg_top_sensitive_probability": summary["avg_top_sensitive_probability"],
+        "summary_json": str(summary_path),
+        "report_html": str(report_path) if report_path is not None else "",
+        "avg_stage1_equivalence_class_size": summary["avg_stage1_equivalence_class_size"],
+    }
+    if use_privjedai_fuzzy and fuzzy_config is not None:
+        summary_row.update(
+            {
+                "privjedai_fuzzy_threshold": float(fuzzy_config["threshold"]),
+                "privjedai_fuzzy_metric": str(fuzzy_config["metric"]),
+                "targets_with_any_privjedai_fuzzy_candidate_rate": summary["targets_with_any_privjedai_fuzzy_candidate_rate"],
+                "targets_with_true_record_kept_by_privjedai_fuzzy_rate": summary["targets_with_true_record_kept_by_privjedai_fuzzy_rate"],
+            }
+        )
+    append_attack_summary(attack_root / "linkage_summary.csv", summary_row)
 
     print(f"Attack summary            : {summary_path}")
+    if report_path is not None:
+        print(f"HTML report               : {report_path}")
     print(f"Attacker knowledge        : {attacker_knowledge_path}")
     print(f"Per-target results        : {per_target_path}")
     print(f"Equivalence class records : {equivalence_class_path}")
-    print(f"Avg equivalence size      : {summary['avg_equivalence_class_size']}")
-    print(f"Unique exact rate         : {summary['unique_exact_reidentification_rate']}")
+    print(f"Avg QI equivalence size   : {summary['avg_qid_equivalence_class_size']}")
+    print(f"Avg reduced eq size       : {summary['avg_equivalence_class_size']}")
+    print(f"Avg reduction rate        : {summary['avg_reduction_rate']}")
+    print(f"Distinct stage1 groups    : {summary['n_distinct_stage1_groups']}")
+    print(f"Logical ops (est.)       : {summary['operation_counter']['estimated_total_operations']}")
+    print(f"Unique reidentification   : {summary['unique_reidentification_rate']}")
+    print(f"False unique matches      : {false_unique_match_rate}")
     print(f"Avg true sensitive prob   : {summary['avg_true_sensitive_probability']}")
     if use_privjedai_fuzzy:
         print(f"Targets with fuzzy cand.  : {summary['targets_with_any_privjedai_fuzzy_candidate_rate']}")
@@ -593,6 +1040,7 @@ def run_linkage_attack(
         "attacker_knowledge_path": attacker_knowledge_path,
         "targets_path": per_target_path,
         "equivalence_class_path": equivalence_class_path,
+        "report_path": report_path,
         "per_target_rows": per_target_rows,
         "equivalence_class_rows": equivalence_class_rows,
         "attacker_knowledge": attacker_knowledge,
@@ -623,6 +1071,8 @@ def run_linkage_attack_from_paths(
     privjedai_bloom_num_hashes: int = 15,
     privjedai_bloom_qgrams: int = 4,
     privjedai_bloom_hashing_type: str = "salted_qgrams",
+    generate_report: bool = True,
+    report_title: str | None = None,
 ) -> dict[str, Any]:
     config_path = Path(config_path).resolve()
     auxiliary_path = Path(auxiliary_path).resolve()
@@ -659,12 +1109,14 @@ def run_linkage_attack_from_paths(
         privjedai_bloom_num_hashes=privjedai_bloom_num_hashes,
         privjedai_bloom_qgrams=privjedai_bloom_qgrams,
         privjedai_bloom_hashing_type=privjedai_bloom_hashing_type,
+        generate_report=generate_report,
+        report_title=report_title,
     )
 
 
 # Parse CLI arguments and launch the linkage attack.
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run a linkage attack against one anonymized dataset.")
+    parser = argparse.ArgumentParser(description="Run a strict linkage attack against one anonymized dataset.")
     parser.add_argument("--config", required=True, help="Generated runtime config JSON from outputs/configs/...")
     parser.add_argument("--auxiliary", required=True, help="Auxiliary attacker knowledge CSV.")
     parser.add_argument("--anonymized", required=True, help="Public anonymized CSV (without record_id ideally).")
@@ -674,7 +1126,11 @@ def main() -> None:
         "--known-qids",
         dest="known_attrs_raw",
         required=True,
-        help="Comma-separated list of attributes known by the attacker.",
+        help=(
+            "Comma-separated list of attributes known by the attacker. "
+            "The attack first filters with attacker-known attributes whose visible_level is not 0, "
+            "then refines with attacker-known clear-text attributes whose visible_level is 0."
+        ),
     )
     parser.add_argument("--target-id-col", default="record_id", help="Internal record identifier column.")
     parser.add_argument("--sensitive-attr", default=None, help="Sensitive attribute to inspect. Defaults to the first sensitive attribute in the runtime config.")
@@ -696,8 +1152,8 @@ def main() -> None:
         "--use-privjedai-fuzzy",
         action="store_true",
         help=(
-            "Enable an optional privJedAI fallback only for clear attributes: "
-            "if the normal ARX-aware match fails on an exact-value attribute, try a privJedAI similarity check."
+            "Enable an optional privJedAI fallback during the refinement stage on attacker-known clear-text attributes: "
+            "if an exact one-to-one match fails, try a privJedAI similarity check."
         ),
     )
     parser.add_argument("--privjedai-src", default=None, help="Path to privJedAI-main/src if privjedai is not installed.")
@@ -710,6 +1166,16 @@ def main() -> None:
         "--privjedai-bloom-hashing-type",
         choices=["salted_string", "salted_qgrams", "salted_skipqgrams", "salted_metaphone", "salted_tokens"],
         default="salted_qgrams",
+    )
+    parser.add_argument(
+        "--no-generate-report",
+        action="store_true",
+        help="Do not auto-generate the HTML linkage report at the end of the attack.",
+    )
+    parser.add_argument(
+        "--report-title",
+        default=None,
+        help="Optional custom title for the generated HTML report.",
     )
     args = parser.parse_args()
 
@@ -734,6 +1200,8 @@ def main() -> None:
         privjedai_bloom_num_hashes=args.privjedai_bloom_num_hashes,
         privjedai_bloom_qgrams=args.privjedai_bloom_qgrams,
         privjedai_bloom_hashing_type=args.privjedai_bloom_hashing_type,
+        generate_report=not args.no_generate_report,
+        report_title=args.report_title,
     )
 
 

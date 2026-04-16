@@ -1,0 +1,288 @@
+PrivJedAI :
+
+Compréhension de la démo :
+
+On deux datasets : ici abtclean.csv et buyclean.csv
+
+abtclean.csv
+id|name
+10|Sony Headphones MDR-ZX110
+25|LG Washing Machine WM2688
+90|Canon Digital Camera EOS
+
+buyclean.csv
+id|name
+501|Sony MDRZX110 Headphones
+777|LG SteamWasher 27 inch
+999|Nikon Coolpix Camera
+
+On crée gtclean.csv à partir de ces 2 csv :
+
+gtclean.csv
+D1|D2
+10|501	(le produit d’id = 10 dans Abt correspond au produit d’id = 501 dans Buy)
+25|777
+
+ensuite on transforme gtclean.csv grâce aux indexs :
+
+gtclean.csv
+D1|D2
+0|0	(dans abt, id = 10 est à l’index 0 et dans buy, id = 501 est aussi à l’index 0)
+1|1
+
+
+Ensuite on applique un Bloom filter
+	pour chaque ligne de Abt et de Buy, on prend seulement le nom du produit et on le transforme en Bloom filter
+
+
+On a qrams = 4
+Donc on découpe chaque name en morceaux de 4 caractères
+ex : Sony Headphones
+	deviens :	Sony
+			ony
+			ny H
+			y He
+			Hea
+			Head
+			eadp
+			adph
+			dpho
+			phon
+			hone
+			ones
+
+Cette découpe permettra de match plus facilement des chaines de caractères différentes mais très proches dans leur contenu.
+Option salt pour ajouter "_" par exemple
+
+Ensuite on a 	"size" : 512
+		"num_hashes" : 15
+
+Pour mieux comprendre on va prendre 	"size" : 16
+					"num_hashes" : 3
+
+Pour chaque 4-gram on le hash
+ex : Sony
+On suppose que les hashs donnent 2, 7 et 12
+avant : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+après : [0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0]
+
+À la fin, chaque ligne est représentée par un seul grand vecteur binaire
+
+encoded_d1 = bloom_generator.encode(abt)
+encoded_d2 = bloom_generator_buy.encode(buy)
+
+il prend toutes les lignes de abt ou buy
+pour chaque ligne, il prend la colonne name
+il calcule les 4-grams
+il hash ces 4-grams
+il construit un Bloom filter de 512 bits
+il remplace la représentation textuelle par la représentation encodée
+
+Donc deux noms proches auront beaucoup de bits en commun, ça sert donc de mesure de similarité
+
+encoded_d1.to_file("dataset_1.pkl")
+il sauvegarde le résultat encodé dans un fichier pickle
+ex : 
+{
+  0: {
+    "name": [3, 17, 42, 90, 144, 201, 287, 301, 450]  (les indices des bits à 1 dans le Bloom filter)
+  }
+}
+
+
+Ensuite le tiers fusionne les deux bases encodées pour former une seule structure
+ex :
+ index global | provenance | contenu
+            0 | dataset 1  | Bloom filter du produit Abt ligne 0 
+            1 | dataset 1  | Bloom filter du produit Abt ligne 1 
+            2 | dataset 1  | Bloom filter du produit Abt ligne 2 
+            3 | dataset 2  | Bloom filter du produit Buy ligne 0 
+            4 | dataset 2  | Bloom filter du produit Buy ligne 1 
+            5 | dataset 2  | Bloom filter du produit Buy ligne 2 
+
+On a décalé les indices du deuxième dataset pour éviter les ambiguïtés
+On note bounds = [3, 6] : indices pour le 2eme dataset
+
+{
+  0: {"name": [positions_de_bits]},
+  1: {"name": [positions_de_bits]},
+  2: {"name": [positions_de_bits]},
+  3: {"name": [positions_de_bits]},
+  4: {"name": [positions_de_bits]},
+  5: {"name": [positions_de_bits]},
+}
+
+Ensuite on applique un blocking pour réduire le nombre de comparaisons (filtrage)
+
+BitBlocker :
+ex :
+Produit 0 : 1 0 1 1 0 0 1 0 1 0 0 1
+Produit 3 : 1 0 1 1 0 1 1 0 1 0 0 1
+
+premier jeu de positions : [0, 2, 3, 6]
+
+Produit 0 : clé = 1111
+Produit 3 : clé = 1111
+
+Ces deux produits seront donc dans le même bloc pour cette clé : bloc A : {0, 3}
+
+LSHBlocker :
+Il essaie de garder un ensemble de positions plus informatives avant de construire les clés    voir pour garder cette logique
+ex :
+position 1 = activée chez 99% des produits
+position 8 = activée chez 1% des produits
+position 4 = activée chez 45% des produits
+position 6 = activée chez 52% des produits
+
+Les positions 1 et 8 sont peu intéressantes, donc LSHBlocker ne va pas privilégier ces positions
+prune_ratio=0.8 sert à éliminer les positions extrêmes
+Il est plus sélectif que BitBlocker dans le choix des positions
+
+FAISSBlocking :
+FAAIS crée pour chaque enregistrement sa liste de nearest neighbors
+
+Pour chaque blocking, il va mesurer sa qualité par rapport au ground truth (peut etre trop prudent ou trop agressif)
+
+
+Etape de meta-blocking (à partir du blocking deja effectué) s:
+Deuxième nettoyage après le premier blocking
+Sert à éliminer les comparaisons qui ont des arêtes faibles
+ex :
+0 -- 3 (arête forte car apparait dans 5 bloc par exemple)
+2 -- 5 (arête faible car peu de sens ou ressemble à du bruit)
+
+
+Etape de matching :
+On compare les Bloom filters encodés de deux enregistrement
+Ici il utilise Dice Similarity
+
+Dice(A,B) = (2∣A∩B∣)/(∣A∣+∣B∣)
+
+avec :	A = ensemble des bits à 1 dans le premier Bloom filter
+	B = ensemble des bits à 1 dans le deuxième
+
+donc plus ils partagent de bits à 1, plus le score est élevé (avec un score entre 0 et 1)
+
+threshold = 0.6 : si score > 0.6 -> on garde la paire
+
+
+Etape de clustering :
+Permet de supprimer les conflits (un enregistrement qui matchs plusieurs enregistrements différents, on veut un match 1-à-1)
+On garde le match avec le plus haut score
+Le clusturing permet d'avoir une structure globale plus cohérente, pas juste une décision locale indépendante pour chaque nœud
+
+Version parallèle avec Ray :
+Ajoute : workers=10 : on va lancer 10 workers pour traiter les comparaisons candidates en parallèle
+	sert à répartir les calculs de matching
+
+Version GPU :
+le matching devient GPU
+le clustering devient aussi GPU
+
+
+Pour utiliser pribJedAI il faudrait modifier notre dataset anonymisé :
+Avant :
+ ligne | age     | sex    | race  | native-country | income 
+
+ A     | [20-29] | female | white | North-America  | <=50K  
+ B     | [20-29] | female | white | North-America  | >50K   
+ C     | [20-29] | male   | white | North-America  | <=50K  
+ D     | [20-29] | female | asian | North-America  | <=50K  
+ E     | [30-39] | female | white | Europe         | >50K   
+
+Après :
+ ligne | age_block | sex_block | race_block | country_block 
+
+ A     | age20to29 | female    | white      | northamerica  
+ B     | age20to29 | female    | white      | northamerica  
+ C     | age20to29 | male      | white      | northamerica  
+ D     | age20to29 | female    | asian      | northamerica  
+ E     | age30to39 | female    | white      | europe        
+
+Comme ça on pourra faire la comparaison
+
+Donc dans notre cas on fait les projections ex : 25 -> [20-29]
+Ce seront elles qu'on donne à privJedAI
+Puis privJedAI encode chaque valeur d'attribut grace au Bloom filter
+Puis privJedAI fait le blocking pour réduire le nombre de candidats
+Puis privJedAI fait son matching pour rejeter certains candidats
+Puis nous on filtre pour vérifier la compatibilité
+
+Mais techniquement le filtre qu'on a permet deja de faire ça, peut etre que privJedAI est interressant comme étape de pré-filtrage
+
+Limiter le filtrage aux QI
+Ajout comme une prévention support de la distortion, si pas un match one-one on obtient 0 sans ça
+voir si on fait toutes les etapes, proba d'obtenir le sensitive attribute > à 90% pour conserver les ressources
+
+
+
+
+Suite de la reflection sur Fellegi-Sunter
+La principale difficulté est que dans un scénario réaliste l'attaquant n'a pas accès à m et u
+m = Proba d'obtenir la meme valeur que la cible si c'est le vrai match
+u = Proba d'obtenir la meme valeur que la cible si c'est un faux match
+
+Mais il faudrait que l'attaquant ai accès à certaines data qui ne sont pas réalistes
+
+On peut essayer de remplacer
+m_j pour l’attribut j = probabilité que l’attribut j soit compatible avec la cible parmi les lignes déjà compatibles avec la cible sur les autres attributs connus
+u_j pour l’attribut j = probabilité que l'attribut j de la cible soit compatible dans le dataset anonymisé
+
+Mais ça mesure plutôt à quel point l’attribut j est plus fréquent dans le sous-ensemble déjà proche de la cible que dans l’ensemble du dataset
+ça compare une compatibilité conditionnelle à une compatibilité marginale
+	peut surévaluer des attributs redondants et produire un score élevé sans vrai gain de pouvoir
+
+
+
+Suite concernant le fait de mettre des poids aux attributs en fonction de leur nombre de valeurs uniques :
+si on a dans le dataset anonymisé de 30k, on a pour l'attribut "age" 16k lignes qui ont comme valeur [20-29] 
+et pour l'attribut "gender" 15k lignes qui ont comme valeur "Male"
+L'attribut "age" peut avoir beaucoup plus de valeurs uniques dans les 14k restantes que "gender"
+	donc on va donné un poids plus fort à "age" alors que pour une cible "Male" agé de 21 ans, le match sur l'age sera en réalité moins précis
+ 
+On pourrait pas plutôt comparer le % de lignes compatibles dans le dataset anonymisé ?
+ex :
+si 50% des lignes sont compatibles -> poids faible
+si 5% des lignes sont compatibles -> poids fort
+si 0.5% des lignes sont compatibles -> poids très fort
+
+combiner aux nb de valeurs uniques
+
+On pourrait avoir poids_A = -log(% de lignes compatibles)
+
+voir si truc deja defini
+
+Si la cible 
+si attribut 50 valeurs uniques mais 50% du dataset réparti sur une seule valeur unique
+	si la cible fait parti de cette valeur
+		score diminue
+	sinon (49 autres category)
+		score augmente plus
+		
+
+Version conditionnelle :
+ex :
+dataset avec L = 1000 (nb de lignes)
+nombre de lignes compatibles avec l'attribut age de la cible L = 600 donc S = -log(600/1000)
+parmi ces 600 lignes : nombre de lignes compatible avec le gender de la cible L = 210 donc S = -log(210/600)
+parmi ces 210 lignes : nb de lignes compatibles avec le pays de la cible L = 60 donc S = -log(60/210)
+
+score final = somme de ces scores = -log(60/1000) = 1.22
+
+Plus ce score est élevé plus les attributs connus réduisent-ils l’incertitude pour cette cible
+
+Update pseudocode
+Faire l'implémentation et la doc
+
+
+
+
+
+
+
+
+
+
+
+
+

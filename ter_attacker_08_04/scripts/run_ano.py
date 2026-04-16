@@ -90,6 +90,38 @@ def _run_anonymization(runtime: dict[str, Any]):
     return AnonymizationManager.anonymize(config)
 
 
+# Remove records whose quasi-identifiers are all fully suppressed as '*'.
+def drop_fully_suppressed_records(anonymized_df, quasi_identifiers: list[str]):
+    missing_qis = [col for col in quasi_identifiers if col not in anonymized_df.columns]
+    if missing_qis:
+        raise ValueError(
+            "Cannot drop fully suppressed records because these quasi-identifiers are missing "
+            f"from the anonymized dataframe: {missing_qis}"
+        )
+
+    if not quasi_identifiers:
+        return anonymized_df.copy(), {
+            "fully_suppressed_drop_enabled": True,
+            "fully_suppressed_qis": [],
+            "n_rows_before_full_suppression_drop": int(len(anonymized_df)),
+            "n_rows_dropped_full_suppression": 0,
+            "n_rows_after_full_suppression_drop": int(len(anonymized_df)),
+        }
+
+    qi_df = anonymized_df[quasi_identifiers].astype(str).apply(lambda col: col.str.strip())
+    fully_suppressed_mask = qi_df.eq("*").all(axis=1)
+    filtered_df = anonymized_df.loc[~fully_suppressed_mask].copy().reset_index(drop=True)
+
+    stats = {
+        "fully_suppressed_drop_enabled": True,
+        "fully_suppressed_qis": list(quasi_identifiers),
+        "n_rows_before_full_suppression_drop": int(len(anonymized_df)),
+        "n_rows_dropped_full_suppression": int(fully_suppressed_mask.sum()),
+        "n_rows_after_full_suppression_drop": int(len(filtered_df)),
+    }
+    return filtered_df, stats
+
+
 # Execute one anonymization experiment and save all generated artifacts.
 def run_one_experiment(
     *,
@@ -100,6 +132,7 @@ def run_one_experiment(
     save_anonymized_eval_csv: bool = False,
     public_drop_columns: list[str] | None = None,
     append_summary: bool = True,
+    drop_fully_suppressed_records_from_exports: bool = True,
 ) -> dict[str, Any]:
     public_drop_columns = list(public_drop_columns or [])
 
@@ -125,6 +158,7 @@ def run_one_experiment(
         "eval_csv_path": None,
         "public_drop_columns": public_drop_columns,
         "anonymized_df": None,
+        "export_df": None,
         "public_df": None,
         "error_path": None,
     }
@@ -133,21 +167,39 @@ def run_one_experiment(
         result = _run_anonymization(runtime)
 
         anonymized_df = None
+        export_df = None
         public_df = None
         public_csv_path = anonymized_dir / f"{experiment_id}.csv"
         eval_csv_path = anonymized_eval_dir / f"{experiment_id}.csv"
+        export_drop_stats = {
+            "fully_suppressed_drop_enabled": bool(drop_fully_suppressed_records_from_exports),
+            "fully_suppressed_qis": list(runtime.get("quasi_identifiers", [])),
+            "n_rows_before_full_suppression_drop": None,
+            "n_rows_dropped_full_suppression": 0,
+            "n_rows_after_full_suppression_drop": None,
+        }
 
         if save_anonymized_csv or save_anonymized_eval_csv:
             anonymized_df = result.get_anonymized_data_as_dataframe()
 
+            if drop_fully_suppressed_records_from_exports:
+                export_df, export_drop_stats = drop_fully_suppressed_records(
+                    anonymized_df=anonymized_df,
+                    quasi_identifiers=list(runtime.get("quasi_identifiers", [])),
+                )
+            else:
+                export_df = anonymized_df.copy()
+                export_drop_stats["n_rows_before_full_suppression_drop"] = int(len(anonymized_df))
+                export_drop_stats["n_rows_after_full_suppression_drop"] = int(len(export_df))
+
             if save_anonymized_eval_csv:
-                anonymized_df.to_csv(eval_csv_path, index=False)
+                export_df.to_csv(eval_csv_path, index=False)
                 row["eval_csv_path"] = str(eval_csv_path)
                 details["eval_csv_path"] = eval_csv_path
 
             if save_anonymized_csv:
-                public_df = anonymized_df.drop(
-                    columns=[col for col in public_drop_columns if col in anonymized_df.columns],
+                public_df = export_df.drop(
+                    columns=[col for col in public_drop_columns if col in export_df.columns],
                     errors="ignore",
                 )
                 public_df.to_csv(public_csv_path, index=False)
@@ -163,6 +215,7 @@ def run_one_experiment(
                 "public_drop_columns": public_drop_columns,
                 "public_csv_path": row["csv_path"],
                 "eval_csv_path": row["eval_csv_path"],
+                **export_drop_stats,
             }
         )
 
@@ -176,11 +229,17 @@ def run_one_experiment(
         details["metrics"] = metrics
         details["metrics_path"] = metrics_path
         details["anonymized_df"] = anonymized_df
+        details["export_df"] = export_df
         details["public_df"] = public_df
 
         print(f"[OK] {experiment_id}")
         print(f"Config        : {runtime_config_path}")
         print(f"Metrics       : {metrics_path}")
+        if export_drop_stats["fully_suppressed_drop_enabled"]:
+            print(
+                "Dropped fully suppressed QI rows : "
+                f"{export_drop_stats['n_rows_dropped_full_suppression']}"
+            )
         if row["csv_path"]:
             print(f"Public CSV    : {public_csv_path}")
         if row["eval_csv_path"]:
@@ -214,6 +273,7 @@ def run_one_experiment_from_config(
     save_anonymized_eval_csv: bool = False,
     public_drop_columns: list[str] | None = None,
     append_summary: bool = True,
+    drop_fully_suppressed_records_from_exports: bool = True,
 ) -> dict[str, Any]:
     config_path = Path(config_path).resolve()
     payload = load_json(config_path)
@@ -236,6 +296,7 @@ def run_one_experiment_from_config(
         save_anonymized_eval_csv=save_anonymized_eval_csv,
         public_drop_columns=public_drop_columns,
         append_summary=append_summary,
+        drop_fully_suppressed_records_from_exports=drop_fully_suppressed_records_from_exports,
     )
 
 
@@ -256,6 +317,14 @@ def main() -> None:
         default="",
         help="Comma-separated columns dropped only from the public CSV (example: record_id).",
     )
+    parser.add_argument(
+        "--keep-fully-suppressed-records",
+        action="store_true",
+        help=(
+            "Keep rows whose quasi-identifiers are all '*' in the exported anonymized CSV files. "
+            "By default these rows are removed from both anonymized.csv and anonymized_eval.csv."
+        ),
+    )
     args = parser.parse_args()
 
     run_one_experiment_from_config(
@@ -266,6 +335,7 @@ def main() -> None:
         save_anonymized_eval_csv=args.save_anonymized_eval_csv,
         public_drop_columns=parse_csv_list(args.public_drop_columns),
         append_summary=True,
+        drop_fully_suppressed_records_from_exports=not args.keep_fully_suppressed_records,
     )
 
 

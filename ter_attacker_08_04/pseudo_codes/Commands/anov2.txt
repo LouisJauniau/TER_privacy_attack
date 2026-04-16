@@ -1,0 +1,127 @@
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_demo_with_record_id.json `
+  --output-root .\outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id
+
+
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_demo_with_record_id.json `
+  --output-root .\outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id `
+  --keep-fully-suppressed-records
+
+
+
+
+
+python .\scripts\make_mia_targets.py `
+  --original .\data\adult_with_record_id.csv `
+  --attacker-frac 0.10 `
+  --seed 42 `
+  --target-id-col record_id `
+  --name adult_mia_demo_2 `
+  --output-root .\outputs `
+  --base-config .\configs\adult_base.json
+
+
+
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_mia_demo_2.runtime.json `
+  --output-root .\outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --name adult_mia_demo_2 `
+  --public-drop-columns record_id
+
+
+
+python .\scripts\make_mia_targets_post_ano.py `
+  --split-metadata .\outputs\prepared_data\adult_mia_demo_2.published.json `
+  --anonymized-eval .\outputs\anonymized_eval\adult_mia_demo_2.csv `
+  --known-qids age,sex,native-country `
+  --output-root .\outputs
+
+
+
+python .\scripts\run_mia_attack.py `
+  --config .\outputs\configs\adult_mia_demo_2.json `
+  --targets .\outputs\mia_targets\adult_mia_demo_2.targets_post_ano.csv `
+  --anonymized .\outputs\anonymized\adult_mia_demo_2.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_mia_demo_2.csv `
+  --known-qids age,sex,native-country `
+  --target-id-col record_id `
+  --member-col is_member `
+  --output-root .\outputs `
+  --use-privjedai-fuzzy `
+  --seed 42
+
+
+
+
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_demo_with_record_id.json `
+  --output-root .\outputs `
+  --name adult_demo `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id 
+
+python .\scripts\make_auxiliary_base.py `
+  --full-dataset .\data\adult_with_record_id.csv `
+  --known-attrs age,sex,native-country `
+  --sample-frac 0.05 `
+  --seed 42 `
+  --sensitive-attr income `
+  --released-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --output-root .\outputs `
+  --aux-output .\outputs\auxiliary\adult_aux_demo.csv
+
+
+python .\scripts\run_linkage_attack.py `
+  --config .\outputs\configs\adult_demo.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_demo.csv `
+  --anonymized .\outputs\anonymized\adult_demo.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --known-attrs age,sex,native-country `
+  --sensitive-attr income `
+  --n-targets all `
+  --seed 42 `
+  --output-root .\outputs
+
+
+python .\scripts\run_linkage_attack.py `
+  --config .\outputs\configs\adult_demo.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_demo.csv `
+  --anonymized .\outputs\anonymized\adult_demo.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --known-attrs age,sex,native-country `
+  --sensitive-attr income `
+  --n-targets all `
+  --seed 42 `
+  --use-privjedai-fuzzy `
+  --output-root .\outputs
+
+  --no-generate-report
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

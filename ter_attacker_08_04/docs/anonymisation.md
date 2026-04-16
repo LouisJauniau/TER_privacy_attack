@@ -4,94 +4,94 @@
 
 L'anonymisation est la première étape centrale du projet.
 
-Son rôle est de transformer un dataset original en une version publiée plus protectrice, tout en conservant un niveau d'utilité suffisant pour les analyses ultérieures.
+Son rôle est de transformer un dataset source en une version publiée plus protectrice, tout en conservant un niveau d'utilité suffisant pour les étapes suivantes.
 
 Dans ce projet, l'anonymisation sert de point de départ aux deux attaques étudiées ensuite :
 
 - la linkage attack ;
 - la membership inference attack (MIA).
 
-Autrement dit, avant de simuler un attaquant, il faut d'abord produire un dataset anonymisé.
-
 ---
 
-## Script principal
+## Scripts principaux
 
-Le script principal de cette étape est :
+Les scripts les plus importants pour cette étape sont :
 
+- `scripts/prepare_dataset_with_record_id.py`
 - `scripts/run_ano.py`
 
-C'est lui qui orchestre l'exécution complète d'une anonymisation à partir d'un fichier de configuration.
+### `prepare_dataset_with_record_id.py`
+Ce script prépare un dataset contenant un identifiant interne stable, généralement `record_id`.
+
+Il peut aussi produire une copie mise à jour d'une configuration de base pour pointer vers ce dataset préparé.
+
+### `run_ano.py`
+C'est le point d'entrée principal de l'anonymisation.
+
+Il charge une configuration, exécute l'anonymisation via le gestionnaire du projet, puis sauvegarde les fichiers de sortie.
 
 ---
 
 ## Idée générale
 
-L'anonymisation suit une logique simple :
+L'anonymisation suit globalement la logique suivante :
 
-1. lire une configuration JSON ;
-2. charger le dataset source ;
-3. identifier les attributs à traiter ;
-4. appliquer la configuration d'anonymisation ;
-5. produire plusieurs fichiers de sortie :
-   - la configuration effectivement utilisée ;
+1. partir d'un dataset source ;
+2. éventuellement lui ajouter `record_id` ;
+3. charger une configuration JSON ;
+4. construire une configuration runtime complète ;
+5. lancer l'anonymisation ;
+6. produire plusieurs sorties utiles :
+   - la configuration réellement exécutée ;
    - le dataset anonymisé public ;
    - le dataset anonymisé d'évaluation ;
-   - les métriques d'anonymisation.
+   - les métriques.
 
 ---
 
 ## Entrées de l'anonymisation
-
-L'étape d'anonymisation repose principalement sur trois types d'entrées.
 
 ### 1. Le dataset source
 
 Le point de départ est un dataset tabulaire, par exemple :
 
 - `data/adult.csv`
-- ou `data/adult_with_record_id.csv`
+- `data/adult_with_record_id.csv`
 
-Selon les besoins du projet, le dataset peut contenir un identifiant interne comme `record_id`, utile pour l'évaluation mais qui ne doit pas être exposé publiquement.
+Dans la pratique actuelle du projet, il est préférable de travailler avec une version déjà préparée avec `record_id`.
 
 ### 2. Le fichier de configuration
 
-L'anonymisation est pilotée par un fichier JSON qui décrit les paramètres de l'expérience.
+L'anonymisation est pilotée par un fichier JSON décrivant l'expérience.
 
 Ce fichier contient notamment :
 
-- le chemin du dataset ;
+- le chemin vers le dataset ;
 - les quasi-identifiants ;
 - l'attribut sensible ;
 - les attributs insensibles ;
-- les hiérarchies à utiliser ;
-- les paramètres d'anonymisation comme `k`, `l`, `t` ;
+- les hiérarchies de généralisation ;
+- les paramètres comme `k`, `l`, `t` ;
 - la limite de suppression.
 
 ### 3. Les hiérarchies de généralisation
 
-Certains attributs disposent de hiérarchies CSV permettant de généraliser les valeurs.
-
-Exemples :
+Certaines colonnes disposent de hiérarchies CSV, par exemple :
 
 - `hierarchies/age.csv`
 - `hierarchies/sex.csv`
 - `hierarchies/race.csv`
 - `hierarchies/native-country.csv`
 
-Ces hiérarchies indiquent comment passer d'une valeur précise à une valeur plus générale.
-
-Par exemple, un âge précis peut être remplacé par un intervalle, ou un pays par une région plus large.
+Chaque ligne d'une hiérarchie décrit une valeur source et ses niveaux successifs de généralisation.
 
 ---
 
 ## Types d'attributs utilisés
 
-Pour comprendre l'anonymisation, il faut distinguer les rôles des colonnes.
-
 ### Quasi-identifiants
 
-Les quasi-identifiants sont les attributs qui peuvent aider à ré-identifier un individu lorsqu'ils sont recoupés.
+Les quasi-identifiants sont les attributs susceptibles de faciliter une ré-identification lorsqu'ils sont recoupés.
 
 Exemples fréquents dans le projet :
 
@@ -101,11 +101,11 @@ Exemples fréquents dans le projet :
 - `marital-status`
 - `native-country`
 
-Ce sont principalement ces attributs qui sont généralisés ou supprimés.
+Ce sont principalement ces colonnes qui sont généralisées ou supprimées.
 
 ### Attribut sensible
 
-L'attribut sensible est celui que l'on veut protéger du mieux possible.
+L'attribut sensible est celui que l'on veut particulièrement protéger.
 
 Dans le dataset Adult, il s'agit souvent de :
 
@@ -113,7 +113,9 @@ Dans le dataset Adult, il s'agit souvent de :
 
 ### Attributs insensibles
 
-Les attributs insensibles ne sont pas utilisés comme quasi-identifiants et ne servent pas directement à protéger l'identité.
+Les attributs insensibles ne servent pas à l'anonymisation elle-même.
+
+Dans le projet, `record_id` est typiquement placé dans cette catégorie pour rester disponible dans l'export d'évaluation.
 
 ---
 
@@ -121,19 +123,19 @@ Les attributs insensibles ne sont pas utilisés comme quasi-identifiants et ne s
 
 La configuration peut inclure plusieurs paramètres classiques.
 
-### k-anonymity
+### `k`-anonymity
 
-Le paramètre `k` impose qu'un enregistrement ne puisse pas être distingué de moins de `k - 1` autres enregistrements sur les quasi-identifiants.
+Le paramètre `k` impose qu'un enregistrement ne puisse pas être distingué de moins de `k - 1` autres sur les quasi-identifiants.
 
-### l-diversity
+### `l`-diversity
 
 Le paramètre `l` impose une diversité minimale de l'attribut sensible dans les classes d'équivalence.
 
-### t-closeness
+### `t`-closeness
 
-Le paramètre `t` contraint la distribution de l'attribut sensible dans chaque groupe à rester proche de la distribution globale.
+Le paramètre `t` impose que la distribution de l'attribut sensible dans chaque classe reste proche de la distribution globale.
 
-### Suppression
+### Limite de suppression
 
 Une limite de suppression peut être fixée pour autoriser la suppression d'une partie des données lorsque la généralisation seule ne suffit pas.
 
@@ -141,105 +143,128 @@ Une limite de suppression peut être fixée pour autoriser la suppression d'une 
 
 ## Déroulement logique de `run_ano.py`
 
-Le script suit globalement la séquence suivante.
-
 ### 1. Lecture de la configuration
 
-Le script commence par charger le fichier JSON de configuration.
-
-Cette configuration décrit l'expérience à exécuter.
+Le script charge d'abord le JSON de configuration demandé.
 
 ### 2. Construction de la configuration runtime
 
-Le script construit ensuite une version complète et exploitable de la configuration.
+Le script produit ensuite une configuration runtime complète et exploitable.
 
 Cette étape sert notamment à :
 
 - résoudre les chemins ;
-- compléter les paramètres manquants ;
-- figer exactement les valeurs utilisées pendant l'exécution.
-
-La configuration runtime est ensuite sauvegardée dans `outputs/configs/`.
+- figer exactement les paramètres utilisés ;
+- sauvegarder une trace reproductible dans `outputs/configs/`.
 
 ### 3. Lancement de l'anonymisation
 
 Le script appelle ensuite le gestionnaire d'anonymisation du projet.
 
-Ce gestionnaire applique les règles définies dans la configuration :
+Cette étape applique les règles définies dans la configuration :
 
-- identification des quasi-identifiants ;
+- chargement du dataset ;
 - chargement des hiérarchies ;
-- application des contraintes de confidentialité ;
-- production du dataset anonymisé.
+- application des contraintes ;
+- production du résultat anonymisé.
 
-### 4. Sauvegarde des sorties
+### 4. Export des fichiers
 
-Une fois l'anonymisation terminée, le script enregistre les sorties utiles du run.
+Une fois l'anonymisation terminée, le script peut produire :
+
+- un export public ;
+- un export d'évaluation ;
+- un fichier de métriques.
+
+---
+
+## Point important : suppression des lignes totalement supprimées
+
+Dans l'état actuel du projet, `run_ano.py` retire par défaut des exports CSV les lignes dont **tous les quasi-identifiants valent `*`**.
+
+Autrement dit, une ligne complètement supprimée au niveau des QI n'est généralement pas gardée dans :
+
+- `outputs/anonymized/...`
+- `outputs/anonymized_eval/...`
+
+Cette règle explique pourquoi :
+
+- `anonymized_eval` peut contenir moins de lignes que le résultat brut de l'anonymiseur ;
+- certaines cibles publiées au départ ne survivent finalement pas dans l'export ;
+- la MIA doit reconstruire ses cibles IN après anonymisation.
+
+### Option associée
+Cette suppression automatique peut être désactivée avec :
+
+- `--keep-fully-suppressed-records`
+
+---
+
+## Point important : différence entre export public et export d'évaluation
+
+### Export public
+L'export public représente ce que l'attaquant est censé voir.
+
+On peut y retirer certaines colonnes internes avec :
+
+- `--public-drop-columns`
+
+Exemple typique :
+
+- `--public-drop-columns record_id`
+
+### Export d'évaluation
+L'export d'évaluation conserve les colonnes utiles à la vérification interne, notamment `record_id`.
+
+Il ne doit pas être considéré comme un fichier publié.
 
 ---
 
 ## Sorties produites
 
-L'anonymisation produit plusieurs fichiers importants.
-
 ### 1. Configuration exécutée
 
-Dossier :
+Dossier typique :
 
 - `outputs/configs/`
 
-Cette configuration correspond à la version réellement utilisée pendant l'exécution.
-
-Elle est utile pour :
-
-- reproduire une expérience ;
-- vérifier les paramètres exacts ;
-- documenter les résultats.
+Le fichier JSON sauvegardé ici correspond à la configuration réellement utilisée pendant l'exécution.
 
 ### 2. Dataset anonymisé public
 
-Dossier :
+Dossier typique :
 
 - `outputs/anonymized/`
 
-C'est la version censée représenter ce qui serait réellement publié.
-
-Elle peut exclure des colonnes internes comme `record_id`.
-
-C'est cette version qui représente la vue réaliste de l'attaquant.
+C'est la version censée représenter les données publiées.
 
 ### 3. Dataset anonymisé d'évaluation
 
-Dossier :
+Dossier typique :
 
 - `outputs/anonymized_eval/`
 
 Cette version est réservée à l'évaluation interne.
 
-Elle conserve certaines informations utiles à la vérification des attaques, en particulier les identifiants internes.
-
-Elle ne doit pas être considérée comme un fichier publié à l'attaquant.
-
 ### 4. Métriques
 
-Dossier :
+Dossier typique :
 
 - `outputs/metrics/`
 
-Ces fichiers résument les résultats de l'anonymisation.
+Ces fichiers résument les résultats de l'anonymisation et incluent aussi des informations utiles sur les exports, par exemple :
 
-Ils peuvent contenir des indicateurs utiles pour comparer plusieurs expériences.
+- les chemins générés ;
+- les colonnes retirées du public ;
+- le nombre de lignes supprimées parce que tous les QI étaient `*`.
 
+### 5. Résumé benchmark
 
-## Exemple de logique
+Fichier typique :
 
-On peut résumer l'étape d'anonymisation ainsi :
+- `outputs/benchmark_summary.csv`
 
-- on choisit un ensemble de quasi-identifiants ;
-- on impose des contraintes de confidentialité ;
-- on généralise ou supprime certaines valeurs ;
-- on produit une version publiable du dataset ;
-- on conserve une version interne pour l'évaluation.
+Ce fichier agrège les runs d'anonymisation exécutés via le pipeline courant.
 
 ---
 
@@ -247,12 +272,28 @@ On peut résumer l'étape d'anonymisation ainsi :
 
 ```mermaid
 flowchart TD
-    A[Fichier de configuration JSON] --> B[run_ano.py]
-    C[Dataset source] --> B
-    D[Hiérarchies CSV] --> B
+    A[Dataset source] --> B[prepare_dataset_with_record_id.py]
+    B --> C[Dataset avec record_id]
 
-    B --> E[Configuration runtime]
-    B --> F[Dataset anonymisé public]
-    B --> G[Dataset anonymisé d'évaluation]
-    B --> H[Métriques]
+    D[Fichier de configuration JSON] --> E[run_ano.py]
+    C --> E
+    F[Hiérarchies CSV] --> E
+
+    E --> G[Configuration runtime]
+    E --> H[Dataset anonymisé public]
+    E --> I[Dataset anonymisé d'évaluation]
+    E --> J[Métriques]
 ```
+
+---
+
+## Résumé
+
+L'anonymisation ne consiste pas seulement à généraliser des valeurs.
+
+Dans le projet actuel, elle inclut aussi :
+
+- la gestion d'un identifiant interne stable ;
+- la distinction stricte entre public et évaluation ;
+- l'exclusion par défaut des lignes totalement supprimées ;
+- la production d'artefacts réutilisables par les attaques et les rapports.

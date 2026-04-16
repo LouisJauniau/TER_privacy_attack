@@ -1,0 +1,294 @@
+cd C:\Users\Louis\TER\TER_v2\RECITALS-anonymization-manager
+.venv\Scripts\activate
+cd ..
+cd C:\Users\Louis\TER\TER_v2\ter_benchmark_starter_branch_27_03
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.10.7-hotspot"
+$env:Path="$env:JAVA_HOME\bin;$env:Path"
+python scripts/run_benchmark.py --grid configs/benchmark_grid.json --output-root outputs
+
+python .\scripts\run_one_experiment.py `
+  --config .\configs\one_experiment_qi5_k5_l2.json `
+  --output-root .\outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id
+
+python .\scripts\make_auxiliary_base.py `
+  --original .\data\adult.csv `
+  --known-attrs sex,marital-status,occupation,education,relationship,race,age,native-country `
+  --sample-size 3 `
+  --seed 42 `
+  --sensitive-attr income `
+  --output-root .\outputs `
+  --base-config .\configs\one_experiment_qi5_k5_l2.json `
+  --config-output .\outputs\configs\one_experiment_qi5_k5_l2_with_record_id.json
+
+
+python .\scripts\run_linkage_attack.py `
+  --config .\outputs\configs\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.json `
+  --auxiliary .\outputs\auxiliary\adult__aux__known_sex-marital-status-occupation-workclass-education-relationship-race-age-native-country__n_3.csv `
+  --anonymized .\outputs\anonymized\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval .\outputs\anonymized_eval\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-attrs sex,marital-status,occupation,education,relationship,race,age,native-country `
+  --target-id-col record_id `
+  --sensitive-attr income `
+  --n-targets 3 `
+  --seed 42 `
+  --output-root .\outputs `
+  --save-prefilter-debug
+
+python .\scripts\run_linkage_attack_privjedai.py `
+  --config .\outputs\configs\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.json `
+  --auxiliary .\outputs\auxiliary\adult__aux__known_sex-marital-status-occupation-workclass-education-relationship-race-age-native-country__n_3.csv `
+  --anonymized .\outputs\anonymized\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval .\outputs\anonymized_eval\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-attrs sex,marital-status,occupation,education,relationship,race,age,native-country `
+  --sensitive-attr income `
+  --n-targets 3 `
+  --seed 42 `
+  --blocking lsh `
+  --metric dice `
+  --threshold 0.6 `
+  --output-root .\outputs
+
+python .\scripts\run_linkage_attack_privjedai.py `
+  --config .\outputs\configs\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.json `
+  --auxiliary .\outputs\auxiliary\adult__aux__known_sex-marital-status-occupation-workclass-education-relationship-race-age-native-country__n_3.csv `
+  --anonymized .\outputs\anonymized\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval .\outputs\anonymized_eval\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-attrs sex,marital-status,occupation,education,relationship,race,age,native-country `
+  --sensitive-attr income `
+  --n-targets 3 `
+  --seed 42 `
+  --blocking lsh `
+  --metric dice `
+  --threshold 0.6 `
+  --output-root .\outputs
+
+
+python scripts/run_mia_attack.py `
+  --config outputs/configs/qi_age-sex-race__k_10__l_2__t_None__supp_10__arx.json `
+  --targets outputs/mia_targets/mia_targets__known_age-sex-race__n_500__seed_42.csv `
+  --anonymized outputs/anonymized/qi_age-sex-race__k_10__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval outputs/anonymized_eval/qi_age-sex-race__k_10__l_2__t_None__supp_10__arx.csv `
+  --known-qids age,sex,race `
+  --target-id-col record_id `
+  --member-col is_member `
+  --min-best-score 0.5 `
+  --max-compatible-candidates 100 `
+  --max-compatible-fraction 0.01 `
+  --output-root outputs
+
+python scripts/make_mia_targets.py `
+  --original data/adult.csv `
+  --known-qids age,sex,race `
+  --out-frac 0.05 `
+  --in-frac 0.05 `
+  --targets-per-class 10 `
+  --seed 42 `
+  --target-id-col record_id `
+  --member-col is_member `
+  --output-root outputs
+
+python scripts/make_mia_targets.py `
+  --original data/adult.csv `
+  --known-qids age,sex,race `
+  --out-frac 0.05 `
+  --in-frac 0.05 `
+  --targets-per-class 10 `
+  --seed 42 `
+  --target-id-col record_id `
+  --member-col is_member `
+  --output-root outputs `
+  --base-config configs/base_config.json `
+  --config-output outputs/configs/mia_base_config_published.json
+
+python scripts/run_one_experiment.py `
+  --config outputs/configs/mia_base_config_published.json `
+  --output-root outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id
+
+python scripts/run_mia_attack.py `
+  --config outputs/configs/mia_base_config_published.json `
+  --targets outputs/mia_targets/mia_targets__known_age-sex-race__n_10__seed_42.csv `
+  --anonymized outputs/anonymized/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval outputs/anonymized_eval/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-qids age,sex,race `
+  --target-id-col record_id `
+  --member-col is_member `
+  --min-best-score 0.5 `
+  --max-compatible-candidates 100 `
+  --max-compatible-fraction 0.01 `
+  --output-root outputs
+
+python scripts/run_mia_attack.py `
+  --config outputs/configs/qi_age-sex__k_5__l_2__t_None__supp_10__arx.json `
+  --targets outputs/mia_targets/mia_targets__known_age-sex-race__n_10__seed_42.csv `
+  --anonymized outputs/anonymized/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval outputs/anonymized_eval/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-qids age,sex,race `
+  --target-id-col record_id `
+  --member-col is_member `
+  --min-best-score 0.5 `
+  --max-compatible-candidates 100 `
+  --max-compatible-fraction 0.01 `
+  --output-root outputs
+
+
+python scripts/run_one_experiment.py `
+  --config outputs/configs/qi_age-sex__k_5__l_2__t_None__supp_10__arx.json `
+  --output-root outputs `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id
+
+python scripts/run_mia_attack.py `
+  --config outputs/configs/qi_age-sex__k_5__l_2__t_None__supp_10__arx.json `
+  --targets outputs/mia_targets/mia_targets__known_age-sex-race__n_10__seed_42.csv `
+  --anonymized outputs/anonymized/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval outputs/anonymized_eval/qi_age-sex__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-qids age,sex,race `
+  --target-id-col record_id `
+  --member-col is_member `
+  --min-best-score 0.5 `
+  --max-compatible-candidates 100 `
+  --max-compatible-fraction 0.01 `
+  --output-root outputs
+
+
+
+
+python .\scripts\run_linkage_attack.py `
+  --config .\outputs\configs\adult_demo.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_demo.csv `
+  --anonymized .\outputs\anonymized\adult_demo.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_demo.csv `
+  --known-attrs age,sex,native-country `
+  --sensitive-attr income `
+  --n-targets 50 `
+  --seed 42 `
+  --output-root .\outputs
+
+
+python .\scripts\run_linkage_attack_privjedai.py `
+  --config .\outputs\configs\adult_privjedai_demo.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_privjedai_demo.csv `
+  --anonymized .\outputs\anonymized\adult_privjedai_demo.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_privjedai_demo.csv `
+  --known-attrs age,sex,race,marital-status,native-country `
+  --sensitive-attr income `
+  --n-targets 50 `
+  --seed 42 `
+  --output-root .\outputs `
+  --privjedai-src .\privJedAI-main\src
+
+
+python .\scripts\run_linkage_attack_optional_privjedai.py `
+  --config .\outputs\configs\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.json `
+  --auxiliary .\outputs\auxiliary\adult__aux__known_age-sex-race-marital-status-native-country__n_3.csv `
+  --anonymized .\outputs\anonymized\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --anonymized-eval .\outputs\anonymized_eval\qi_age-sex-race-marital-status-native-country__k_5__l_2__t_None__supp_10__arx.csv `
+  --known-attrs age,sex,race,marital-status,native-country `
+  --n-targets all `
+  --use-privjedai-fuzzy `
+  --privjedai-src .\privJedAI-main\src `
+  --privjedai-fuzzy-threshold 0.9 `
+  --privjedai-fuzzy-metric dice
+
+python .\scripts\run_linkage_attack_optional_privjedai.py `
+  --config .\outputs\configs\adult_privjedai_demo.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_privjedai_demo.csv `
+  --anonymized .\outputs\anonymized\adult_privjedai_demo.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_privjedai_demo.csv `
+  --known-attrs age,sex,race,marital-status,native-country `
+  --n-targets 50
+
+
+python .\scripts\make_auxiliary_base.py `
+  --original .\data\adult.csv `
+  --known-attrs age,sex,native-country `
+  --sample-size 500 `
+  --seed 42 `
+  --sensitive-attr income `
+  --output-root .\outputs `
+  --full-output .\data\adult_with_record_id.csv `
+  --aux-output .\outputs\auxiliary\adult_aux_demo.csv `
+  --base-config .\configs\adult_base.json `
+  --config-output .\outputs\configs\adult_demo_with_record_id.json
+
+
+
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_demo_with_record_id.json `
+  --output-root .\outputs `
+  --name adult_demo `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --name adult_demo_2 `
+  --public-drop-columns record_id 
+
+python .\scripts\make_auxiliary_base.py `
+  --full-dataset .\data\adult_with_record_id.csv `
+  --known-attrs age,sex,native-country `
+  --sample-frac 0.05 `
+  --seed 42 `
+  --sensitive-attr income `
+  --released-eval .\outputs\anonymized_eval\adult_demo_2.csv `
+  --output-root .\outputs `
+  --aux-output .\outputs\auxiliary\adult_aux_demo_2.csv
+
+
+python .\scripts\run_linkage_attack.py `
+  --config .\outputs\configs\adult_demo_2.json `
+  --auxiliary .\outputs\auxiliary\adult_aux_demo_2.csv `
+  --anonymized .\outputs\anonymized\adult_demo_2.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_demo_2.csv `
+  --known-attrs age,sex,native-country `
+  --sensitive-attr income `
+  --n-targets all `
+  --seed 42 `
+  --output-root .\outputs
+
+
+
+
+
+
+
+
+
+
+python .\scripts\make_mia_targets.py `
+  --original .\data\adult.csv `
+  --known-qids age,sex,native-country `
+  --out-frac 0.05 `
+  --in-frac 0.05 `
+  --targets-per-class 500 `
+  --seed 42 `
+  --output-root .\outputs `
+  --name adult_mia_demo `
+  --base-config .\outputs\configs\adult_demo_with_record_id.json
+
+python .\scripts\run_ano.py `
+  --config .\outputs\configs\adult_mia_demo.runtime.json `
+  --output-root .\outputs `
+  --name adult_demo_mia `
+  --save-anonymized-csv `
+  --save-anonymized-eval-csv `
+  --public-drop-columns record_id 
+
+python .\scripts\run_mia_attack.py `
+  --config .\outputs\configs\qi_age-sex-race-marital-status__k_5__l_2__t_None__supp_0.1__arx.json `
+  --targets .\outputs\mia_targets\adult_mia_demo.targets.csv `
+  --anonymized .\outputs\anonymized\adult_demo_mia.csv `
+  --anonymized-eval .\outputs\anonymized_eval\adult_demo_mia.csv `
+  --known-qids age,sex,native-country `
+  --target-id-col record_id `
+  --member-col is_member `
+  --min-best-score 0.5 `
+  --max-compatible-candidates 100 `
+  --max-compatible-fraction 0.01 `
+  --output-root .\outputs `
+  --seed 42

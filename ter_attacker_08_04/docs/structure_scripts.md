@@ -2,198 +2,264 @@
 
 ## Objectif de cette page
 
-Cette page permet de donner une vue claire de l'organisation des scripts du projet, pour comprendre rapidement :
+Cette page donne une vue claire de l'organisation des scripts du projet, pour comprendre rapidement :
 
 - quels fichiers jouent un rôle central ;
 - quels scripts servent à lancer les étapes principales ;
-- quels fichiers servent surtout de support ;
+- quels fichiers servent de support ;
+- quels scripts servent surtout à automatiser ou à générer des rapports.
 
 ---
 
 ## Vue d'ensemble
 
-Le dossier `scripts/` contient :
+Le dossier `scripts/` contient principalement :
 
-1. les scripts d'exécution principaux ;
-2. les scripts de préparation des données d'attaque ;
-3. les fichiers utilitaires partagés ;
-5. les fichiers annexes.
+1. les scripts de préparation du dataset ;
+2. les scripts d'exécution principaux ;
+3. les scripts de préparation des attaques ;
+4. les fichiers utilitaires partagés ;
+5. les scripts de benchmark ;
+6. les scripts de génération de rapports.
 
 ---
 
 ## Scripts principaux
 
-Les scripts les plus importants dans l'état actuel du projet sont les suivants :
+Les scripts les plus importants dans l'état actuel du projet sont :
 
+- `prepare_dataset_with_record_id.py`
 - `run_ano.py`
 - `make_auxiliary_base.py`
 - `run_linkage_attack.py`
 - `make_mia_targets.py`
+- `make_mia_targets_post_ano.py`
 - `run_mia_attack.py`
 
-Ce sont eux qui correspondent directement à la logique principale documentée dans les pages précédentes.
+Ce sont eux qui correspondent directement au pipeline principal documenté dans les autres pages.
 
 ---
 
-## 1. Scripts d'exécution principaux
+## 1. Préparation du dataset
 
-## `run_ano.py`
+### `prepare_dataset_with_record_id.py`
+
+C'est le script de préparation le plus important avant anonymisation.
+
+#### Rôle
+- ajouter `record_id` si nécessaire ;
+- vérifier son unicité ;
+- produire une version stable du dataset ;
+- éventuellement générer une copie de configuration mise à jour.
+
+#### Pourquoi il est important
+Le pipeline actuel s'appuie fortement sur `record_id` pour relier :
+
+- l'anonymisation ;
+- la linkage attack ;
+- la MIA ;
+- l'évaluation interne.
+
+---
+
+## 2. Scripts d'exécution principaux
+
+### `run_ano.py`
 
 C'est le point d'entrée principal pour l'anonymisation.
 
-### Rôle
+#### Rôle
 - charger une configuration d'expérience ;
 - préparer la configuration runtime ;
 - lancer l'anonymisation ;
 - sauvegarder les sorties produites.
 
-### Entrées typiques
-- un fichier de configuration JSON ;
-- un dataset source ;
-- des hiérarchies de généralisation.
-
-### Sorties typiques
+#### Sorties typiques
 - configuration exécutée ;
 - dataset anonymisé public ;
 - dataset anonymisé d'évaluation ;
 - métriques.
 
-C'est le script central de la phase d'anonymisation.
-
 ---
 
-## `run_linkage_attack.py`
+### `run_linkage_attack.py`
 
 C'est le point d'entrée principal pour exécuter la linkage attack.
 
-### Rôle
+#### Rôle
 - charger la base auxiliaire ;
 - charger les datasets anonymisés ;
-- traiter les cibles ;
-- filtrer les candidats compatibles ;
+- construire `attacker_knowledge` ;
+- séparer les attributs entre stade 1 et stade 2 ;
 - construire les classes d'équivalence ;
 - inférer l'attribut sensible ;
-- sauvegarder les résultats.
+- sauvegarder les résultats et le rapport HTML.
 
-### Idée générale
-Ce script contient la logique principale de l'attaque de linkage.
+#### Particularité actuelle
+Le script applique une logique en deux étages basée sur `visible_level`.
 
 ---
 
-## `run_mia_attack.py`
+### `run_mia_attack.py`
 
 C'est le point d'entrée principal pour exécuter la membership inference attack.
 
-### Rôle
+#### Rôle
 - charger les cibles MIA ;
 - charger les datasets anonymisés ;
-- tester la compatibilité avec les attributs connus ;
-- calculer des signaux de membership ;
+- construire `attacker_knowledge` ;
+- séparer les attributs entre stade 1 et stade 2 ;
+- calculer les candidats compatibles ;
 - prédire IN ou OUT ;
-- sauvegarder les résultats.
-
-### Idée générale
-Ce script contient la logique principale de la MIA.
+- sauvegarder les résultats et le rapport HTML.
 
 ---
 
-## 2. Scripts de préparation des données d'attaque
+## 3. Scripts de préparation des données d'attaque
 
-Ces scripts ne réalisent pas directement les attaques, mais ils préparent les fichiers nécessaires à leur exécution.
+### `make_auxiliary_base.py`
 
-## `make_auxiliary_base.py`
+Prépare la base auxiliaire utilisée par la linkage attack.
 
-Ce script prépare la base auxiliaire utilisée par la linkage attack.
+#### Rôle
+- partir d'un dataset déjà préparé avec `record_id` ;
+- sélectionner les attributs connus par l'attaquant ;
+- échantillonner les individus ;
+- éventuellement ne garder que les individus encore publiés via `--released-eval`.
 
-### Rôle
+#### Pourquoi il est important
+Dans la version actuelle, la linkage attack est utilisée en mode strict : les cibles doivent en pratique être encore présentes dans `anonymized_eval`.
+
+---
+
+### `make_mia_targets.py`
+
+Prépare le split pré-anonymisation pour la MIA.
+
+#### Rôle
 - partir du dataset original ;
-- sélectionner un sous-ensemble d'individus ;
-- conserver seulement les colonnes connues par l'attaquant ;
-- produire un fichier auxiliaire exploitable pour l'attaque.
+- créer un `published subset` ;
+- créer un `OUT holdout pool` ;
+- écrire un JSON de métadonnées de split ;
+- éventuellement produire une config retargetée vers le subset publié.
 
-### Pourquoi il est important
-Sans base auxiliaire, il n'y a pas de connaissance attaquant à exploiter dans la linkage attack.
-
----
-
-## `make_mia_targets.py`
-
-Ce script prépare les cibles utilisées par la MIA.
-
-### Rôle
-- construire les groupes IN et OUT ;
-- échantillonner les cibles ;
-- associer les attributs connus ;
-- ajouter le label de vérité terrain `is_member` ;
-- sauvegarder le fichier de cibles.
-
-### Pourquoi il est important
-Il définit précisément ce que la MIA devra prédire.
+#### Point important
+Ce script ne crée plus directement les cibles finales IN/OUT.
 
 ---
 
-## 3. Fichiers utilitaires partagés
+### `make_mia_targets_post_ano.py`
 
-Ces fichiers ne sont pas lancés directement par l'utilisateur.  
-Ils servent de couche de support pour factoriser la logique ou les fonctions techniques.
+Prépare les cibles finales de la MIA après anonymisation.
 
-## `common.py`
+#### Rôle
+- lire le `published subset` ;
+- lire le `OUT holdout pool` ;
+- lire `anonymized_eval` ;
+- identifier les survivants ;
+- construire l'attacker base ;
+- construire des cibles équilibrées IN/OUT.
 
-Ce fichier regroupe les utilitaires communs au projet.
-
-### Rôle
-- gestion de chemins ;
-- lecture et écriture de fichiers ;
-- helpers de configuration ;
-- fonctions réutilisées par plusieurs scripts.
-
-C'est la boîte à outils générale du projet.
+#### Pourquoi il est important
+Il garantit que les cibles IN correspondent réellement à des enregistrements encore présents dans l'export final.
 
 ---
 
-## `attack_common.py`
+## 4. Fichiers utilitaires partagés
 
-Ce fichier regroupe les utilitaires communs aux attaques.
+### `common.py`
 
-### Rôle
-- logique partagée entre linkage attack et MIA ;
-- fonctions de chargement ou de validation ;
-- compatibilité entre cibles et lignes anonymisées ;
-- calculs communs liés aux attaques.
+Boîte à outils générale du projet.
 
-C'est la couche partagée par les scripts d'attaque.
-
----
-
-## `linkage_helpers.py`
-
-Ce fichier contient les helpers spécifiques à la linkage attack.
-
-### Rôle
-- fonctions de filtrage des candidats ;
-- logique de compatibilité orientée linkage ;
-- construction ou manipulation des classes d'équivalence ;
-- traitement de l'inférence de l'attribut sensible.
-
-Il isole la logique propre à la linkage attack pour éviter de surcharger le script principal.
+#### Rôle
+- gestion des chemins ;
+- lecture et écriture JSON ;
+- création de dossiers ;
+- fonctions utilitaires réutilisées dans plusieurs scripts.
 
 ---
 
-## `privjedai_utils.py`
+### `attack_common.py`
 
-Ce fichier regroupe les fonctions liées à l'utilisation de `privJedAI`.
+Utilitaires communs aux attaques.
 
-### Rôle
-- transformations de données pour les étapes fuzzy ;
-- fonctions d'intégration avec `privJedAI` ;
-- logique de support pour les variantes de linkage plus souples.
+#### Rôle
+- lecture normalisée des CSV ;
+- chargement de la configuration runtime ;
+- construction de `attacker_knowledge` ;
+- inférence de `visible_level` ;
+- helpers partagés de validation et d'écriture de résumés.
 
-Ce fichier sert d'extension utile pour certaines variantes de la linkage attack.
+---
+
+### `linkage_helpers.py`
+
+Helpers spécifiques à la linkage attack.
+
+#### Rôle
+- construction d'index de valeurs ;
+- logique de compatibilité ;
+- raffinement exact ou fuzzy ;
+- résumé des distributions de l'attribut sensible.
+
+---
+
+### `privjedai_utils.py`
+
+Couche d'intégration avec `privJedAI`.
+
+#### Rôle
+- configuration du mode fuzzy ;
+- calcul de similarité ;
+- support des comparaisons Bloom-filter pour les attributs restés en clair.
+
+---
+
+## 5. Scripts de génération de rapports
+
+### `generate_linkage_attack_report.py`
+
+Génère un rapport HTML pour une attaque de linkage.
+
+#### Rôle
+- lire `summary.json` ;
+- lire `targets.csv` ;
+- éventuellement lire config et métriques d'anonymisation ;
+- produire un rapport HTML synthétique.
+
+---
+
+### `generate_mia_attack_report.py`
+
+Génère un rapport HTML pour une MIA.
+
+#### Rôle
+- lire `summary.json` ;
+- lire `targets.csv` ;
+- calculer les indicateurs de classification ;
+- produire un rapport HTML.
+
+---
+
+## 6. Scripts de benchmark
+
+### `run_benchmark.py`
+Automatise plusieurs runs d'anonymisation.
+
+### `run_linkage_benchmark.py`
+Automatise des séries d'attaques de linkage.
+
+### `run_mia_benchmark.py`
+Automatise des séries d'attaques MIA.
+
+Ces scripts sont utiles pour produire plusieurs expériences comparables, mais ils ne constituent pas le cœur logique des attaques elles-mêmes.
 
 ---
 
 ## Organisation logique
 
+### Bloc préparation du dataset
+- `prepare_dataset_with_record_id.py`
 
 ### Bloc anonymisation
 - `run_ano.py`
@@ -208,6 +274,7 @@ Ce fichier sert d'extension utile pour certaines variantes de la linkage attack.
 
 ### Bloc préparation MIA
 - `make_mia_targets.py`
+- `make_mia_targets_post_ano.py`
 
 ### Bloc attaque MIA
 - `run_mia_attack.py`
@@ -216,7 +283,25 @@ Ce fichier sert d'extension utile pour certaines variantes de la linkage attack.
 - `common.py`
 - `attack_common.py`
 
+### Bloc rapports
+- `generate_linkage_attack_report.py`
+- `generate_mia_attack_report.py`
+
 ### Bloc benchmarks
 - `run_benchmark.py`
 - `run_linkage_benchmark.py`
 - `run_mia_benchmark.py`
+
+---
+
+## Résumé
+
+La structure actuelle des scripts reflète une organisation en pipeline :
+
+1. préparer le dataset ;
+2. anonymiser ;
+3. préparer les entrées des attaques ;
+4. exécuter les attaques ;
+5. générer des rapports.
+
+La principale évolution récente du projet concerne surtout la MIA, qui est maintenant séparée en une phase pré-anonymisation et une phase post-anonymisation.
