@@ -1,33 +1,32 @@
 # Membership Inference Attack (MIA)
 
-## Rôle de cette étape
+## Role of this step
 
-La **Membership Inference Attack (MIA)** cherche à déterminer si une cible donnée appartenait ou non au dataset publié avant anonymisation.
+The **Membership Inference Attack (MIA)** tries to determine whether a given target was part of the published dataset before anonymization.
 
-Autrement dit, l'attaquant ne cherche pas ici à retrouver directement une ligne précise ni à inférer en priorité un attribut sensible.
-Il cherche à répondre à la question suivante :
+In other words, the attacker is not trying to recover a specific row here, nor to infer a sensitive attribute as a priority. They want to answer the question:
 
-**"Cette personne faisait-elle partie du dataset utilisé pour produire les données anonymisées publiées ?"**
+**"Was this individual part of the dataset used to produce the published anonymized data?"**
 
-Dans le cadre du projet, cette attaque permet donc d'évaluer un risque de fuite d'**appartenance**.
-
----
-
-## Idée générale
-
-La logique générale de la MIA est la suivante :
-
-1. construire un ensemble de cibles équilibré entre membres et non-membres ;
-2. comparer les informations connues sur chaque cible au dataset anonymisé publié ;
-3. construire une classe de candidats compatibles ;
-4. décider si cette classe constitue un signal d'appartenance ou non ;
-5. comparer la prédiction avec la vérité terrain.
+Within this project, this attack therefore evaluates a **membership leakage** risk.
 
 ---
 
-## Scripts principaux
+## General idea
 
-Les scripts principaux de cette étape sont :
+The general logic of the MIA is:
+
+1. build a balanced set of targets between members and non-members;
+2. compare the information known about each target with the published anonymized dataset;
+3. build a class of compatible candidates (using the same phase 1 / phase 2 equivalence class logic as the linkage attack);
+4. decide whether this class is a membership signal or not;
+5. compare the prediction with the ground truth.
+
+---
+
+## Main scripts
+
+The main scripts at this step are:
 
 - `scripts/make_mia_targets.py`
 - `scripts/make_mia_targets_post_ano.py`
@@ -35,373 +34,375 @@ Les scripts principaux de cette étape sont :
 - `scripts/generate_mia_attack_report.py`
 
 ### `make_mia_targets.py`
-Prépare le split pré-anonymisation.
+Prepares the pre-anonymization split.
 
-Il produit :
+It produces:
 
-- un `published subset` qui sera anonymisé ;
-- un `OUT holdout pool` qui restera hors publication ;
-- un JSON de métadonnées de split.
+- a `published subset` which will be anonymized;
+- an `OUT holdout pool` which stays out of the publication;
+- a JSON file with the split metadata.
 
 ### `make_mia_targets_post_ano.py`
-Construit les cibles MIA finales après anonymisation.
+Builds the final MIA targets after anonymization.
 
-Il ne garde les cibles IN que parmi les individus du `published subset` qui ont réellement survécu dans `anonymized_eval`.
+It keeps IN targets only among the individuals of the `published subset` that actually survived in `anonymized_eval`.
 
 ### `run_mia_attack.py`
-Exécute l'attaque elle-même.
+Runs the attack itself.
 
 ### `generate_mia_attack_report.py`
-Génère un rapport HTML à partir des sorties de l'attaque.
+Generates an HTML report from the attack outputs.
 
 ---
 
-## Ce que cherche à prédire la MIA
+## What the MIA predicts
 
-La sortie principale de la MIA est une prédiction binaire :
+The main output of the MIA is a binary prediction:
 
-- **IN** : la cible est prédite comme membre du dataset publié ;
-- **OUT** : la cible est prédite comme non-membre.
+- **IN**: the target is predicted as a member of the published dataset;
+- **OUT**: the target is predicted as a non-member.
 
-Dans les fichiers, la vérité terrain est généralement codée ainsi :
+In the files, the ground truth is usually encoded as:
 
-- `is_member = 1` pour IN ;
-- `is_member = 0` pour OUT.
+- `is_member = 1` for IN;
+- `is_member = 0` for OUT.
 
 ---
 
-## Différence avec la linkage attack
+## Difference with the linkage attack
 
 ### Linkage attack
-La linkage attack cherche surtout à savoir :
+The linkage attack mainly tries to know:
 
-- quelles lignes anonymisées sont compatibles avec une cible ;
-- ce qu'on peut en déduire sur l'attribut sensible.
+- which anonymized rows are compatible with a target;
+- what can be deduced about the sensitive attribute.
 
 ### MIA
-La MIA cherche surtout à savoir :
+The MIA mainly tries to know:
 
-- si une cible faisait partie ou non du dataset publié.
+- whether a target is part of the published dataset or not.
 
-Autrement dit :
+In other words:
 
-- la linkage attack traite surtout le risque de liaison et d'inférence sensible ;
-- la MIA traite le risque d'appartenance.
+- the linkage attack addresses the risk of linkage and sensitive inference;
+- the MIA addresses the risk of membership disclosure.
 
----
-
-## Données utilisées par l'attaque
-
-La MIA repose sur trois ensembles de données principaux.
-
-### 1. Les cibles MIA
-
-Ce fichier contient les individus testés par l'attaque.
-
-Chaque ligne contient :
-
-- `record_id` ;
-- les attributs connus par l'attaquant ;
-- le label `is_member`.
-
-### 2. Le dataset anonymisé public
-
-C'est la version visible par l'attaquant.
-
-### 3. Le dataset anonymisé d'évaluation
-
-Cette version est utilisée en interne pour :
-
-- vérifier quels `record_id` ont survécu ;
-- évaluer correctement les prédictions ;
-- relier les étapes entre elles.
+Both attacks share the same phase 1 / phase 2 equivalence class engine: the difference lies in what they do with the final class.
 
 ---
 
-## Construction des cibles MIA
+## Data used by the attack
 
-### Étape 1 : `make_mia_targets.py`
+The MIA relies on three main data sets.
 
-Le script suit globalement les étapes suivantes :
+### 1. The MIA targets
 
-1. charger le dataset original ;
-2. s'assurer que le dataset contient `record_id` ;
-3. déterminer la taille de la future attacker base via `--attacker-frac` ou `--attacker-size` ;
-4. en déduire un **OUT holdout pool** ;
-5. conserver le reste comme **published subset** ;
-6. écrire :
+This file contains the individuals tested by the attack.
+
+Each row contains:
+
+- `record_id`;
+- the attributes known by the attacker;
+- the `is_member` label.
+
+### 2. The public anonymized dataset
+
+This is the version visible to the attacker.
+
+### 3. The evaluation anonymized dataset
+
+This version is used internally to:
+
+- check which `record_id` survived;
+- evaluate predictions properly;
+- keep the steps linked together.
+
+---
+
+## Building the MIA targets
+
+### Step 1: `make_mia_targets.py`
+
+The script roughly follows these steps:
+
+1. load the original dataset;
+2. ensure the dataset contains `record_id`;
+3. determine the size of the future attacker base via `--attacker-frac` or `--attacker-size`;
+4. derive an **OUT holdout pool** from it;
+5. keep the rest as the **published subset**;
+6. write:
    - `*.published.csv`
    - `*.out.csv`
-   - un JSON de métadonnées.
+   - a JSON metadata file.
 
-Le principe actuel est le suivant :
+The current principle is:
 
-- la taille totale de l'attacker base est choisie ;
-- elle est ensuite répartie de façon équilibrée entre OUT et IN ;
-- la partie IN sera échantillonnée plus tard, après anonymisation.
+- the total size of the attacker base is chosen;
+- it is then split evenly between OUT and IN;
+- the IN part will be sampled later, after anonymization.
 
-### Étape 2 : `make_mia_targets_post_ano.py`
+### Step 2: `make_mia_targets_post_ano.py`
 
-Ce script suit ensuite les étapes suivantes :
+This script then follows these steps:
 
-1. charger le `published subset` ;
-2. charger le `OUT holdout pool` ;
-3. charger `anonymized_eval` ;
-4. récupérer les `record_id` qui ont réellement survécu ;
-5. former le pool IN à partir de ces survivants ;
-6. construire une attacker base équilibrée ;
-7. échantillonner un nombre égal de cibles IN et OUT ;
-8. écrire :
+1. load the `published subset`;
+2. load the `OUT holdout pool`;
+3. load `anonymized_eval`;
+4. fetch the `record_id`s that actually survived;
+5. form the IN pool from these survivors;
+6. build a balanced attacker base;
+7. sample an equal number of IN and OUT targets;
+8. write:
    - `targets_post_ano.csv`
    - `attacker_base.csv`
-   - un JSON de métadonnées.
+   - a JSON metadata file.
 
 ---
 
-## Ce que sait l'attaquant
+## What the attacker knows
 
-Comme pour la linkage attack, l'attaquant ne connaît qu'un sous-ensemble d'attributs.
+Just like for the linkage attack, the attacker only knows a subset of attributes.
 
-Exemples fréquents :
+Common examples:
 
 - `age`
 - `sex`
 - `race`
 
-Ces colonnes sont passées via `--known-qids`.
+These columns are passed via `--known-qids`.
 
 ---
 
-## Notion de compatibilité
+## Compatibility notion
 
-La MIA repose elle aussi sur une logique de compatibilité.
+The MIA also relies on a compatibility logic.
 
-Pour une cible donnée, on cherche les lignes du dataset anonymisé qui restent cohérentes avec les attributs connus.
+For a given target, the attack searches the anonymized rows that remain consistent with the known attributes.
 
-### Exemple simple
+### Simple example
 
-Si l'attaquant connaît :
+If the attacker knows:
 
 - `age = 27`
 - `sex = Male`
 - `race = White`
 
-et qu'une ligne anonymisée contient :
+and an anonymized row contains:
 
 - `age = [20-29]`
 - `sex = Male`
 - `race = White`
 
-alors cette ligne est compatible avec la cible.
+then this row is compatible with the target.
 
 ---
 
-## Logique actuelle de filtrage
+## Current filtering logic (phase 1 / phase 2 equivalence class)
 
-Comme pour la linkage attack, la MIA sépare les attributs connus en deux groupes selon `visible_level`.
+As for the linkage attack, the MIA splits known attributes into two groups based on `visible_level`. The split is attacker-view based, not config-based.
 
-### Stade 1
-Attributs dont `visible_level != 0`.
+### Equivalence class phase 1
+Attributes with `visible_level != 0`.
 
-Ils servent à construire la classe initiale à partir des valeurs généralisées visibles.
+They serve to build the **initial (phase 1) equivalence class** from generalized/suppressed visible values. The same `qid_stage1_cache` mechanism as in the linkage attack is used to reuse phase 1 classes across targets that share the same projection.
 
-### Stade 2
-Attributs dont `visible_level == 0`.
+### Equivalence class phase 2
+Attributes with `visible_level == 0`.
 
-Ils servent à raffiner la classe initiale, soit :
+They serve to **refine** the phase 1 class to the **phase 2 class**, either:
 
-- en exact ;
-- soit éventuellement avec `privJedAI` si `--use-privjedai-fuzzy` est activé.
+- by exact match;
+- or optionally with `privJedAI` if `--use-privjedai-fuzzy` is enabled.
 
 ---
 
-## Décision IN / OUT dans la version actuelle
+## IN / OUT decision in the current version
 
-Dans le code actuel, la décision finale est volontairement simple.
+In the current code, the final decision is deliberately simple.
 
-Elle repose principalement sur deux critères :
+It mainly relies on two criteria:
 
 - `compatible_candidate_count`
 - `compatible_candidate_fraction`
 
-### Règle actuelle
+### Current rule
 
-La cible est prédite **IN** si :
+The target is predicted **IN** if:
 
-1. il reste au moins un candidat compatible ;
-2. la fraction compatible dans le dataset est inférieure ou égale à `max_compatible_fraction`.
+1. at least one compatible candidate remains after phase 2;
+2. the compatible fraction in the dataset is less than or equal to `max_compatible_fraction`.
 
-Sinon, la cible est prédite **OUT**.
+Otherwise, the target is predicted **OUT**.
 
----
-
-## Déroulement logique de `run_mia_attack.py`
-
-Le script suit globalement les étapes suivantes.
-
-### 1. Chargement des fichiers
-Le script charge :
-
-- la configuration runtime ;
-- le fichier de cibles ;
-- le dataset anonymisé public ;
-- le dataset anonymisé d'évaluation.
-
-### 2. Inférence des colonnes connues
-Si besoin, il déduit les `known_qids` à partir du fichier de cibles.
-
-### 3. Construction de `attacker_knowledge`
-Comme pour la linkage, le script construit une vue attaquant des attributs connus et de leur `visible_level`.
-
-### 4. Séparation stade 1 / stade 2
-Les attributs connus sont répartis entre :
-
-- `qid_filter_qids`
-- `refine_qids`
-
-### 5. Construction de la classe de stade 1
-Le script conserve les lignes compatibles avec les attributs généralisés.
-
-### 6. Raffinement final
-Il réduit ensuite cette classe avec les attributs restés en clair.
-
-### 7. Décision de membership
-Il calcule :
-
-- `compatible_candidate_count`
-- `compatible_candidate_fraction`
-
-puis applique la règle de décision IN/OUT.
-
-### 8. Évaluation
-Il calcule enfin :
-
-- accuracy
-- precision
-- recall
-- F1
-- matrice de confusion
-- statistiques séparées pour membres et non-membres
+This rule is applied by `decide_membership(...)` in `run_mia_attack.py` and its reasoning is exposed in the `decision_reason` field of `targets.csv` for auditability.
 
 ---
 
-## Sorties produites
+## Logical flow of `run_mia_attack.py`
 
-Chaque run de MIA produit généralement un dossier de la forme :
+The script roughly follows these steps.
+
+### 1. Loading files
+The script loads:
+
+- the runtime configuration;
+- the targets file;
+- the public anonymized dataset;
+- the evaluation anonymized dataset.
+
+### 2. Inferring known columns
+If needed, it derives `known_qids` from the targets file.
+
+### 3. Building `attacker_knowledge`
+As for the linkage attack, the script builds an attacker view of the known attributes and of their `visible_level`.
+
+### 4. Phase 1 / phase 2 split
+Known attributes are split between:
+
+- `qid_filter_qids` (phase 1);
+- `refine_qids` (phase 2).
+
+### 5. Building the phase 1 class
+The script keeps the rows compatible with the generalized attributes, using the `qid_stage1_cache` for reuse across targets.
+
+### 6. Phase 2 refinement
+It then reduces that class with the clear-text attributes (exact or privJedAI fuzzy).
+
+### 7. Membership decision
+It computes:
+
+- `compatible_candidate_count`;
+- `compatible_candidate_fraction`;
+
+then applies the IN/OUT decision rule.
+
+### 8. Evaluation
+It finally computes:
+
+- accuracy;
+- precision;
+- recall;
+- F1;
+- confusion matrix;
+- separate statistics for members and non-members.
+
+---
+
+## Outputs produced
+
+Each MIA run usually produces a folder of the form:
 
 - `outputs/attacks/mia/<attack_id>/`
 
-On y trouve notamment :
+It typically contains:
 
 ### `summary.json`
-Résumé global de l'attaque.
+Global summary of the attack.
 
 ### `targets.csv`
-Résultats par cible.
+Per-target results.
 
 ### `<attack_id>__report.html`
-Rapport HTML généré automatiquement si possible.
+HTML report generated automatically if possible.
 
-En plus, un résumé agrégé peut être ajouté dans :
+In addition, an aggregated summary can be appended to:
 
 - `outputs/attacks/mia/mia_summary.csv`
 
 ---
 
-## Variables principales du `summary.json`
+## Main variables of `summary.json`
 
-| Variable | Signification |
+| Variable | Meaning |
 |---|---|
-| `attack_id` | Identifiant du run MIA. |
-| `known_qids` | Attributs connus par l'attaquant. |
-| `qid_filter_qids` | Attributs utilisés au stade 1. |
-| `refine_qids` | Attributs utilisés au stade 2. |
-| `n_targets` | Nombre total de cibles évaluées. |
-| `n_members` | Nombre de cibles IN dans la vérité terrain. |
-| `n_non_members` | Nombre de cibles OUT dans la vérité terrain. |
-| `max_compatible_fraction` | Seuil maximal de fraction compatible autorisé pour prédire IN. |
-| `tp` | Nombre de vrais positifs : cibles IN correctement prédites IN. |
-| `tn` | Nombre de vrais négatifs : cibles OUT correctement prédites OUT. |
-| `fp` | Nombre de faux positifs : cibles OUT prédites IN. |
-| `fn` | Nombre de faux négatifs : cibles IN prédites OUT. |
-| `accuracy` | Part totale de prédictions correctes. |
-| `precision` | Parmi les prédictions IN, part de celles qui sont correctes. |
-| `recall` | Parmi les vraies cibles IN, part de celles retrouvées comme IN. |
-| `f1` | Moyenne harmonique entre precision et recall. |
-| `member_recall` | Recall restreint à la classe membre. |
-| `non_member_true_negative_rate` | Taux de vrais négatifs sur la classe OUT. |
-| `member_avg_stage1_equivalence_class_size` | Taille moyenne de la classe de stade 1 pour les membres. |
-| `non_member_avg_stage1_equivalence_class_size` | Taille moyenne de la classe de stade 1 pour les non-membres. |
-| `member_avg_compatible_candidate_count` | Nombre moyen de candidats compatibles finaux pour les membres. |
-| `non_member_avg_compatible_candidate_count` | Nombre moyen de candidats compatibles finaux pour les non-membres. |
-| `member_avg_equivalence_class_reduction` | Réduction moyenne entre stade 1 et stade final pour les membres. |
-| `non_member_avg_equivalence_class_reduction` | Réduction moyenne entre stade 1 et stade final pour les non-membres. |
+| `attack_id` | Identifier of the MIA run. |
+| `known_qids` | Attributes known by the attacker. |
+| `qid_filter_qids` | Attributes used in phase 1. |
+| `refine_qids` | Attributes used in phase 2. |
+| `n_targets` | Total number of evaluated targets. |
+| `n_members` | Number of IN targets in the ground truth. |
+| `n_non_members` | Number of OUT targets in the ground truth. |
+| `max_compatible_fraction` | Maximum compatible-fraction threshold allowed to predict IN. |
+| `tp` | True positives: IN targets correctly predicted IN. |
+| `tn` | True negatives: OUT targets correctly predicted OUT. |
+| `fp` | False positives: OUT targets predicted IN. |
+| `fn` | False negatives: IN targets predicted OUT. |
+| `accuracy` | Overall share of correct predictions. |
+| `precision` | Among IN predictions, share of correct ones. |
+| `recall` | Among true IN targets, share found as IN. |
+| `f1` | Harmonic mean of precision and recall. |
+| `member_recall` | Recall restricted to the member class. |
+| `non_member_true_negative_rate` | True negative rate on the OUT class. |
+| `member_avg_stage1_equivalence_class_size` | Average size of the phase 1 class for members. |
+| `non_member_avg_stage1_equivalence_class_size` | Average size of the phase 1 class for non-members. |
+| `member_avg_compatible_candidate_count` | Average final (phase 2) compatible-candidate count for members. |
+| `non_member_avg_compatible_candidate_count` | Average final (phase 2) compatible-candidate count for non-members. |
+| `member_avg_equivalence_class_reduction` | Average reduction from phase 1 to phase 2 for members. |
+| `non_member_avg_equivalence_class_reduction` | Average reduction from phase 1 to phase 2 for non-members. |
 
 ---
 
-## Variables de complexité
+## Complexity variables
 
-Ces compteurs servent à estimer la quantité de travail logique effectuée par l'attaque.
+These counters estimate the amount of logical work performed by the attack.
 
-| Variable | Signification |
+| Variable | Meaning |
 |---|---|
-| `row_index_row_visits` | Nombre de visites de lignes liées à l'index utilisé au stade de filtrage initial. |
-| `targets_evaluated` | Nombre de cibles effectivement traitées. |
-| `candidate_row_refs_loaded` | Nombre de références de lignes candidates chargées en mémoire pendant l'attaque. |
-| `refinement_candidate_row_visits` | Nombre total de visites de candidats pendant la phase de raffinement. |
-| `refinement_exact_tests` | Nombre de tests exacts réalisés pendant ce raffinement. |
-| `refinement_fuzzy_tests` | Nombre de tests fuzzy réalisés lorsque l'option correspondante est activée. |
-| `refinement_mask_cells` | Nombre de cellules manipulées dans les masques logiques pendant le raffinement. |
-| `membership_decisions` | Nombre de décisions finales IN/OUT prises par l'attaque. |
-| `estimated_total_operations` | Estimation globale du nombre d'opérations logiques réalisées. |
+| `row_index_row_visits` | Number of row visits linked to the index used during the initial filtering phase (phase 1). |
+| `targets_evaluated` | Number of targets actually processed. |
+| `candidate_row_refs_loaded` | Number of candidate-row references loaded in memory during the attack. |
+| `refinement_candidate_row_visits` | Total number of candidate visits during phase 2. |
+| `refinement_exact_tests` | Number of exact tests performed during phase 2. |
+| `refinement_fuzzy_tests` | Number of fuzzy tests performed when the corresponding option is enabled. |
+| `refinement_mask_cells` | Number of cells handled in the phase 2 masks. |
+| `membership_decisions` | Number of final IN/OUT decisions taken by the attack. |
+| `estimated_total_operations` | Global estimate of the number of logical operations performed. |
 
 ---
 
-## Variables principales de `targets.csv`
+## Main variables of `targets.csv`
 
-| Variable | Signification |
+| Variable | Meaning |
 |---|---|
-| `target_id` | Identifiant interne de la cible. |
-| `ground_truth_member` | Vérité terrain : 1 si IN, 0 si OUT. |
-| `predicted_member` | Prédiction finale de l'attaque. |
-| `qid_filter_qids` | Attributs utilisés au stade 1 pour cette attaque. |
-| `refine_qids` | Attributs utilisés au stade 2 pour cette attaque. |
-| `stage1_equivalence_class_size` | Taille de la classe obtenue au stade 1. |
-| `compatible_candidate_count` | Nombre final de candidats compatibles. |
-| `reduced_equivalence_class_size` | Même information que la taille finale de classe. |
-| `equivalence_class_reduction` | Réduction absolue entre stade 1 et stade final. |
-| `equivalence_class_reduction_rate` | Réduction relative entre stade 1 et stade final. |
-| `compatible_candidate_fraction` | Fraction de lignes anonymisées restant compatibles. |
-| `target_present_in_anonymized` | Indique si le `record_id` de la cible est réellement présent dans `anonymized_eval`. |
-| `true_record_in_stage1_class` | Indique si le vrai record est présent dans la classe de stade 1. |
-| `true_record_in_reduced_class` | Indique si le vrai record est encore présent après raffinement. |
-| `decision_reason` | Trace textuelle de la logique de décision utilisée par le script. |
+| `target_id` | Internal identifier of the target. |
+| `ground_truth_member` | Ground truth: 1 if IN, 0 if OUT. |
+| `predicted_member` | Final attack prediction. |
+| `qid_filter_qids` | Attributes used in phase 1 for this attack. |
+| `refine_qids` | Attributes used in phase 2 for this attack. |
+| `stage1_equivalence_class_size` | Size of the phase 1 class. |
+| `compatible_candidate_count` | Final number of compatible candidates (phase 2). |
+| `reduced_equivalence_class_size` | Same information as the final class size. |
+| `equivalence_class_reduction` | Absolute reduction from phase 1 to phase 2. |
+| `equivalence_class_reduction_rate` | Relative reduction from phase 1 to phase 2. |
+| `compatible_candidate_fraction` | Fraction of anonymized rows still compatible. |
+| `target_present_in_anonymized` | Whether the target's `record_id` is actually present in `anonymized_eval`. |
+| `true_record_in_stage1_class` | Whether the true record is present in the phase 1 class. |
+| `true_record_in_reduced_class` | Whether the true record is still present after phase 2. |
+| `decision_reason` | Textual trace of the decision logic applied by the script. |
 
 ---
 
-## Variables de configuration
+## Configuration variables
 
-| Variable | Signification |
+| Variable | Meaning |
 |---|---|
-| `attack_id` | Identifiant unique de l'expérience MIA. |
-| `known_qids` | Attributs connus par l'attaquant. |
-| `qid_filter_qids` | Attributs utilisés au stade 1 pour le premier filtrage. |
-| `refine_qids` | Attributs utilisés au stade 2 pour affiner les candidats. |
-| `target_id_col` | Nom de la colonne identifiant la cible. |
-| `member_col` | Nom de la colonne portant le label de vérité terrain IN/OUT. |
-| `max_compatible_fraction` | Seuil maximal de fraction compatible utilisé dans la logique de décision. |
-| `use_privjedai_fuzzy` | Indique si un raffinement fuzzy a été activé. |
-| `seed` | Graine aléatoire de reproductibilité. |
-
+| `attack_id` | Unique identifier of the MIA experiment. |
+| `known_qids` | Attributes known by the attacker. |
+| `qid_filter_qids` | Attributes used in phase 1 for the initial filtering. |
+| `refine_qids` | Attributes used in phase 2 to refine the candidates. |
+| `target_id_col` | Name of the column identifying the target. |
+| `member_col` | Name of the column carrying the IN/OUT ground truth label. |
+| `max_compatible_fraction` | Maximum compatible-fraction threshold used in the decision logic. |
+| `use_privjedai_fuzzy` | Whether fuzzy refinement was enabled. |
+| `seed` | Random seed for reproducibility. |
 
 ---
 
+## Summary
 
-## Résumé
+The current MIA relies on a consistent chain:
 
-La MIA actuelle du projet repose donc sur une chaîne cohérente :
-
-1. préparer un split avant anonymisation ;
-2. reconstruire les cibles après anonymisation en ne gardant que les survivants pour les IN ;
-3. construire une classe compatible ;
-4. décider IN ou OUT à partir de la taille relative de cette classe.
+1. prepare a split before anonymization;
+2. rebuild targets after anonymization, keeping only survivors for IN;
+3. build a compatible class via phase 1 / phase 2 equivalence-class logic;
+4. decide IN or OUT based on the relative size of that class.

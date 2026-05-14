@@ -1,32 +1,33 @@
-# Structure des scripts
+# Script structure
 
-## Objectif de cette page
+## Purpose of this page
 
-Cette page donne une vue claire de l'organisation des scripts du projet, pour comprendre rapidement :
+This page gives a clear view of how the project's scripts are organized, to quickly understand:
 
-- quels fichiers jouent un rôle central ;
-- quels scripts servent à lancer les étapes principales ;
-- quels fichiers servent de support ;
-- quels scripts servent surtout à automatiser ou à générer des rapports.
-
----
-
-## Vue d'ensemble
-
-Le dossier `scripts/` contient principalement :
-
-1. les scripts de préparation du dataset ;
-2. les scripts d'exécution principaux ;
-3. les scripts de préparation des attaques ;
-4. les fichiers utilitaires partagés ;
-5. les scripts de benchmark ;
-6. les scripts de génération de rapports.
+- which files play a central role;
+- which scripts are used to run the main steps;
+- which files serve as support;
+- which scripts are mostly used for automation or report generation.
 
 ---
 
-## Scripts principaux
+## Overview
 
-Les scripts les plus importants dans l'état actuel du projet sont :
+The `scripts/` folder mainly contains:
+
+1. dataset preparation scripts;
+2. main execution scripts;
+3. attack preparation scripts;
+4. shared utility files;
+5. schema-matching scripts;
+6. benchmark scripts;
+7. report generation scripts.
+
+---
+
+## Main scripts
+
+In the current project state, the most important scripts are:
 
 - `prepare_dataset_with_record_id.py`
 - `run_ano.py`
@@ -36,272 +37,322 @@ Les scripts les plus importants dans l'état actuel du projet sont :
 - `make_mia_targets_post_ano.py`
 - `run_mia_attack.py`
 
-Ce sont eux qui correspondent directement au pipeline principal documenté dans les autres pages.
+They correspond directly to the main pipeline documented on the other pages.
 
 ---
 
-## 1. Préparation du dataset
+## 1. Dataset preparation
 
 ### `prepare_dataset_with_record_id.py`
 
-C'est le script de préparation le plus important avant anonymisation.
+This is the most important preparation script before anonymization.
 
-#### Rôle
-- ajouter `record_id` si nécessaire ;
-- vérifier son unicité ;
-- produire une version stable du dataset ;
-- éventuellement générer une copie de configuration mise à jour.
+#### Role
+- add `record_id` if missing;
+- check its uniqueness;
+- produce a stable version of the dataset;
+- optionally generate an updated copy of a configuration.
 
-#### Pourquoi il est important
-Le pipeline actuel s'appuie fortement sur `record_id` pour relier :
+#### Why it matters
+The current pipeline relies heavily on `record_id` to link together:
 
-- l'anonymisation ;
-- la linkage attack ;
-- la MIA ;
-- l'évaluation interne.
+- anonymization;
+- linkage attack;
+- MIA;
+- internal evaluation.
+
+In particular, `record_id` must be declared as `insensitive_attributes` in the runtime config (and removed from quasi-identifiers / sensitive attributes) so that it is not generalized or suppressed during anonymization.
 
 ---
 
-## 2. Scripts d'exécution principaux
+## 2. Main execution scripts
 
 ### `run_ano.py`
 
-C'est le point d'entrée principal pour l'anonymisation.
+Main entry point for anonymization.
 
-#### Rôle
-- charger une configuration d'expérience ;
-- préparer la configuration runtime ;
-- lancer l'anonymisation ;
-- sauvegarder les sorties produites.
+#### Role
+- load an experiment configuration;
+- prepare the runtime configuration;
+- run the anonymization;
+- save the produced outputs.
 
-#### Sorties typiques
-- configuration exécutée ;
-- dataset anonymisé public ;
-- dataset anonymisé d'évaluation ;
-- métriques.
+#### Typical outputs
+- executed configuration;
+- public anonymized dataset;
+- evaluation anonymized dataset;
+- metrics.
 
 ---
 
 ### `run_linkage_attack.py`
 
-C'est le point d'entrée principal pour exécuter la linkage attack.
+Main entry point to run the linkage attack.
 
-#### Rôle
-- charger la base auxiliaire ;
-- charger les datasets anonymisés ;
-- construire `attacker_knowledge` ;
-- séparer les attributs entre stade 1 et stade 2 ;
-- construire les classes d'équivalence ;
-- inférer l'attribut sensible ;
-- sauvegarder les résultats et le rapport HTML.
+#### Role
+- load the auxiliary base;
+- load the anonymized datasets;
+- build `attacker_knowledge`;
+- split attributes between phase 1 and phase 2 based on `visible_level`;
+- optionally run the Valentine / Jaccard schema-matching step between the two phases;
+- build the phase 1 and phase 2 equivalence classes;
+- infer the sensitive attribute;
+- save the results and the HTML report.
 
-#### Particularité actuelle
-Le script applique une logique en deux étages basée sur `visible_level`.
+#### Current specificity
+The script applies a two-phase equivalence class logic based on `visible_level`, with an optional schema-matching step inserted between phase 1 and phase 2 when `--obfuscate-refine-attrs` is set.
 
 ---
 
 ### `run_mia_attack.py`
 
-C'est le point d'entrée principal pour exécuter la membership inference attack.
+Main entry point to run the membership inference attack.
 
-#### Rôle
-- charger les cibles MIA ;
-- charger les datasets anonymisés ;
-- construire `attacker_knowledge` ;
-- séparer les attributs entre stade 1 et stade 2 ;
-- calculer les candidats compatibles ;
-- prédire IN ou OUT ;
-- sauvegarder les résultats et le rapport HTML.
+#### Role
+- load the MIA targets;
+- load the anonymized datasets;
+- build `attacker_knowledge`;
+- split attributes between phase 1 and phase 2;
+- compute the compatible candidates via phase 1 / phase 2 equivalence classes;
+- predict IN or OUT;
+- save the results and the HTML report.
 
 ---
 
-## 3. Scripts de préparation des données d'attaque
+## 3. Attack-data preparation scripts
 
 ### `make_auxiliary_base.py`
 
-Prépare la base auxiliaire utilisée par la linkage attack.
+Prepares the auxiliary base used by the linkage attack.
 
-#### Rôle
-- partir d'un dataset déjà préparé avec `record_id` ;
-- sélectionner les attributs connus par l'attaquant ;
-- échantillonner les individus ;
-- éventuellement ne garder que les individus encore publiés via `--released-eval`.
+#### Role
+- start from a dataset already prepared with `record_id`;
+- select the attributes known by the attacker;
+- sample individuals;
+- optionally keep only the individuals still present in `anonymized_eval` via `--released-eval`.
 
-#### Pourquoi il est important
-Dans la version actuelle, la linkage attack est utilisée en mode strict : les cibles doivent en pratique être encore présentes dans `anonymized_eval`.
+#### Why it matters
+In the current version, the linkage attack is used in strict mode: targets must in practice still be present in `anonymized_eval`.
 
 ---
 
 ### `make_mia_targets.py`
 
-Prépare le split pré-anonymisation pour la MIA.
+Prepares the MIA pre-anonymization split.
 
-#### Rôle
-- partir du dataset original ;
-- créer un `published subset` ;
-- créer un `OUT holdout pool` ;
-- écrire un JSON de métadonnées de split ;
-- éventuellement produire une config retargetée vers le subset publié.
+#### Role
+- start from the original dataset;
+- create a `published subset`;
+- create an `OUT holdout pool`;
+- write a JSON with the split metadata;
+- optionally produce a config retargeted to the published subset.
 
-#### Point important
-Ce script ne crée plus directement les cibles finales IN/OUT.
+#### Important note
+This script no longer creates the final IN/OUT targets directly.
 
 ---
 
 ### `make_mia_targets_post_ano.py`
 
-Prépare les cibles finales de la MIA après anonymisation.
+Prepares the final MIA targets after anonymization.
 
-#### Rôle
-- lire le `published subset` ;
-- lire le `OUT holdout pool` ;
-- lire `anonymized_eval` ;
-- identifier les survivants ;
-- construire l'attacker base ;
-- construire des cibles équilibrées IN/OUT.
+#### Role
+- read the `published subset`;
+- read the `OUT holdout pool`;
+- read `anonymized_eval`;
+- identify the survivors;
+- build the attacker base;
+- build balanced IN/OUT targets.
 
-#### Pourquoi il est important
-Il garantit que les cibles IN correspondent réellement à des enregistrements encore présents dans l'export final.
+#### Why it matters
+It guarantees that IN targets actually correspond to records still present in the final export.
 
 ---
 
-## 4. Fichiers utilitaires partagés
+## 4. Shared utility files
 
 ### `common.py`
 
-Boîte à outils générale du projet.
+General toolbox of the project.
 
-#### Rôle
-- gestion des chemins ;
-- lecture et écriture JSON ;
-- création de dossiers ;
-- fonctions utilitaires réutilisées dans plusieurs scripts.
+#### Role
+- path handling;
+- JSON read/write;
+- folder creation;
+- helper functions reused across several scripts.
 
 ---
 
 ### `attack_common.py`
 
-Utilitaires communs aux attaques.
+Utilities common to both attacks.
 
-#### Rôle
-- lecture normalisée des CSV ;
-- chargement de la configuration runtime ;
-- construction de `attacker_knowledge` ;
-- inférence de `visible_level` ;
-- helpers partagés de validation et d'écriture de résumés.
+#### Role
+- normalized CSV loading;
+- runtime configuration loading;
+- `attacker_knowledge` construction;
+- `visible_level` inference;
+- shared helpers for validation and summary writing.
 
 ---
 
 ### `linkage_helpers.py`
 
-Helpers spécifiques à la linkage attack.
+Helpers specific to the linkage attack.
 
-#### Rôle
-- construction d'index de valeurs ;
-- logique de compatibilité ;
-- raffinement exact ou fuzzy ;
-- résumé des distributions de l'attribut sensible.
+#### Role
+- value-index construction;
+- compatibility logic (exact, generalized, suppressed, privJedAI fuzzy);
+- refinement (exact or fuzzy) for phase 2;
+- summary of the sensitive attribute distributions.
 
 ---
 
 ### `privjedai_utils.py`
 
-Couche d'intégration avec `privJedAI`.
+Integration layer with `privJedAI`.
 
-#### Rôle
-- configuration du mode fuzzy ;
-- calcul de similarité ;
-- support des comparaisons Bloom-filter pour les attributs restés en clair.
+#### Role
+- fuzzy-mode configuration;
+- similarity computation;
+- Bloom-filter comparisons for clear-text attributes used in phase 2.
 
 ---
 
-## 5. Scripts de génération de rapports
+## 5. Schema-matching scripts
+
+The schema-matching step is inserted between phase 1 and phase 2 of the linkage attack. It is used when the anonymized release has obfuscated column names on the clear-text columns that phase 2 would otherwise rely on.
+
+### `schema_matcher.py`
+
+Module providing the schema-matching primitives.
+
+#### Role
+- `build_valentine_matcher(name)` — factory for Valentine matchers: `coma` (`valentine.algorithms.Coma`), `jaccard` (`valentine.algorithms.JaccardDistanceMatcher`), `distribution` (`valentine.algorithms.DistributionBased`);
+- `obfuscate_columns(...)` — rename a subset of columns to `col_0`, `col_1`, ... and keep the ground-truth mapping aside for evaluation;
+- `recover_column_mapping(...)` — run Valentine on the two column subsets and return a one-to-one mapping `anon_column -> (kb_column, score)`, filtered by a minimum score;
+- `jaccard_baseline(...)` — pure-Python greedy Jaccard baseline over unique-value sets, useful as a sanity check against Valentine;
+- `apply_recovered_mapping(...)` — rename the obfuscated columns back to the auxiliary-base names so phase 2 can run unchanged;
+- `evaluate_mapping(...)` — compare the recovered mapping against the ground truth and return coverage / accuracy / recall metrics.
+
+#### Why it matters
+This is the module that makes the attack robust to a realistic scenario where the attacker does not know the labels of the release's clear-text columns. It is invoked by `run_linkage_attack.py` when `--obfuscate-refine-attrs` is set.
+
+---
+
+### `demo_schema_matching.py`
+
+Standalone demo that runs only the schema-matching step.
+
+#### Role
+- load an anonymized public CSV and an auxiliary KB CSV;
+- obfuscate a chosen list of `refine_attrs`;
+- run the chosen matcher (`coma`, `jaccard`, `distribution`, or `baseline_jaccard`);
+- print the recovered mapping and the evaluation metrics;
+- show how the renamed DataFrame can be plugged back into `run_linkage_attack._evaluate_target()`.
+
+#### Why it matters
+Useful to calibrate `--schema-matcher` and `--schema-matcher-min-score` on new data, outside of the full attack pipeline.
+
+---
+
+## 6. Report generation scripts
 
 ### `generate_linkage_attack_report.py`
 
-Génère un rapport HTML pour une attaque de linkage.
+Generates an HTML report for a linkage attack.
 
-#### Rôle
-- lire `summary.json` ;
-- lire `targets.csv` ;
-- éventuellement lire config et métriques d'anonymisation ;
-- produire un rapport HTML synthétique.
+#### Role
+- read `summary.json`;
+- read `targets.csv`;
+- optionally read the config and the anonymization metrics;
+- produce a synthetic HTML report.
 
 ---
 
 ### `generate_mia_attack_report.py`
 
-Génère un rapport HTML pour une MIA.
+Generates an HTML report for a MIA.
 
-#### Rôle
-- lire `summary.json` ;
-- lire `targets.csv` ;
-- calculer les indicateurs de classification ;
-- produire un rapport HTML.
+#### Role
+- read `summary.json`;
+- read `targets.csv`;
+- compute the classification indicators;
+- produce an HTML report.
 
 ---
 
-## 6. Scripts de benchmark
+## 7. Benchmark scripts
 
 ### `run_benchmark.py`
-Automatise plusieurs runs d'anonymisation.
+Automates several anonymization runs.
 
 ### `run_linkage_benchmark.py`
-Automatise des séries d'attaques de linkage.
+Automates batches of linkage attacks.
 
 ### `run_mia_benchmark.py`
-Automatise des séries d'attaques MIA.
+Automates batches of MIA attacks.
 
-Ces scripts sont utiles pour produire plusieurs expériences comparables, mais ils ne constituent pas le cœur logique des attaques elles-mêmes.
+### `run_linkage_phase_curve.py`
+Sweeps a pool of quasi-identifiers, runs the full pipeline (anonymization → auxiliary base → linkage attack) for each combination, and aggregates phase 1 and phase 2 equivalence-class sizes. Produces a plot of the two curves as a function of the number of generalized attacker-known attributes.
+
+These scripts are useful to produce several comparable experiments, but they are not the logical core of the attacks themselves.
 
 ---
 
-## Organisation logique
+## Logical organization
 
-### Bloc préparation du dataset
+### Dataset preparation block
 - `prepare_dataset_with_record_id.py`
 
-### Bloc anonymisation
+### Anonymization block
 - `run_ano.py`
 
-### Bloc préparation linkage
+### Linkage preparation block
 - `make_auxiliary_base.py`
 
-### Bloc attaque linkage
+### Linkage attack block
 - `run_linkage_attack.py`
 - `linkage_helpers.py`
 - `privjedai_utils.py`
+- `schema_matcher.py` *(optional schema-matching step between phase 1 and phase 2)*
+- `demo_schema_matching.py` *(standalone demo)*
 
-### Bloc préparation MIA
+### MIA preparation block
 - `make_mia_targets.py`
 - `make_mia_targets_post_ano.py`
 
-### Bloc attaque MIA
+### MIA attack block
 - `run_mia_attack.py`
 
-### Bloc utilitaires partagés
+### Shared utilities block
 - `common.py`
 - `attack_common.py`
 
-### Bloc rapports
+### Reports block
 - `generate_linkage_attack_report.py`
 - `generate_mia_attack_report.py`
 
-### Bloc benchmarks
+### Benchmarks block
 - `run_benchmark.py`
 - `run_linkage_benchmark.py`
 - `run_mia_benchmark.py`
+- `run_linkage_phase_curve.py`
 
 ---
 
-## Résumé
+## Summary
 
-La structure actuelle des scripts reflète une organisation en pipeline :
+The current script organization reflects a pipeline structure:
 
-1. préparer le dataset ;
-2. anonymiser ;
-3. préparer les entrées des attaques ;
-4. exécuter les attaques ;
-5. générer des rapports.
+1. prepare the dataset;
+2. anonymize;
+3. prepare the attack inputs;
+4. run the attacks (with the optional Valentine / Jaccard schema-matching step for the linkage attack);
+5. generate the reports.
 
-La principale évolution récente du projet concerne surtout la MIA, qui est maintenant séparée en une phase pré-anonymisation et une phase post-anonymisation.
+The main recent evolutions are:
+
+- the MIA is now split into a pre-anonymization phase and a post-anonymization phase;
+- both attacks use an explicit **phase 1 / phase 2 equivalence class** engine driven by `visible_level`;
+- the linkage attack now supports a schema-matching step based on Valentine (`coma`, `jaccard`, `distribution`) or a pure-Python `baseline_jaccard` to handle obfuscated column names in the release.

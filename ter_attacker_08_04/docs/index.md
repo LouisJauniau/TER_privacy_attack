@@ -1,99 +1,113 @@
-# Documentation TER
+# TER Documentation
 
-## Objectif de cette documentation
+## Purpose of this documentation
 
-Cette documentation présente le fonctionnement global du projet TER, depuis la préparation du dataset jusqu'à l'évaluation des attaques après anonymisation.
+This documentation describes how the TER project works end to end, from dataset preparation to attack evaluation after anonymization.
 
-L'objectif est de comprendre :
+The goal is to understand:
 
-- comment le dataset est préparé ;
-- comment l'anonymisation est exécutée ;
-- comment la linkage attack et la membership inference attack (MIA) sont construites ;
-- quels fichiers sont produits à chaque étape.
-
----
-
-## Contexte du projet
-
-Le projet étudie l'effet de l'anonymisation d'un dataset sur la protection de la vie privée.
-
-À partir d'un dataset source, on produit une version anonymisée, puis on évalue ce qu'un attaquant peut encore apprendre à partir des données publiées.
-
-Le travail se concentre principalement sur trois blocs :
-
-- l'anonymisation ;
-- la **linkage attack** ;
-- la **membership inference attack (MIA)**.
-
-Les scripts de benchmark existent aussi dans le projet, mais ils servent surtout à automatiser des séries d'expériences.
+- how the dataset is prepared;
+- how anonymization is executed;
+- how the linkage attack and the membership inference attack (MIA) are built;
+- which files are produced at each step.
 
 ---
 
-## Organisation de la documentation
+## Project context
 
-### Vue générale du projet
-Présente le pipeline global, les grandes étapes et la logique d'enchaînement entre préparation, anonymisation et attaques.
+The project studies the effect of dataset anonymization on privacy protection.
 
-### Anonymisation
-Explique comment un dataset source est transformé en dataset anonymisé, avec une version publique et une version d'évaluation.
+Starting from a source dataset, an anonymized version is produced, and the project then measures what an attacker can still learn from the published data.
+
+The work focuses on three main blocks:
+
+- anonymization;
+- the **linkage attack**;
+- the **membership inference attack (MIA)**.
+
+Benchmark scripts also exist in the project, but they mostly serve to automate batches of experiments.
+
+---
+
+## Documentation layout
+
+### Project overview
+Presents the overall pipeline, the main steps, and the logical chaining between preparation, anonymization and attacks.
+
+### Anonymization
+Explains how a source dataset is transformed into an anonymized dataset, with a public version and an evaluation version.
 
 ### Linkage attack
-Décrit comment une base auxiliaire attaquant est utilisée pour construire des classes d'équivalence, les réduire, puis inférer un attribut sensible.
+Describes how an attacker auxiliary base is used to build equivalence classes, reduce them, and then infer a sensitive attribute. It also covers the schema-matching step based on Valentine (COMA, JaccardDistanceMatcher, DistributionBased) that sits between phase 1 and phase 2.
 
 ### Membership Inference Attack (MIA)
-Décrit comment des cibles IN et OUT sont construites, puis comment l'attaque décide si une cible appartenait ou non au dataset publié.
+Describes how IN and OUT targets are built, then how the attack decides whether a target belonged to the published dataset.
 
-### Structure des scripts
-Donne une vue d'ensemble du dossier `scripts/` et du rôle des principaux fichiers.
+### Script structure
+Gives an overview of the `scripts/` folder and of the role of each main file.
 
-### Formats des fichiers d'entrée / sortie
-Présente les principales familles de fichiers manipulées par le projet et leur place dans le pipeline.
-
----
-
-## Pipeline global
-
-Le projet suit globalement la logique suivante :
-
-1. préparer un dataset avec un identifiant interne stable `record_id` ;
-2. exécuter une anonymisation ;
-3. produire un dataset anonymisé public et un dataset anonymisé d'évaluation ;
-4. préparer les fichiers nécessaires à la linkage attack et/ou à la MIA ;
-5. exécuter les attaques ;
-6. sauvegarder les résultats détaillés et les rapports HTML dans `outputs/`.
+### File formats
+Describes the main families of files handled by the project and their place in the pipeline.
 
 ---
 
-## Point important sur `record_id`
+## Overall pipeline
 
-Le projet utilise un identifiant interne stable, généralement `record_id`, pour relier proprement les différentes étapes.
+The project roughly follows this logic:
 
-Cet identifiant :
-
-- est utile pour l'évaluation interne ;
-- est conservé dans `anonymized_eval` ;
-- peut être retiré du dataset public avec `--public-drop-columns record_id`.
-
-Il ne doit donc pas être considéré comme une information publiée à l'attaquant.
-
----
-
-## Point important sur la MIA
-
-Dans l'état actuel du projet, la MIA se fait en deux temps :
-
-1. `make_mia_targets.py` prépare un **published subset** et un **OUT holdout pool** avant anonymisation ;
-2. `make_mia_targets_post_ano.py` construit ensuite les **vraies cibles finales** après anonymisation, en ne prenant les cibles IN que parmi les enregistrements qui ont réellement survécu dans `anonymized_eval`.
-
-Cette séparation est importante pour garder une vérité terrain cohérente lorsque certaines lignes sont supprimées de l'export final.
+1. prepare a dataset with a stable internal identifier `record_id`;
+2. run an anonymization;
+3. produce a public anonymized dataset and an evaluation anonymized dataset;
+4. prepare the files required for the linkage attack and/or the MIA;
+5. run the attacks;
+6. save the detailed results and the HTML reports under `outputs/`.
 
 ---
 
-## Point important sur la linkage attack
+## Important note about `record_id`
 
-Dans l'état actuel du projet, la linkage attack suit une logique en deux étages :
+The project uses a stable internal identifier, usually `record_id`, to cleanly link the different steps.
 
-- **stade 1** : filtrage avec les attributs que l'attaquant voit sous forme généralisée ou supprimée dans le dataset publié ;
-- **stade 2** : raffinement avec les attributs encore visibles en clair, soit en exact, soit éventuellement avec `privJedAI` en mode fuzzy.
+This identifier:
 
-La documentation détaillée de cette logique se trouve dans la page dédiée à la linkage attack.
+- is useful for internal evaluation;
+- is kept in `anonymized_eval`;
+- can be removed from the public dataset using `--public-drop-columns record_id`.
+
+It must therefore **not** be considered as information published to the attacker.
+
+---
+
+## Important note about the linkage attack
+
+In the current state of the project, the linkage attack follows a two-phase logic on equivalence classes:
+
+- **phase 1 (equivalence class phase 1)**: filtering with attacker-known attributes whose values appear **generalized or suppressed** in the published dataset (`visible_level != 0`);
+- **phase 2 (equivalence class phase 2)**: refinement with attacker-known attributes that remain **visible in clear text** (`visible_level == 0`), either via exact match or optionally with `privJedAI` in fuzzy mode.
+
+An optional **schema-matching step** can be inserted between phase 1 and phase 2 using the Valentine library. It simulates an attacker who does not know the column names of the anonymized release but still wants to use their values during phase 2. Schema matchers available include `coma`, `jaccard` (JaccardDistanceMatcher from Valentine), `distribution`, and a pure-Python `baseline_jaccard`.
+
+The detailed documentation of this logic is on the dedicated linkage attack page.
+
+---
+
+## Important note about the MIA
+
+In the current state of the project, the MIA is done in two steps:
+
+1. `make_mia_targets.py` prepares a **published subset** and an **OUT holdout pool** before anonymization;
+2. `make_mia_targets_post_ano.py` then builds the **final targets** after anonymization, taking IN targets only from records that actually survived in `anonymized_eval`.
+
+This split is important to keep a consistent ground truth when some rows are removed from the final export.
+
+The MIA also uses the same phase 1 / phase 2 equivalence class logic as the linkage attack.
+
+## Integrated documentation structure
+
+This documentation now combines two complementary parts of the TER project.
+
+- The **privacy attack part** documents the global pipeline, anonymization outputs, linkage attack, MIA, attacker knowledge, and implementation details.
+- The **utility evaluation part** documents ARX utility metrics, quality models, aggregate functions, classification benchmarks, and the associated scripts and file formats.
+
+The navigation menu separates these concerns into four main blocks: **Overview**, **Anonymization**, **Attacks**, **Utility metrics and classification**, and **Implementation**.
+

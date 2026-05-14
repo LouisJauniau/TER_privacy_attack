@@ -1,19 +1,75 @@
-site_name: Documentation TER
+site_name: TER Documentation
+
 theme:
   name: material
+  language: en
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - toc.integrate
+    - search.highlight
+    - search.suggest
+    - content.code.copy
 
-nav:
-  - Accueil: index.md
-  - Vue générale du projet: vue_generale.md
-  - Anonymisation: anonymisation.md
-  - Linkage attack: linkage_attack.md
-  - MIA: mia.md
-  - Structure des scripts: structure_scripts.md
-  - Formats des fichiers: formats_fichiers.md
+plugins:
+  - search:
+      lang: en
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.arithmatex:
+      generic: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Overview:
+      - Home: index.md
+      - Project overview: vue_generale.md
+  - Anonymization:
+      - Main anonymization pipeline: anonymisation.md
+      - Benchmark and privacy models: anonymisation/index.md
+      - Quality models: anonymisation/mesures_utilite.md
+      - Aggregate functions: anonymisation/fonctions_agregats.md
+  - Attacks:
+      - Linkage attack: linkage_attack.md
+      - Membership Inference Attack: mia.md
+  - Utility metrics and classification:
+      - ARX utility metrics: metriques/index.md
+      - Classification: classification/index.md
+      - Classification models integration: classification/classification_models.md
+  - Implementation:
+      - Main script structure: structure_scripts.md
+      - Utility/classification script structure: structure_scripts/index.md
+      - Main file formats: formats_fichiers.md
+      - Utility/classification file formats: formats_fichiers/index.md

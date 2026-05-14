@@ -1,77 +1,77 @@
-# Vue générale du projet
+# Project overview
 
-## Objectif du projet
+## Project goal
 
-Ce projet étudie l'effet de l'anonymisation d'un dataset sur la protection de la vie privée.
+This project studies the effect of dataset anonymization on privacy protection.
 
-Le but est d'observer ce qu'un attaquant peut encore faire après publication des données, en se concentrant sur trois parties principales :
+The goal is to observe what an attacker can still do once data is published, focusing on three main parts:
 
-- l'anonymisation ;
-- la **linkage attack** ;
-- la **membership inference attack (MIA)**.
+- anonymization;
+- the **linkage attack**;
+- the **membership inference attack (MIA)**.
 
-L'idée générale est simple : on part d'un dataset source, on applique une anonymisation, puis on mesure ce qu'un attaquant peut encore inférer à partir des données publiées.
-
----
-
-## Les grandes briques du pipeline
-
-Le pipeline du projet repose sur plusieurs étapes complémentaires :
-
-1. préparer un dataset avec un identifiant interne stable `record_id` ;
-2. lancer une anonymisation ;
-3. produire :
-   - un dataset anonymisé public ;
-   - un dataset anonymisé d'évaluation ;
-   - des métriques d'anonymisation ;
-4. préparer les entrées de la linkage attack ;
-5. préparer les entrées de la MIA ;
-6. exécuter les attaques ;
-7. sauvegarder les résultats détaillés et les rapports HTML.
+The general idea is simple: start from a source dataset, apply an anonymization, then measure what an attacker can still infer from the published data.
 
 ---
 
-## Différence entre dataset public et dataset d'évaluation
+## The main building blocks of the pipeline
 
-Le projet manipule deux vues principales du dataset anonymisé :
+The project pipeline relies on several complementary steps:
 
-### Dataset anonymisé public
-C'est la version censée représenter ce qui serait réellement publié.
-
-Elle peut exclure des colonnes internes comme `record_id`.
-
-### Dataset anonymisé d'évaluation
-C'est une version interne, réservée à l'évaluation.
-
-Elle conserve notamment `record_id`, ce qui permet :
-
-- de savoir si le vrai record d'une cible a survécu ;
-- de mesurer la qualité réelle des attaques ;
-- de garder un lien propre entre les étapes.
-
-Cette version ne doit pas être considérée comme visible par l'attaquant.
+1. prepare a dataset with a stable internal identifier `record_id`;
+2. run an anonymization;
+3. produce:
+   - a public anonymized dataset;
+   - an evaluation anonymized dataset;
+   - anonymization metrics;
+4. prepare the inputs of the linkage attack;
+5. prepare the inputs of the MIA;
+6. run the attacks;
+7. save the detailed results and HTML reports.
 
 ---
 
-## Vue d'ensemble du pipeline
+## Difference between public dataset and evaluation dataset
+
+The project handles two main views of the anonymized dataset.
+
+### Public anonymized dataset
+This is the version meant to represent what would actually be published.
+
+It may drop internal columns such as `record_id`.
+
+### Evaluation anonymized dataset
+This is an internal version reserved for evaluation.
+
+It notably keeps `record_id`, which allows:
+
+- knowing whether a target's true record has survived;
+- measuring the real quality of the attacks;
+- keeping a clean link between the different steps.
+
+This version must **not** be considered visible to the attacker.
+
+---
+
+## Pipeline overview
 
 ```mermaid
 flowchart TD
-    A[Dataset original] --> B[prepare_dataset_with_record_id.py]
-    B --> C[Dataset avec record_id]
+    A[Original dataset] --> B[prepare_dataset_with_record_id.py]
+    B --> C[Dataset with record_id]
 
     C --> D[run_ano.py]
-    D --> E[Dataset anonymisé public]
-    D --> F[Dataset anonymisé d'évaluation]
-    D --> G[Métriques d'anonymisation]
+    D --> E[Public anonymized dataset]
+    D --> F[Evaluation anonymized dataset]
+    D --> G[Anonymization metrics]
 
     C --> H[make_auxiliary_base.py]
-    H --> I[Base auxiliaire linkage]
+    H --> I[Linkage auxiliary base]
 
     E --> J[run_linkage_attack.py]
     F --> J
     I --> J
-    J --> K[Résultats linkage + rapport HTML]
+    J --> K[Linkage results + HTML report]
 
     C --> L[make_mia_targets.py]
     L --> M[Published subset]
@@ -79,86 +79,91 @@ flowchart TD
     L --> O[Split metadata JSON]
 
     M --> P[run_ano.py]
-    P --> Q[Dataset anonymisé public pour la MIA]
-    P --> R[Dataset anonymisé d'évaluation pour la MIA]
+    P --> Q[Public anonymized dataset for MIA]
+    P --> R[Evaluation anonymized dataset for MIA]
 
     N --> S[make_mia_targets_post_ano.py]
     O --> S
     R --> S
-    S --> T[Attacker base MIA]
-    S --> U[Cibles MIA équilibrées]
+    S --> T[MIA attacker base]
+    S --> U[Balanced MIA targets]
 
     Q --> V[run_mia_attack.py]
     R --> V
     U --> V
-    V --> W[Résultats MIA + rapport HTML]
+    V --> W[MIA results + HTML report]
 ```
 
 ---
 
-## Branche anonymisation
+## Anonymization branch
 
-L'anonymisation est le socle du projet.
+Anonymization is the foundation of the project.
 
-Elle transforme un dataset source en plusieurs sorties :
+It transforms a source dataset into several outputs:
 
-- une configuration runtime dans `outputs/configs/` ;
-- un dataset anonymisé public dans `outputs/anonymized/` ;
-- un dataset anonymisé d'évaluation dans `outputs/anonymized_eval/` ;
-- des métriques dans `outputs/metrics/`.
+- a runtime configuration in `outputs/configs/`;
+- a public anonymized dataset in `outputs/anonymized/`;
+- an evaluation anonymized dataset in `outputs/anonymized_eval/`;
+- metrics in `outputs/metrics/`.
 
-Par défaut, les lignes dont tous les quasi-identifiants valent `*` sont retirées des exports CSV.
-
----
-
-## Branche linkage attack
-
-La linkage attack utilise :
-
-- une base auxiliaire contenant les attributs connus par l'attaquant ;
-- le dataset anonymisé public ;
-- le dataset anonymisé d'évaluation.
-
-Dans l'état actuel du projet, elle suit une logique en deux étages :
-
-1. construire une classe d'équivalence avec les attributs vus comme généralisés ou supprimés ;
-2. essayer de réduire cette classe avec les attributs restés en clair.
-
-Le résultat principal n'est pas seulement la recherche d'un candidat unique, mais aussi l'inférence de l'attribut sensible à partir de la classe finale.
+By default, rows whose quasi-identifiers are all `*` are removed from the CSV exports.
 
 ---
 
-## Branche MIA
+## Linkage attack branch
 
-La MIA suit désormais une logique en deux temps.
+The linkage attack uses:
 
-### Étape 1 : split pré-anonymisation
-`make_mia_targets.py` ne construit plus directement les cibles finales.
+- an auxiliary base containing the attributes known to the attacker;
+- the public anonymized dataset;
+- the evaluation anonymized dataset.
 
-Il produit surtout :
+In the current state of the project, it follows an **equivalence class logic in two phases**, driven by the attacker-observed `visible_level` of each known attribute:
 
-- un `published subset` qui sera anonymisé ;
-- un `OUT holdout pool` qui restera hors du dataset publié ;
-- un fichier JSON de métadonnées de split.
+1. **equivalence class phase 1**: build an initial equivalence class using attacker-known attributes that appear **generalized or suppressed** in the release (`visible_level != 0`);
+2. **equivalence class phase 2**: reduce that class using attacker-known attributes that remain **in clear text** in the release (`visible_level == 0`), either by exact match or with `privJedAI` fuzzy matching.
 
-### Étape 2 : construction post-anonymisation
-`make_mia_targets_post_ano.py` reconstruit ensuite :
+An optional **schema-matching step** may be inserted between the two phases: when some clear-text columns of the release have obfuscated names, Valentine-based matchers (`coma`, `jaccard`, `distribution`) or a pure-Python `baseline_jaccard` try to recover the original column names before phase 2 runs.
 
-- une attacker base équilibrée ;
-- les vraies cibles IN et OUT ;
-- les labels `is_member`.
-
-Les cibles IN sont choisies uniquement parmi les enregistrements qui ont réellement survécu dans `anonymized_eval`.
+The main output is not only the search for a unique candidate, but also the inference of the sensitive attribute from the final class.
 
 ---
 
-## Ce que le pipeline permet de mesurer
+## MIA branch
 
-Le pipeline complet permet d'observer plusieurs choses :
+The MIA now follows a two-step logic.
 
-- le niveau de généralisation et de suppression produit par l'anonymisation ;
-- la difficulté de relier une cible à des lignes anonymisées ;
-- la capacité d'inférer un attribut sensible après filtrage ;
-- la capacité de prédire l'appartenance d'une cible au dataset publié.
+### Step 1: pre-anonymization split
+`make_mia_targets.py` no longer builds the final targets directly.
 
-Le projet ne se limite donc pas à produire des datasets anonymisés : il cherche aussi à mesurer concrètement ce qu'un attaquant peut encore apprendre.
+It mainly produces:
+
+- a `published subset` which will be anonymized;
+- an `OUT holdout pool` which will stay out of the published dataset;
+- a JSON file with the split metadata.
+
+### Step 2: post-anonymization construction
+`make_mia_targets_post_ano.py` then builds:
+
+- a balanced attacker base;
+- the real IN and OUT targets;
+- the `is_member` labels.
+
+IN targets are picked **only** from records that actually survived in `anonymized_eval`.
+
+The MIA itself also uses the phase 1 / phase 2 equivalence class logic, with the same split rule based on `visible_level`.
+
+---
+
+## What the pipeline can measure
+
+The full pipeline lets us observe several things:
+
+- the level of generalization and suppression produced by anonymization;
+- the difficulty of linking a target to anonymized rows;
+- the ability to infer a sensitive attribute after filtering;
+- the ability to predict membership of a target in the published dataset;
+- the contribution of schema matching: how much of the phase-2 refinement power survives when column names in the release are not known to the attacker.
+
+The project is therefore not limited to producing anonymized datasets: it also seeks to measure concretely what an attacker can still learn.

@@ -1,99 +1,99 @@
-# Anonymisation
+# Anonymization
 
-## Rôle de cette étape
+## Role of this step
 
-L'anonymisation est la première étape centrale du projet.
+Anonymization is the first central step of the project.
 
-Son rôle est de transformer un dataset source en une version publiée plus protectrice, tout en conservant un niveau d'utilité suffisant pour les étapes suivantes.
+Its role is to transform a source dataset into a more protective published version, while keeping enough utility for the downstream steps.
 
-Dans ce projet, l'anonymisation sert de point de départ aux deux attaques étudiées ensuite :
+In this project, anonymization is the starting point of the two studied attacks:
 
-- la linkage attack ;
-- la membership inference attack (MIA).
+- the linkage attack;
+- the membership inference attack (MIA).
 
 ---
 
-## Scripts principaux
+## Main scripts
 
-Les scripts les plus importants pour cette étape sont :
+The most important scripts at this step are:
 
 - `scripts/prepare_dataset_with_record_id.py`
 - `scripts/run_ano.py`
 
 ### `prepare_dataset_with_record_id.py`
-Ce script prépare un dataset contenant un identifiant interne stable, généralement `record_id`.
+This script prepares a dataset containing a stable internal identifier, usually `record_id`.
 
-Il peut aussi produire une copie mise à jour d'une configuration de base pour pointer vers ce dataset préparé.
+It can also produce an updated copy of a base configuration so that it points to the prepared dataset.
 
 ### `run_ano.py`
-C'est le point d'entrée principal de l'anonymisation.
+This is the main entry point for anonymization.
 
-Il charge une configuration, exécute l'anonymisation via le gestionnaire du projet, puis sauvegarde les fichiers de sortie.
-
----
-
-## Idée générale
-
-L'anonymisation suit globalement la logique suivante :
-
-1. partir d'un dataset source ;
-2. éventuellement lui ajouter `record_id` ;
-3. charger une configuration JSON ;
-4. construire une configuration runtime complète ;
-5. lancer l'anonymisation ;
-6. produire plusieurs sorties utiles :
-   - la configuration réellement exécutée ;
-   - le dataset anonymisé public ;
-   - le dataset anonymisé d'évaluation ;
-   - les métriques.
+It loads a configuration, runs the anonymization through the project's manager, then saves the output files.
 
 ---
 
-## Entrées de l'anonymisation
+## General idea
 
-### 1. Le dataset source
+Anonymization roughly follows this logic:
 
-Le point de départ est un dataset tabulaire, par exemple :
+1. start from a source dataset;
+2. optionally add `record_id`;
+3. load a JSON configuration;
+4. build a complete runtime configuration;
+5. run the anonymization;
+6. produce several useful outputs:
+   - the configuration that was actually executed;
+   - the public anonymized dataset;
+   - the evaluation anonymized dataset;
+   - the metrics.
+
+---
+
+## Inputs of the anonymization
+
+### 1. The source dataset
+
+The starting point is a tabular dataset, for example:
 
 - `data/adult.csv`
 - `data/adult_with_record_id.csv`
 
-Dans la pratique actuelle du projet, il est préférable de travailler avec une version déjà préparée avec `record_id`.
+In current project practice, it is preferable to work with a version that already has `record_id`.
 
-### 2. Le fichier de configuration
+### 2. The configuration file
 
-L'anonymisation est pilotée par un fichier JSON décrivant l'expérience.
+Anonymization is driven by a JSON file describing the experiment.
 
-Ce fichier contient notamment :
+This file notably contains:
 
-- le chemin vers le dataset ;
-- les quasi-identifiants ;
-- l'attribut sensible ;
-- les attributs insensibles ;
-- les hiérarchies de généralisation ;
-- les paramètres comme `k`, `l`, `t` ;
-- la limite de suppression.
+- the path to the dataset;
+- the quasi-identifiers;
+- the sensitive attribute;
+- the insensitive attributes;
+- the generalization hierarchies;
+- parameters such as `k`, `l`, `t`;
+- the suppression limit.
 
-### 3. Les hiérarchies de généralisation
+### 3. The generalization hierarchies
 
-Certaines colonnes disposent de hiérarchies CSV, par exemple :
+Some columns come with CSV hierarchies, for example:
 
 - `hierarchies/age.csv`
 - `hierarchies/sex.csv`
 - `hierarchies/race.csv`
 - `hierarchies/native-country.csv`
 
-Chaque ligne d'une hiérarchie décrit une valeur source et ses niveaux successifs de généralisation.
+Each row of a hierarchy describes a source value and its successive generalization levels.
 
 ---
 
-## Types d'attributs utilisés
+## Types of attributes used
 
-### Quasi-identifiants
+### Quasi-identifiers
 
-Les quasi-identifiants sont les attributs susceptibles de faciliter une ré-identification lorsqu'ils sont recoupés.
+Quasi-identifiers are attributes that can facilitate re-identification when cross-referenced.
 
-Exemples fréquents dans le projet :
+Common examples in the project:
 
 - `age`
 - `sex`
@@ -101,199 +101,200 @@ Exemples fréquents dans le projet :
 - `marital-status`
 - `native-country`
 
-Ce sont principalement ces colonnes qui sont généralisées ou supprimées.
+These are the columns that are mostly generalized or suppressed.
 
-### Attribut sensible
+### Sensitive attribute
 
-L'attribut sensible est celui que l'on veut particulièrement protéger.
+The sensitive attribute is the one we especially want to protect.
 
-Dans le dataset Adult, il s'agit souvent de :
+In the Adult dataset, it is typically:
 
 - `income`
 
-### Attributs insensibles
+### Insensitive attributes
 
-Les attributs insensibles ne servent pas à l'anonymisation elle-même.
+Insensitive attributes are not used by the anonymization itself.
 
-Dans le projet, `record_id` est typiquement placé dans cette catégorie pour rester disponible dans l'export d'évaluation.
+In the project, `record_id` is typically placed in this category to remain available in the evaluation export. The attack pipeline relies on this: `record_id` must be protected from anonymization at the runtime-config level (added to `insensitive_attributes`, removed from quasi-identifiers and sensitive attributes), otherwise downstream ID matching breaks entirely.
 
 ---
 
-## Paramètres d'anonymisation
+## Anonymization parameters
 
-La configuration peut inclure plusieurs paramètres classiques.
+The configuration can include several classic parameters.
 
 ### `k`-anonymity
 
-Le paramètre `k` impose qu'un enregistrement ne puisse pas être distingué de moins de `k - 1` autres sur les quasi-identifiants.
+The `k` parameter requires that a record cannot be distinguished from fewer than `k - 1` others on the quasi-identifiers.
 
 ### `l`-diversity
 
-Le paramètre `l` impose une diversité minimale de l'attribut sensible dans les classes d'équivalence.
+The `l` parameter requires a minimum diversity of the sensitive attribute inside the equivalence classes.
 
 ### `t`-closeness
 
-Le paramètre `t` impose que la distribution de l'attribut sensible dans chaque classe reste proche de la distribution globale.
+The `t` parameter requires that the distribution of the sensitive attribute in each class stays close to the global distribution.
 
-### Limite de suppression
+### Suppression limit
 
-Une limite de suppression peut être fixée pour autoriser la suppression d'une partie des données lorsque la généralisation seule ne suffit pas.
-
----
-
-## Déroulement logique de `run_ano.py`
-
-### 1. Lecture de la configuration
-
-Le script charge d'abord le JSON de configuration demandé.
-
-### 2. Construction de la configuration runtime
-
-Le script produit ensuite une configuration runtime complète et exploitable.
-
-Cette étape sert notamment à :
-
-- résoudre les chemins ;
-- figer exactement les paramètres utilisés ;
-- sauvegarder une trace reproductible dans `outputs/configs/`.
-
-### 3. Lancement de l'anonymisation
-
-Le script appelle ensuite le gestionnaire d'anonymisation du projet.
-
-Cette étape applique les règles définies dans la configuration :
-
-- chargement du dataset ;
-- chargement des hiérarchies ;
-- application des contraintes ;
-- production du résultat anonymisé.
-
-### 4. Export des fichiers
-
-Une fois l'anonymisation terminée, le script peut produire :
-
-- un export public ;
-- un export d'évaluation ;
-- un fichier de métriques.
+A suppression limit can be set to allow removing part of the data when generalization alone is not enough.
 
 ---
 
-## Point important : suppression des lignes totalement supprimées
+## Logical flow of `run_ano.py`
 
-Dans l'état actuel du projet, `run_ano.py` retire par défaut des exports CSV les lignes dont **tous les quasi-identifiants valent `*`**.
+### 1. Reading the configuration
 
-Autrement dit, une ligne complètement supprimée au niveau des QI n'est généralement pas gardée dans :
+The script first loads the requested JSON configuration.
+
+### 2. Building the runtime configuration
+
+The script then produces a complete, usable runtime configuration.
+
+This step is used to:
+
+- resolve paths;
+- freeze exactly the parameters that are used;
+- save a reproducible trace in `outputs/configs/`.
+
+### 3. Running the anonymization
+
+The script then calls the project's anonymization manager.
+
+This step applies the rules defined in the configuration:
+
+- loading the dataset;
+- loading the hierarchies;
+- applying the constraints;
+- producing the anonymized result.
+
+### 4. File exports
+
+Once anonymization is done, the script can produce:
+
+- a public export;
+- an evaluation export;
+- a metrics file.
+
+---
+
+## Important note: removal of fully suppressed rows
+
+In the current state of the project, `run_ano.py` removes by default from CSV exports the rows where **all quasi-identifiers are `*`**.
+
+In other words, a row that is fully suppressed at the QI level is usually not kept in:
 
 - `outputs/anonymized/...`
 - `outputs/anonymized_eval/...`
 
-Cette règle explique pourquoi :
+This rule explains why:
 
-- `anonymized_eval` peut contenir moins de lignes que le résultat brut de l'anonymiseur ;
-- certaines cibles publiées au départ ne survivent finalement pas dans l'export ;
-- la MIA doit reconstruire ses cibles IN après anonymisation.
+- `anonymized_eval` can contain fewer rows than the raw anonymizer output;
+- some initially-published targets end up not surviving in the export;
+- the MIA must reconstruct its IN targets after anonymization.
 
-### Option associée
-Cette suppression automatique peut être désactivée avec :
+### Associated option
+This automatic removal can be disabled with:
 
 - `--keep-fully-suppressed-records`
 
 ---
 
-## Point important : différence entre export public et export d'évaluation
+## Important note: difference between public and evaluation exports
 
-### Export public
-L'export public représente ce que l'attaquant est censé voir.
+### Public export
+The public export represents what the attacker is supposed to see.
 
-On peut y retirer certaines colonnes internes avec :
+Some internal columns can be dropped with:
 
 - `--public-drop-columns`
 
-Exemple typique :
+Typical example:
 
 - `--public-drop-columns record_id`
 
-### Export d'évaluation
-L'export d'évaluation conserve les colonnes utiles à la vérification interne, notamment `record_id`.
+### Evaluation export
+The evaluation export keeps the columns that are useful for internal checks, notably `record_id`.
 
-Il ne doit pas être considéré comme un fichier publié.
+It must **not** be considered a published file.
 
 ---
 
-## Sorties produites
+## Outputs produced
 
-### 1. Configuration exécutée
+### 1. Executed configuration
 
-Dossier typique :
+Typical folder:
 
 - `outputs/configs/`
 
-Le fichier JSON sauvegardé ici correspond à la configuration réellement utilisée pendant l'exécution.
+The JSON file saved here corresponds to the configuration actually used during the run.
 
-### 2. Dataset anonymisé public
+### 2. Public anonymized dataset
 
-Dossier typique :
+Typical folder:
 
 - `outputs/anonymized/`
 
-C'est la version censée représenter les données publiées.
+This is the version meant to represent the published data.
 
-### 3. Dataset anonymisé d'évaluation
+### 3. Evaluation anonymized dataset
 
-Dossier typique :
+Typical folder:
 
 - `outputs/anonymized_eval/`
 
-Cette version est réservée à l'évaluation interne.
+This version is reserved for internal evaluation.
 
-### 4. Métriques
+### 4. Metrics
 
-Dossier typique :
+Typical folder:
 
 - `outputs/metrics/`
 
-Ces fichiers résument les résultats de l'anonymisation et incluent aussi des informations utiles sur les exports, par exemple :
+These files summarize the anonymization results and also contain useful information about the exports, for example:
 
-- les chemins générés ;
-- les colonnes retirées du public ;
-- le nombre de lignes supprimées parce que tous les QI étaient `*`.
+- the generated paths;
+- the columns dropped from the public version;
+- the number of rows removed because all QIs were `*`.
 
-### 5. Résumé benchmark
+### 5. Benchmark summary
 
-Fichier typique :
+Typical file:
 
 - `outputs/benchmark_summary.csv`
 
-Ce fichier agrège les runs d'anonymisation exécutés via le pipeline courant.
+This file aggregates the anonymization runs executed through the current pipeline.
 
 ---
 
-## Schéma simplifié
+## Simplified schema
 
 ```mermaid
 flowchart TD
-    A[Dataset source] --> B[prepare_dataset_with_record_id.py]
-    B --> C[Dataset avec record_id]
+    A[Source dataset] --> B[prepare_dataset_with_record_id.py]
+    B --> C[Dataset with record_id]
 
-    D[Fichier de configuration JSON] --> E[run_ano.py]
+    D[JSON configuration file] --> E[run_ano.py]
     C --> E
-    F[Hiérarchies CSV] --> E
+    F[CSV hierarchies] --> E
 
-    E --> G[Configuration runtime]
-    E --> H[Dataset anonymisé public]
-    E --> I[Dataset anonymisé d'évaluation]
-    E --> J[Métriques]
+    E --> G[Runtime configuration]
+    E --> H[Public anonymized dataset]
+    E --> I[Evaluation anonymized dataset]
+    E --> J[Metrics]
 ```
 
 ---
 
-## Résumé
+## Summary
 
-L'anonymisation ne consiste pas seulement à généraliser des valeurs.
+Anonymization is not only about generalizing values.
 
-Dans le projet actuel, elle inclut aussi :
+In the current project, it also includes:
 
-- la gestion d'un identifiant interne stable ;
-- la distinction stricte entre public et évaluation ;
-- l'exclusion par défaut des lignes totalement supprimées ;
-- la production d'artefacts réutilisables par les attaques et les rapports.
+- managing a stable internal identifier;
+- strict separation between public and evaluation exports;
+- default exclusion of fully suppressed rows;
+- protection of `record_id` from anonymization via the runtime config;
+- production of artifacts reused by the attacks and reports.
