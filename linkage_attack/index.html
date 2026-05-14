@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../anonymisation/">
+        <link rel="prev" href="../anonymisation/fonctions_agregats/">
       
       
         <link rel="next" href="../mia/">
@@ -28,6 +28,9 @@
     
     
       <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +58,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -76,9 +86,7 @@
     
       
 
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="TER Documentation" class="md-header__button md-logo" aria-label="TER Documentation" data-md-component="logo">
       
@@ -106,6 +114,32 @@
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -137,6 +171,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -162,6 +198,127 @@
       
         
           
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+    
+  
+  Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../anonymisation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Anonymization
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Attacks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../metriques/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Utility metrics and classification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../structure_scripts/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Implementation
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -175,8 +332,12 @@
                     
 
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="TER Documentation" class="md-nav__button md-logo" aria-label="TER Documentation" data-md-component="logo">
       
@@ -195,15 +356,40 @@
   
   
   
-    <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+    
+    
+      
         
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href=".." class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -211,13 +397,30 @@
   
   
 
-      </a>
-    </li>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview
   
 
-    
-      
-      
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
   
   
   
@@ -242,6 +445,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -249,9 +460,38 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../anonymisation/" class="md-nav__link">
+    
+    
+      
         
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../anonymisation/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -265,13 +505,184 @@
   
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Anonymization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main anonymization pipeline
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/mesures_utilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/fonctions_agregats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aggregate functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attacks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
     
@@ -974,9 +1385,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -989,7 +1401,7 @@
   <span class="md-ellipsis">
     
   
-    MIA
+    Membership Inference Attack
   
 
     
@@ -1001,9 +1413,222 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metriques/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utility metrics and classification
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utility metrics and classification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/classification_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classification models integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../structure_scripts/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
   
@@ -1016,7 +1641,7 @@
   <span class="md-ellipsis">
     
   
-    Script structure
+    Main script structure
   
 
     
@@ -1028,9 +1653,12 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+            
+              
+                
   
   
   
@@ -1043,7 +1671,7 @@
   <span class="md-ellipsis">
     
   
-    File formats
+    Main file formats
   
 
     
@@ -1055,6 +1683,42 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats_fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utility/classification file formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
   </ul>
 </nav>
@@ -1062,663 +1726,6 @@
                 </div>
               </div>
             
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#role-of-this-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role of this step
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#general-idea" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        General idea
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#main-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Main scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Main scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#make_auxiliary_basepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_auxiliary_base.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_attack.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#schema_matcherpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        schema_matcher.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#demo_schema_matchingpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        demo_schema_matching.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generate_linkage_attack_reportpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        generate_linkage_attack_report.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-used-by-the-attack" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data used by the attack
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Data used by the attack">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-the-attacker-auxiliary-base" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. The attacker auxiliary base
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-the-public-anonymized-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. The public anonymized dataset
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-the-evaluation-anonymized-dataset" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. The evaluation anonymized dataset
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#what-the-attacker-knows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What the attacker knows
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-notion-of-visible_level" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The notion of visible_level
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="The notion of visible_level">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#visible_level-0" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        visible_level != 0
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#visible_level-0_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        visible_level == 0
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#attack-logical-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Attack logical flow
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Attack logical flow">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#equivalence-class-phase-1-initial-class" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Equivalence class phase 1 — initial class
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#optional-schema-matching-between-the-two-phases" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        (Optional) Schema matching between the two phases
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#equivalence-class-phase-2-refinement" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Equivalence class phase 2 — refinement
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phase-1-class-reuse-cache" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 1 class reuse (cache)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#schema-matching-between-phase-1-and-phase-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Schema matching between phase 1 and phase 2
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Schema matching between phase 1 and phase 2">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#motivation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Motivation
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#module-involved" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Module involved
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#available-matchers" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Available matchers
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#schema-matching-logical-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Schema-matching logical flow
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#outputs-of-the-schema-matching-step" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Outputs of the schema-matching step
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#standalone-demo" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Standalone demo
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phase-2-compatibility-and-refinement-types" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Phase 2 compatibility and refinement types
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Phase 2 compatibility and refinement types">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#exact-match" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Exact match
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fuzzy-match-with-privjedai" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fuzzy match with privJedAI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#suppression-during-phase-2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Suppression during phase 2
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#sensitive-attribute-inference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Sensitive attribute inference
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Sensitive attribute inference">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#case-1-empty-class" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Case 1: empty class
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#case-2-a-single-candidate" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Case 2: a single candidate
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#case-3-multiple-candidates-a-single-sensitive-value" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Case 3: multiple candidates, a single sensitive value
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#case-4-multiple-candidates-multiple-sensitive-values" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Case 4: multiple candidates, multiple sensitive values
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#outputs-produced" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Outputs produced
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Outputs produced">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#summaryjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        summary.json
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#targetscsv" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        targets.csv
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#equivalence_class_candidatescsv" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        equivalence_class_candidates.csv
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attacker_knowledgejson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        attacker_knowledge.json
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#schema_matching_resultsjson-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        schema_matching_results.json (optional)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#schema_matching_pairscsv-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        schema_matching_pairs.csv (optional)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#prefilter_debug-optional" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prefilter_debug/ (optional)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attack_id__reporthtml" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        &lt;attack_id&gt;__report.html
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#logical-flow-of-make_auxiliary_basepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logical flow of make_auxiliary_base.py
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#logical-flow-of-run_linkage_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logical flow of run_linkage_attack.py
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#main-variables-of-summaryjson" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Main variables of summary.json
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#main-variables-of-targetscsv" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Main variables of targets.csv
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#complexity-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Complexity variables
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-variables" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration variables
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
             
           
           
@@ -1730,13 +1737,13 @@
 
 
 
-<h1 id="linkage-attack">Linkage attack</h1>
-<h2 id="role-of-this-step">Role of this step</h2>
+<h1 id="linkage-attack">Linkage attack<a class="headerlink" href="#linkage-attack" title="Permanent link">&para;</a></h1>
+<h2 id="role-of-this-step">Role of this step<a class="headerlink" href="#role-of-this-step" title="Permanent link">&para;</a></h2>
 <p>The <strong>linkage attack</strong> tries to link a target known to the attacker to one or more rows of the published anonymized dataset.</p>
 <p>In this project, its role is not only to search for an exact re-identification.
 It also serves to measure what an attacker can still learn about the <strong>sensitive attribute</strong> from the remaining compatible candidates.</p>
 <hr />
-<h2 id="general-idea">General idea</h2>
+<h2 id="general-idea">General idea<a class="headerlink" href="#general-idea" title="Permanent link">&para;</a></h2>
 <p>The attack starts from a realistic assumption:</p>
 <ul>
 <li>the attacker has an auxiliary base;</li>
@@ -1752,7 +1759,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li><strong>equivalence class phase 2</strong> — refine the class with clear-text attributes (exact or fuzzy).</li>
 </ol>
 <hr />
-<h2 id="main-scripts">Main scripts</h2>
+<h2 id="main-scripts">Main scripts<a class="headerlink" href="#main-scripts" title="Permanent link">&para;</a></h2>
 <p>The most important scripts at this step are:</p>
 <ul>
 <li><code>scripts/make_auxiliary_base.py</code></li>
@@ -1761,20 +1768,20 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li><code>scripts/demo_schema_matching.py</code></li>
 <li><code>scripts/generate_linkage_attack_report.py</code></li>
 </ul>
-<h3 id="make_auxiliary_basepy"><code>make_auxiliary_base.py</code></h3>
+<h3 id="make_auxiliary_basepy"><code>make_auxiliary_base.py</code><a class="headerlink" href="#make_auxiliary_basepy" title="Permanent link">&para;</a></h3>
 <p>Prepares the attacker auxiliary base from a dataset that already has <code>record_id</code>.</p>
-<h3 id="run_linkage_attackpy"><code>run_linkage_attack.py</code></h3>
+<h3 id="run_linkage_attackpy"><code>run_linkage_attack.py</code><a class="headerlink" href="#run_linkage_attackpy" title="Permanent link">&para;</a></h3>
 <p>Runs the attack, produces the detailed files, the <code>summary.json</code>, and if possible the HTML report. It also drives the optional schema-matching step.</p>
-<h3 id="schema_matcherpy"><code>schema_matcher.py</code></h3>
+<h3 id="schema_matcherpy"><code>schema_matcher.py</code><a class="headerlink" href="#schema_matcherpy" title="Permanent link">&para;</a></h3>
 <p>Schema-matching module used between phase 1 and phase 2. Wraps the Valentine library (COMA, JaccardDistanceMatcher, DistributionBased) and provides a pure-Python Jaccard baseline. Also exposes utilities to obfuscate column names, evaluate recovered mappings, and rename columns back.</p>
-<h3 id="demo_schema_matchingpy"><code>demo_schema_matching.py</code></h3>
+<h3 id="demo_schema_matchingpy"><code>demo_schema_matching.py</code><a class="headerlink" href="#demo_schema_matchingpy" title="Permanent link">&para;</a></h3>
 <p>Standalone demo that showcases the schema-matching step alone (outside of the full attack), useful to check matcher behavior on a given anonymized release and auxiliary base.</p>
-<h3 id="generate_linkage_attack_reportpy"><code>generate_linkage_attack_report.py</code></h3>
+<h3 id="generate_linkage_attack_reportpy"><code>generate_linkage_attack_report.py</code><a class="headerlink" href="#generate_linkage_attack_reportpy" title="Permanent link">&para;</a></h3>
 <p>Generates an HTML report from the attack outputs.</p>
 <hr />
-<h2 id="data-used-by-the-attack">Data used by the attack</h2>
+<h2 id="data-used-by-the-attack">Data used by the attack<a class="headerlink" href="#data-used-by-the-attack" title="Permanent link">&para;</a></h2>
 <p>The linkage attack relies on three main data sets.</p>
-<h3 id="1-the-attacker-auxiliary-base">1. The attacker auxiliary base</h3>
+<h3 id="1-the-attacker-auxiliary-base">1. The attacker auxiliary base<a class="headerlink" href="#1-the-attacker-auxiliary-base" title="Permanent link">&para;</a></h3>
 <p>It contains the information the attacker knows about the targets.</p>
 <p>Common examples:</p>
 <ul>
@@ -1784,9 +1791,9 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li><code>marital-status</code></li>
 <li><code>native-country</code></li>
 </ul>
-<h3 id="2-the-public-anonymized-dataset">2. The public anonymized dataset</h3>
+<h3 id="2-the-public-anonymized-dataset">2. The public anonymized dataset<a class="headerlink" href="#2-the-public-anonymized-dataset" title="Permanent link">&para;</a></h3>
 <p>This is the attacker's assumed realistic view.</p>
-<h3 id="3-the-evaluation-anonymized-dataset">3. The evaluation anonymized dataset</h3>
+<h3 id="3-the-evaluation-anonymized-dataset">3. The evaluation anonymized dataset<a class="headerlink" href="#3-the-evaluation-anonymized-dataset" title="Permanent link">&para;</a></h3>
 <p>This version is used internally to:</p>
 <ul>
 <li>recover <code>record_id</code>;</li>
@@ -1795,7 +1802,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>measure the real quality of the attack.</li>
 </ul>
 <hr />
-<h2 id="what-the-attacker-knows">What the attacker knows</h2>
+<h2 id="what-the-attacker-knows">What the attacker knows<a class="headerlink" href="#what-the-attacker-knows" title="Permanent link">&para;</a></h2>
 <p>The attacker only knows a subset of attributes.</p>
 <p>The script accepts this list through <code>--known-attrs</code>.</p>
 <p>This partial knowledge is then interpreted through an important internal object:</p>
@@ -1809,18 +1816,18 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>the projection from attacker-raw value to attacker-visible value.</li>
 </ul>
 <hr />
-<h2 id="the-notion-of-visible_level">The notion of <code>visible_level</code></h2>
+<h2 id="the-notion-of-visible_level">The notion of <code>visible_level</code><a class="headerlink" href="#the-notion-of-visible_level" title="Permanent link">&para;</a></h2>
 <p>The <code>visible_level</code> indicates up to which hierarchy level an attribute remains visible in the published data.</p>
-<h3 id="visible_level-0"><code>visible_level != 0</code></h3>
+<h3 id="visible_level-0"><code>visible_level != 0</code><a class="headerlink" href="#visible_level-0" title="Permanent link">&para;</a></h3>
 <p>The attribute appears in a generalized or suppressed form in the release.</p>
 <p>It therefore belongs to <strong>equivalence class phase 1</strong>.</p>
-<h3 id="visible_level-0_1"><code>visible_level == 0</code></h3>
+<h3 id="visible_level-0_1"><code>visible_level == 0</code><a class="headerlink" href="#visible_level-0_1" title="Permanent link">&para;</a></h3>
 <p>The attribute remains visible as clear text in the release.</p>
 <p>It can then be used to <strong>refine</strong> the class built in phase 1, that is, it belongs to <strong>equivalence class phase 2</strong>.</p>
 <p>This separation is central to the current logic of the attack: the attribute split is <strong>attacker-view based</strong>, not config-based.</p>
 <hr />
-<h2 id="attack-logical-flow">Attack logical flow</h2>
-<h3 id="equivalence-class-phase-1-initial-class">Equivalence class phase 1 — initial class</h3>
+<h2 id="attack-logical-flow">Attack logical flow<a class="headerlink" href="#attack-logical-flow" title="Permanent link">&para;</a></h2>
+<h3 id="equivalence-class-phase-1-initial-class">Equivalence class phase 1 — initial class<a class="headerlink" href="#equivalence-class-phase-1-initial-class" title="Permanent link">&para;</a></h3>
 <p>The script selects the known attributes with <code>visible_level != 0</code> (these are called <code>qid_filter_attrs</code> or <code>stage1_filter_attrs</code> in the summary).</p>
 <p>For each of them, it projects the target's raw value into the attacker-visible value.</p>
 <p>Example:</p>
@@ -1830,9 +1837,9 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </ul>
 <p>It then keeps only the anonymized rows compatible with all these visible values. Compatibility is evaluated through an inverted index (one entry per attribute value) built once over the anonymized release.</p>
 <p>The result is the <strong>phase 1 equivalence class</strong> (also called <code>qid_equivalence_class</code> or <code>stage1_equivalence_class</code>).</p>
-<h3 id="optional-schema-matching-between-the-two-phases">(Optional) Schema matching between the two phases</h3>
+<h3 id="optional-schema-matching-between-the-two-phases">(Optional) Schema matching between the two phases<a class="headerlink" href="#optional-schema-matching-between-the-two-phases" title="Permanent link">&para;</a></h3>
 <p>If the attacker does not know the column names of the clear-text columns in the release, a schema-matching step can be inserted here. See the dedicated section below.</p>
-<h3 id="equivalence-class-phase-2-refinement">Equivalence class phase 2 — refinement</h3>
+<h3 id="equivalence-class-phase-2-refinement">Equivalence class phase 2 — refinement<a class="headerlink" href="#equivalence-class-phase-2-refinement" title="Permanent link">&para;</a></h3>
 <p>The script then selects the known attributes with <code>visible_level == 0</code> (called <code>refine_attrs</code> or <code>stage2_refine_attrs</code> in the summary).</p>
 <p>Starting from the phase 1 class, it further reduces the candidates:</p>
 <ul>
@@ -1841,7 +1848,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </ul>
 <p>The result is the <strong>phase 2 equivalence class</strong> (also called <code>reduced_equivalence_class</code> or <code>stage2_equivalence_class</code>).</p>
 <hr />
-<h2 id="phase-1-class-reuse-cache">Phase 1 class reuse (cache)</h2>
+<h2 id="phase-1-class-reuse-cache">Phase 1 class reuse (cache)<a class="headerlink" href="#phase-1-class-reuse-cache" title="Permanent link">&para;</a></h2>
 <p>The script does not recompute the phase 1 class for every target.</p>
 <p>If several targets share exactly the same projection on the phase 1 attributes, they reuse the same phase 1 class through a cache (<code>qid_stage1_cache</code>), keyed on a tuple of <code>(attribute, projected value)</code> pairs.</p>
 <p>This is what the variable <code>n_distinct_stage1_groups</code> counts.</p>
@@ -1851,12 +1858,12 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>it influences the complexity counters.</li>
 </ul>
 <hr />
-<h2 id="schema-matching-between-phase-1-and-phase-2">Schema matching between phase 1 and phase 2</h2>
-<h3 id="motivation">Motivation</h3>
+<h2 id="schema-matching-between-phase-1-and-phase-2">Schema matching between phase 1 and phase 2<a class="headerlink" href="#schema-matching-between-phase-1-and-phase-2" title="Permanent link">&para;</a></h2>
+<h3 id="motivation">Motivation<a class="headerlink" href="#motivation" title="Permanent link">&para;</a></h3>
 <p>Phase 2 refines the equivalence class using attacker-known attributes that stay in clear text in the release. For this to work, the attacker needs to know <strong>which column</strong> in the release corresponds to each clear-text attribute they have in their auxiliary base.</p>
 <p>In a realistic scenario, the data publisher may obfuscate or rename these columns. Phase 2 cannot proceed as-is: the attacker sees values but not labels.</p>
 <p>The schema-matching step recovers, from values alone, a mapping from each obfuscated anonymized column to its corresponding auxiliary-base column. It is instance-based: it compares values, not names.</p>
-<h3 id="module-involved">Module involved</h3>
+<h3 id="module-involved">Module involved<a class="headerlink" href="#module-involved" title="Permanent link">&para;</a></h3>
 <p>The logic lives in <code>scripts/schema_matcher.py</code>. It is wired into <code>run_linkage_attack.py</code> via three CLI flags:</p>
 <ul>
 <li><code>--obfuscate-refine-attrs age,hours-per-week,capital-gain</code> — the comma-separated list of clear-text attributes to treat as unknown-named in <code>df_public</code> (they will be renamed to <code>col_0</code>, <code>col_1</code>, ... before matching);</li>
@@ -1864,7 +1871,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li><code>--schema-matcher-min-score &lt;float&gt;</code> — minimum similarity score required to keep a recovered mapping.</li>
 </ul>
 <p>When <code>--obfuscate-refine-attrs</code> is not passed, the schema-matching step is skipped and phase 2 runs as usual on known column names.</p>
-<h3 id="available-matchers">Available matchers</h3>
+<h3 id="available-matchers">Available matchers<a class="headerlink" href="#available-matchers" title="Permanent link">&para;</a></h3>
 <p>The <code>schema_matcher.build_valentine_matcher</code> factory exposes three Valentine matchers plus a baseline:</p>
 <table>
 <thead>
@@ -1898,7 +1905,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </tbody>
 </table>
 <p>The recommended default is <code>jaccard</code> because it is simple, fast, and works well on the Adult dataset's categorical columns. <code>baseline_jaccard</code> is kept as a reference to confirm that Valentine's <code>JaccardDistanceMatcher</code> behaves as expected.</p>
-<h3 id="schema-matching-logical-flow">Schema-matching logical flow</h3>
+<h3 id="schema-matching-logical-flow">Schema-matching logical flow<a class="headerlink" href="#schema-matching-logical-flow" title="Permanent link">&para;</a></h3>
 <p>Inside <code>run_linkage_attack</code>, when <code>--obfuscate-refine-attrs</code> is set:</p>
 <ol>
 <li>rename the listed columns in <code>df_public</code> to <code>col_0</code>, <code>col_1</code>, ... (<code>obfuscate_columns</code>), keeping the ground truth aside for evaluation only;</li>
@@ -1910,35 +1917,35 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>evaluate the recovered mapping against the ground truth (<code>evaluate_mapping</code>) and save both a JSON and a CSV trace.</li>
 </ol>
 <p>Phase 2 then proceeds as if the names had never been hidden, operating only on columns that were actually recovered.</p>
-<h3 id="outputs-of-the-schema-matching-step">Outputs of the schema-matching step</h3>
+<h3 id="outputs-of-the-schema-matching-step">Outputs of the schema-matching step<a class="headerlink" href="#outputs-of-the-schema-matching-step" title="Permanent link">&para;</a></h3>
 <p>When the step runs, the attack directory contains:</p>
 <ul>
 <li><code>schema_matching_results.json</code> — full trace: matcher used, <code>min_score</code>, obfuscated columns, candidate columns on the KB side, ground truth, recovered pairs with scores, metrics (<code>n_obfuscated</code>, <code>n_mapped</code>, <code>n_correct</code>, <code>coverage</code>, <code>accuracy_on_mapped</code>, <code>recall</code>);</li>
 <li><code>schema_matching_pairs.csv</code> — one row per obfuscated column with <code>anon_column</code>, <code>true_column</code>, <code>predicted_column</code>, <code>score</code>, <code>is_mapped</code>, <code>is_correct</code>, <code>matcher</code>, <code>min_score</code>.</li>
 </ul>
 <p>The <code>summary.json</code> of the attack also gains the following fields: <code>schema_matching_enabled</code>, <code>schema_matcher_name</code>, <code>schema_matcher_min_score</code>, <code>schema_matching_results_json</code>, <code>schema_matching_pairs_csv</code>.</p>
-<h3 id="standalone-demo">Standalone demo</h3>
+<h3 id="standalone-demo">Standalone demo<a class="headerlink" href="#standalone-demo" title="Permanent link">&para;</a></h3>
 <p><code>scripts/demo_schema_matching.py</code> runs the schema-matching step in isolation, outside of the full attack. It loads an anonymized CSV and an auxiliary CSV, obfuscates a chosen list of <code>refine_attrs</code>, runs a chosen matcher, prints the recovered mapping and the evaluation metrics, and shows how the renamed DataFrame can be plugged back into the attack pipeline. Useful when calibrating <code>--schema-matcher</code> and <code>--schema-matcher-min-score</code> on new data.</p>
 <hr />
-<h2 id="phase-2-compatibility-and-refinement-types">Phase 2 compatibility and refinement types</h2>
-<h3 id="exact-match">Exact match</h3>
+<h2 id="phase-2-compatibility-and-refinement-types">Phase 2 compatibility and refinement types<a class="headerlink" href="#phase-2-compatibility-and-refinement-types" title="Permanent link">&para;</a></h2>
+<h3 id="exact-match">Exact match<a class="headerlink" href="#exact-match" title="Permanent link">&para;</a></h3>
 <p>Used when the refinement attribute remained visible as-is in the published dataset.</p>
-<h3 id="fuzzy-match-with-privjedai">Fuzzy match with <code>privJedAI</code></h3>
+<h3 id="fuzzy-match-with-privjedai">Fuzzy match with <code>privJedAI</code><a class="headerlink" href="#fuzzy-match-with-privjedai" title="Permanent link">&para;</a></h3>
 <p>Optional, enabled with <code>--use-privjedai-fuzzy</code>.</p>
 <p>This mode is useful when two values should be treated as close despite form variations.</p>
 <p>It does not replace phase 1: it only kicks in during phase 2 on clear-text attributes, after the optional schema-matching step.</p>
-<h3 id="suppression-during-phase-2">Suppression during phase 2</h3>
+<h3 id="suppression-during-phase-2">Suppression during phase 2<a class="headerlink" href="#suppression-during-phase-2" title="Permanent link">&para;</a></h3>
 <p>During refinement, an anonymized value that is a pure suppression token (e.g. <code>*</code>, <code>**</code>, empty string) stays compatible with any attacker value. This avoids collapsing the phase 2 class to size 0 when an attribute was mistakenly routed to refinement because its column is entirely suppressed.</p>
 <hr />
-<h2 id="sensitive-attribute-inference">Sensitive attribute inference</h2>
+<h2 id="sensitive-attribute-inference">Sensitive attribute inference<a class="headerlink" href="#sensitive-attribute-inference" title="Permanent link">&para;</a></h2>
 <p>Once the phase 2 class is obtained, the attack looks at the sensitive attribute values among the candidates.</p>
-<h3 id="case-1-empty-class">Case 1: empty class</h3>
+<h3 id="case-1-empty-class">Case 1: empty class<a class="headerlink" href="#case-1-empty-class" title="Permanent link">&para;</a></h3>
 <p>No compatible candidate remains.</p>
-<h3 id="case-2-a-single-candidate">Case 2: a single candidate</h3>
+<h3 id="case-2-a-single-candidate">Case 2: a single candidate<a class="headerlink" href="#case-2-a-single-candidate" title="Permanent link">&para;</a></h3>
 <p>The target is re-identified uniquely in the scope of the attack.</p>
-<h3 id="case-3-multiple-candidates-a-single-sensitive-value">Case 3: multiple candidates, a single sensitive value</h3>
+<h3 id="case-3-multiple-candidates-a-single-sensitive-value">Case 3: multiple candidates, a single sensitive value<a class="headerlink" href="#case-3-multiple-candidates-a-single-sensitive-value" title="Permanent link">&para;</a></h3>
 <p>The sensitive attribute is inferred with certainty, even without unique re-identification.</p>
-<h3 id="case-4-multiple-candidates-multiple-sensitive-values">Case 4: multiple candidates, multiple sensitive values</h3>
+<h3 id="case-4-multiple-candidates-multiple-sensitive-values">Case 4: multiple candidates, multiple sensitive values<a class="headerlink" href="#case-4-multiple-candidates-multiple-sensitive-values" title="Permanent link">&para;</a></h3>
 <p>The script produces a probability distribution from the observed frequencies.</p>
 <p>Example:</p>
 <ul>
@@ -1946,34 +1953,34 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li><code>&gt;50K</code>: 25 %</li>
 </ul>
 <hr />
-<h2 id="outputs-produced">Outputs produced</h2>
+<h2 id="outputs-produced">Outputs produced<a class="headerlink" href="#outputs-produced" title="Permanent link">&para;</a></h2>
 <p>Each linkage run usually produces a folder of the form:</p>
 <ul>
 <li><code>outputs/attacks/linkage/&lt;attack_id&gt;/</code></li>
 </ul>
 <p>It typically contains:</p>
-<h3 id="summaryjson"><code>summary.json</code></h3>
+<h3 id="summaryjson"><code>summary.json</code><a class="headerlink" href="#summaryjson" title="Permanent link">&para;</a></h3>
 <p>Global summary of the attack.</p>
-<h3 id="targetscsv"><code>targets.csv</code></h3>
+<h3 id="targetscsv"><code>targets.csv</code><a class="headerlink" href="#targetscsv" title="Permanent link">&para;</a></h3>
 <p>Per-target results.</p>
-<h3 id="equivalence_class_candidatescsv"><code>equivalence_class_candidates.csv</code></h3>
+<h3 id="equivalence_class_candidatescsv"><code>equivalence_class_candidates.csv</code><a class="headerlink" href="#equivalence_class_candidatescsv" title="Permanent link">&para;</a></h3>
 <p>One row per candidate kept in the final (phase 2) equivalence classes.</p>
-<h3 id="attacker_knowledgejson"><code>attacker_knowledge.json</code></h3>
+<h3 id="attacker_knowledgejson"><code>attacker_knowledge.json</code><a class="headerlink" href="#attacker_knowledgejson" title="Permanent link">&para;</a></h3>
 <p>Description of the attacker's visibility over the known attributes.</p>
-<h3 id="schema_matching_resultsjson-optional"><code>schema_matching_results.json</code> (optional)</h3>
+<h3 id="schema_matching_resultsjson-optional"><code>schema_matching_results.json</code> (optional)<a class="headerlink" href="#schema_matching_resultsjson-optional" title="Permanent link">&para;</a></h3>
 <p>Only present when <code>--obfuscate-refine-attrs</code> was set. Trace of the matcher run, recovered mapping and evaluation metrics.</p>
-<h3 id="schema_matching_pairscsv-optional"><code>schema_matching_pairs.csv</code> (optional)</h3>
+<h3 id="schema_matching_pairscsv-optional"><code>schema_matching_pairs.csv</code> (optional)<a class="headerlink" href="#schema_matching_pairscsv-optional" title="Permanent link">&para;</a></h3>
 <p>Flat, per-column view of the schema-matching result.</p>
-<h3 id="prefilter_debug-optional"><code>prefilter_debug/</code> (optional)</h3>
+<h3 id="prefilter_debug-optional"><code>prefilter_debug/</code> (optional)<a class="headerlink" href="#prefilter_debug-optional" title="Permanent link">&para;</a></h3>
 <p>Debug files detailing the rows kept at the different phases.</p>
-<h3 id="attack_id__reporthtml"><code>&lt;attack_id&gt;__report.html</code></h3>
+<h3 id="attack_id__reporthtml"><code>&lt;attack_id&gt;__report.html</code><a class="headerlink" href="#attack_id__reporthtml" title="Permanent link">&para;</a></h3>
 <p>HTML report generated automatically if generation succeeds.</p>
 <p>In addition, an aggregated summary can be appended to:</p>
 <ul>
 <li><code>outputs/attacks/linkage/linkage_summary.csv</code></li>
 </ul>
 <hr />
-<h2 id="logical-flow-of-make_auxiliary_basepy">Logical flow of <code>make_auxiliary_base.py</code></h2>
+<h2 id="logical-flow-of-make_auxiliary_basepy">Logical flow of <code>make_auxiliary_base.py</code><a class="headerlink" href="#logical-flow-of-make_auxiliary_basepy" title="Permanent link">&para;</a></h2>
 <p>The script roughly follows these steps:</p>
 <ol>
 <li>load a dataset already prepared with <code>record_id</code>;</li>
@@ -1983,7 +1990,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>produce an auxiliary CSV and a JSON metadata file.</li>
 </ol>
 <hr />
-<h2 id="logical-flow-of-run_linkage_attackpy">Logical flow of <code>run_linkage_attack.py</code></h2>
+<h2 id="logical-flow-of-run_linkage_attackpy">Logical flow of <code>run_linkage_attack.py</code><a class="headerlink" href="#logical-flow-of-run_linkage_attackpy" title="Permanent link">&para;</a></h2>
 <p>The script roughly follows these steps:</p>
 <ol>
 <li>load the runtime configuration;</li>
@@ -1999,7 +2006,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 <li>save the artifacts and the report.</li>
 </ol>
 <hr />
-<h2 id="main-variables-of-summaryjson">Main variables of <code>summary.json</code></h2>
+<h2 id="main-variables-of-summaryjson">Main variables of <code>summary.json</code><a class="headerlink" href="#main-variables-of-summaryjson" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2115,7 +2122,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </tbody>
 </table>
 <hr />
-<h2 id="main-variables-of-targetscsv">Main variables of <code>targets.csv</code></h2>
+<h2 id="main-variables-of-targetscsv">Main variables of <code>targets.csv</code><a class="headerlink" href="#main-variables-of-targetscsv" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2187,7 +2194,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </tbody>
 </table>
 <hr />
-<h2 id="complexity-variables">Complexity variables</h2>
+<h2 id="complexity-variables">Complexity variables<a class="headerlink" href="#complexity-variables" title="Permanent link">&para;</a></h2>
 <p>These counters give an <strong>estimate of the amount of logical work</strong> performed by the attack.</p>
 <table>
 <thead>
@@ -2256,7 +2263,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </tbody>
 </table>
 <hr />
-<h2 id="configuration-variables">Configuration variables</h2>
+<h2 id="configuration-variables">Configuration variables<a class="headerlink" href="#configuration-variables" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -2316,7 +2323,7 @@ It also serves to measure what an attacker can still learn about the <strong>sen
 </tbody>
 </table>
 <hr />
-<h2 id="summary">Summary</h2>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
 <p>The current linkage attack relies on a precise logic:</p>
 <ol>
 <li>build a phase 1 equivalence class using attributes seen as generalized or suppressed;</li>
@@ -2343,6 +2350,12 @@ It also serves to measure what an attacker can still learn about the <strong>sen
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -2373,10 +2386,14 @@ It also serves to measure what an attacker can still learn about the <strong>sen
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

@@ -9,7 +9,7 @@
       
       
       
-        <link rel="prev" href="../mia/">
+        <link rel="prev" href="./">
       
       
         <link rel="next" href="../formats_fichiers/">
@@ -23,11 +23,14 @@
     
     
       
-        <title>Script structure - TER Documentation</title>
+        <title>Utility/classification script structure - TER Documentation</title>
       
     
     
       <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -55,7 +58,14 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -76,9 +86,7 @@
     
       
 
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="TER Documentation" class="md-header__button md-logo" aria-label="TER Documentation" data-md-component="logo">
       
@@ -100,12 +108,38 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Script structure
+              Utility/classification script structure
             
           </span>
         </div>
       </div>
     </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
     
     
       <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
@@ -137,6 +171,8 @@
         </button>
       </nav>
       
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
@@ -162,6 +198,127 @@
       
         
           
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href=".." class="md-tabs__link">
+          
+  
+  
+    
+  
+  Overview
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../anonymisation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Anonymization
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../linkage_attack/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Attacks
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../metriques/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Utility metrics and classification
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Implementation
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -175,8 +332,12 @@
                     
 
 
+  
 
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="TER Documentation" class="md-nav__button md-logo" aria-label="TER Documentation" data-md-component="logo">
       
@@ -195,15 +356,40 @@
   
   
   
-    <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+    
+    
+      
         
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href=".." class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
     
   
-    Home
+    Overview
   
 
     
@@ -211,13 +397,30 @@
   
   
 
-      </a>
-    </li>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_1" id="__nav_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Overview
   
 
-    
-      
-      
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
   
   
   
@@ -242,6 +445,14 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
@@ -249,9 +460,38 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../anonymisation/" class="md-nav__link">
+    
+    
+      
         
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../anonymisation/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
@@ -265,13 +505,179 @@
   
   
 
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Anonymization
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main anonymization pipeline
+  
+
+    
+  </span>
+  
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/mesures_utilite/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../anonymisation/fonctions_agregats/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Aggregate functions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Attacks
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Attacks
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
   
   
   
@@ -296,9 +702,10 @@
     </li>
   
 
-    
-      
-      
+              
+            
+              
+                
   
   
   
@@ -311,7 +718,7 @@
   <span class="md-ellipsis">
     
   
-    MIA
+    Membership Inference Attack
   
 
     
@@ -323,31 +730,57 @@
     </li>
   
 
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
       
       
   
   
+  
+  
     
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
+    
       
         
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
           
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metriques/" class="md-nav__link ">
+              
   
   
   <span class="md-ellipsis">
     
   
-    Script structure
+    Utility metrics and classification
   
 
     
@@ -355,17 +788,43 @@
   
   
 
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utility metrics and classification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../classification/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Script structure
+    Classification
   
 
     
@@ -374,856 +833,41 @@
   
 
       </a>
-      
-        
+    </li>
+  
 
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+              
+            
+              
+                
   
   
   
+  
+    <li class="md-nav__item">
+      <a href="../classification/classification_models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
     
   
+    Classification models integration
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#purpose-of-this-page" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Purpose of this page
-      
-    </span>
-  </a>
+
+    
+  </span>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#main-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Main scripts
-      
-    </span>
-  </a>
+
+      </a>
+    </li>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#1-dataset-preparation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Dataset preparation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Dataset preparation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#prepare_dataset_with_record_idpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prepare_dataset_with_record_id.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="prepare_dataset_with_record_id.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-main-execution-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Main execution scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Main execution scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run_anopy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_ano.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_ano.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typical-outputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Typical outputs
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_attack.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_linkage_attack.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#current-specificity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Current specificity
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_mia_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_mia_attack.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_mia_attack.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-attack-data-preparation-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Attack-data preparation scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. Attack-data preparation scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#make_auxiliary_basepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_auxiliary_base.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_auxiliary_base.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make_mia_targetspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_mia_targets.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_mia_targets.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#important-note" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important note
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make_mia_targets_post_anopy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_mia_targets_post_ano.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_mia_targets_post_ano.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-shared-utility-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Shared utility files
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Shared utility files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commonpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        common.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="common.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attack_commonpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        attack_common.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="attack_common.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage_helperspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkage_helpers.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="linkage_helpers.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#privjedai_utilspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        privjedai_utils.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="privjedai_utils.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-schema-matching-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Schema-matching scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5. Schema-matching scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#schema_matcherpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        schema_matcher.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="schema_matcher.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#demo_schema_matchingpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        demo_schema_matching.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="demo_schema_matching.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-report-generation-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. Report generation scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="6. Report generation scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#generate_linkage_attack_reportpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        generate_linkage_attack_report.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="generate_linkage_attack_report.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generate_mia_attack_reportpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        generate_mia_attack_report.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="generate_mia_attack_report.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7-benchmark-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Benchmark scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="7. Benchmark scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_mia_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_mia_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_phase_curvepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_phase_curve.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#logical-organization" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logical organization
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Logical organization">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dataset-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dataset preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#anonymization-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anonymization block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linkage preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage-attack-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linkage attack block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mia-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIA preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mia-attack-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIA attack block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shared-utilities-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared utilities block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reports-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reports block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#benchmarks-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmarks block
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1231,6 +875,112 @@
     
       
       
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Implementation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="./" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Main script structure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
   
   
   
@@ -1243,7 +993,7 @@
   <span class="md-ellipsis">
     
   
-    File formats
+    Main file formats
   
 
     
@@ -1255,6 +1005,42 @@
     </li>
   
 
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formats_fichiers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utility/classification file formats
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
     
   </ul>
 </nav>
@@ -1262,863 +1048,6 @@
                 </div>
               </div>
             
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#purpose-of-this-page" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Purpose of this page
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#main-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Main scripts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#1-dataset-preparation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Dataset preparation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Dataset preparation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#prepare_dataset_with_record_idpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        prepare_dataset_with_record_id.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="prepare_dataset_with_record_id.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-main-execution-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Main execution scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="2. Main execution scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run_anopy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_ano.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_ano.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typical-outputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Typical outputs
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_attack.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_linkage_attack.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#current-specificity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Current specificity
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_mia_attackpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_mia_attack.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="run_mia_attack.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-attack-data-preparation-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Attack-data preparation scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="3. Attack-data preparation scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#make_auxiliary_basepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_auxiliary_base.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_auxiliary_base.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make_mia_targetspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_mia_targets.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_mia_targets.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#important-note" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Important note
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#make_mia_targets_post_anopy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        make_mia_targets_post_ano.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="make_mia_targets_post_ano.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-shared-utility-files" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Shared utility files
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="4. Shared utility files">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#commonpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        common.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="common.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#attack_commonpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        attack_common.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="attack_common.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage_helperspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        linkage_helpers.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="linkage_helpers.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#privjedai_utilspy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        privjedai_utils.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="privjedai_utils.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-schema-matching-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Schema-matching scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="5. Schema-matching scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#schema_matcherpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        schema_matcher.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="schema_matcher.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#demo_schema_matchingpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        demo_schema_matching.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="demo_schema_matching.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#why-it-matters_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why it matters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#6-report-generation-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6. Report generation scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="6. Report generation scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#generate_linkage_attack_reportpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        generate_linkage_attack_report.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="generate_linkage_attack_report.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#generate_mia_attack_reportpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        generate_mia_attack_report.py
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="generate_mia_attack_report.py">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#role_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Role
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#7-benchmark-scripts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        7. Benchmark scripts
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="7. Benchmark scripts">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#run_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_mia_benchmarkpy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_mia_benchmark.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#run_linkage_phase_curvepy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        run_linkage_phase_curve.py
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#logical-organization" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logical organization
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Logical organization">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#dataset-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dataset preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#anonymization-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Anonymization block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linkage preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#linkage-attack-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linkage attack block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mia-preparation-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIA preparation block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#mia-attack-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MIA attack block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shared-utilities-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Shared utilities block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reports-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reports block
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#benchmarks-block" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmarks block
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
             
           
           
@@ -2130,313 +1059,180 @@
 
 
 
-<h1 id="script-structure">Script structure</h1>
-<h2 id="purpose-of-this-page">Purpose of this page</h2>
-<p>This page gives a clear view of how the project's scripts are organized, to quickly understand:</p>
+<h1 id="script-structure">Script Structure<a class="headerlink" href="#script-structure" title="Permanent link">&para;</a></h1>
+<p>This page describes the role of each script and configuration file in the project and how they relate to each other.</p>
+<hr />
+<h2 id="general-organization">General organization<a class="headerlink" href="#general-organization" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    A[Configuration files] --&gt; B[Anonymization]
+    B --&gt; C[Utility evaluation]
+    C --&gt; D[Classification]
+    B --&gt; E[Reporting]
+    D --&gt; E</code></pre>
+<hr />
+<h2 id="configuration-files">Configuration files<a class="headerlink" href="#configuration-files" title="Permanent link">&para;</a></h2>
+<h3 id="configsbase_configjson"><code>configs/base_config.json</code><a class="headerlink" href="#configsbase_configjson" title="Permanent link">&para;</a></h3>
+<p>Defines the base anonymization setup shared across all experiments: dataset path, attribute roles, default privacy parameters, and backend.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;data/adult.csv&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;hierarchy_dir&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hierarchies&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;quasi_identifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;race&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;marital-status&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;native-country&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;sensitive_attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;income&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;insensitive_attributes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;workclass&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;fnlwgt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;education&quot;</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;k&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;l&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;t&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;suppression_limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.1</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;utility_measure&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;utility_aggregate&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arithmetic_mean&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;backend&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arx&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="configsbenchmark_gridjson"><code>configs/benchmark_grid.json</code><a class="headerlink" href="#configsbenchmark_gridjson" title="Permanent link">&para;</a></h3>
+<p>Defines the parameter grid used by <code>run_benchmark.py</code> to generate all experiment combinations. Each combination of <code>qi_subset_sizes</code>, <code>k_values</code>, <code>l_values</code>, <code>utility_measures</code>, and <code>utility_aggregates</code> produces one independent experiment.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;base_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;configs/base_config.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;qi_pool&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;race&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;marital-status&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;native-country&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;qi_subset_sizes&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;k_values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;l_values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;t_values&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="kc">null</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;suppression_limits&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;utility_measures&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;precision&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;height&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;utility_aggregates&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;arithmetic_mean&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;geometric_mean&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sum&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;maximum&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rank&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;backend&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;arx&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;save_anonymized_csv&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;stop_on_error&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></div>
+<hr />
+<h3 id="configsclassification_configjson"><code>configs/classification_config.json</code><a class="headerlink" href="#configsclassification_configjson" title="Permanent link">&para;</a></h3>
+<p>Configuration for the classification utility benchmark. Specifies the cross-validation setup, the target attribute, the active models, and — for each classifier — its hyperparameters. All values are fully configurable.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;n_folds&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;random_state&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;income&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;active_models&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;naive_bayes&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;feature_cols&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;race&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;marital-status&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;native-country&quot;</span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;classifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;logistic_regression&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;C&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100000</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;naive_bayes&quot;</span><span class="p">:</span><span class="w">         </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;model&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;MULTINOMIAL&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;preprocessing&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;n_bins&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;alpha&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;random_forest&quot;</span><span class="p">:</span><span class="w">       </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;params&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;n_estimators&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">500</span><span class="p">,</span><span class="w"> </span><span class="err">...</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;zero_r&quot;</span><span class="p">:</span><span class="w">              </span><span class="p">{</span><span class="w"> </span><span class="nt">&quot;enabled&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>The <code>active_models</code> field controls which classifiers are actually run. It can be set to <code>"all"</code> or to a list of specific model names.</p>
+<hr />
+<h2 id="anonymization">Anonymization<a class="headerlink" href="#anonymization" title="Permanent link">&para;</a></h2>
+<h3 id="run_one_experimentpy"><code>run_one_experiment.py</code><a class="headerlink" href="#run_one_experimentpy" title="Permanent link">&para;</a></h3>
+<p>Core script that runs a single anonymization experiment end-to-end. It loads a configuration, calls RECITALS/ARX, collects all ARX result metrics, saves the anonymized CSV, and appends a row to the benchmark summary.</p>
+<p>This is the most important script in the pipeline — all other evaluation scripts depend on its outputs.</p>
 <ul>
-<li>which files play a central role;</li>
-<li>which scripts are used to run the main steps;</li>
-<li>which files serve as support;</li>
-<li>which scripts are mostly used for automation or report generation.</li>
+<li><strong>Input</strong>: one experiment config JSON</li>
+<li><strong>Output</strong>: <code>outputs/anonymized/{id}.csv</code>, <code>outputs/metrics/{id}.json</code>, row in <code>benchmark_summary.csv</code></li>
 </ul>
 <hr />
-<h2 id="overview">Overview</h2>
-<p>The <code>scripts/</code> folder mainly contains:</p>
+<h3 id="run_benchmarkpy"><code>run_benchmark.py</code><a class="headerlink" href="#run_benchmarkpy" title="Permanent link">&para;</a></h3>
+<p>Orchestrates the full benchmark grid. It reads <code>benchmark_grid.json</code>, generates all parameter combinations (QI subsets × k values × l values × utility measures × aggregate functions), builds a config for each, and calls <code>run_one_experiment.py</code> for each one.</p>
+<ul>
+<li><strong>Input</strong>: <code>configs/benchmark_grid.json</code>, <code>configs/base_config.json</code></li>
+<li><strong>Output</strong>: one experiment per combination in <code>outputs/</code></li>
+</ul>
+<hr />
+<h2 id="utility-evaluation-classification">Utility evaluation — Classification<a class="headerlink" href="#utility-evaluation-classification" title="Permanent link">&para;</a></h2>
+<h3 id="classification_modelspy"><code>classification_models.py</code><a class="headerlink" href="#classification_modelspy" title="Permanent link">&para;</a></h3>
+<p>Defines the four classifier pipelines (ZeroR, Logistic Regression, Naive Bayes, Random Forest) as factories — each call produces a fresh pipeline to avoid state leakage across cross-validation folds. Handles preprocessing of generalized and suppressed values.</p>
+<hr />
+<h3 id="compute_classification_metricspy"><code>compute_classification_metrics.py</code><a class="headerlink" href="#compute_classification_metricspy" title="Permanent link">&para;</a></h3>
+<p>Computes all classification metrics (accuracy, relative accuracy, AUC, Brier score, Brier skill score, sensitivity, specificity) from the globally concatenated out-of-fold predictions. Mirrors ARX's metric computation strategy.</p>
+<hr />
+<h3 id="run_classification_benchmarkpy"><code>run_classification_benchmark.py</code><a class="headerlink" href="#run_classification_benchmarkpy" title="Permanent link">&para;</a></h3>
+<p>Runs the classification utility benchmark over all successful experiments. For each experiment, it:</p>
 <ol>
-<li>dataset preparation scripts;</li>
-<li>main execution scripts;</li>
-<li>attack preparation scripts;</li>
-<li>shared utility files;</li>
-<li>schema-matching scripts;</li>
-<li>benchmark scripts;</li>
-<li>report generation scripts.</li>
+<li>Loads the original and anonymized datasets (row-aligned)</li>
+<li>Splits into 10 stratified folds on the original</li>
+<li>Per fold: trains on original → predicts on original, trains on anonymized → predicts on anonymized</li>
+<li>
+<p>Concatenates OOF predictions globally and computes metrics</p>
+</li>
+<li>
+<p><strong>Input</strong>: <code>outputs/benchmark_summary.csv</code>, original + anonymized CSVs</p>
+</li>
+<li><strong>Output</strong>: <code>outputs/classification/{id}_classification.json</code>, <code>outputs/classification_summary.csv</code></li>
 </ol>
 <hr />
-<h2 id="main-scripts">Main scripts</h2>
-<p>In the current project state, the most important scripts are:</p>
+<h2 id="reporting-and-visualization">Reporting and visualization<a class="headerlink" href="#reporting-and-visualization" title="Permanent link">&para;</a></h2>
+<h3 id="generate_anonymization_reportpy"><code>generate_anonymization_report.py</code><a class="headerlink" href="#generate_anonymization_reportpy" title="Permanent link">&para;</a></h3>
+<p>Generates a self-contained HTML report summarizing the anonymization results across all experiments. Includes summary tables and per-attribute statistics.</p>
 <ul>
-<li><code>prepare_dataset_with_record_id.py</code></li>
-<li><code>run_ano.py</code></li>
-<li><code>make_auxiliary_base.py</code></li>
-<li><code>run_linkage_attack.py</code></li>
-<li><code>make_mia_targets.py</code></li>
-<li><code>make_mia_targets_post_ano.py</code></li>
-<li><code>run_mia_attack.py</code></li>
-</ul>
-<p>They correspond directly to the main pipeline documented on the other pages.</p>
-<hr />
-<h2 id="1-dataset-preparation">1. Dataset preparation</h2>
-<h3 id="prepare_dataset_with_record_idpy"><code>prepare_dataset_with_record_id.py</code></h3>
-<p>This is the most important preparation script before anonymization.</p>
-<h4 id="role">Role</h4>
-<ul>
-<li>add <code>record_id</code> if missing;</li>
-<li>check its uniqueness;</li>
-<li>produce a stable version of the dataset;</li>
-<li>optionally generate an updated copy of a configuration.</li>
-</ul>
-<h4 id="why-it-matters">Why it matters</h4>
-<p>The current pipeline relies heavily on <code>record_id</code> to link together:</p>
-<ul>
-<li>anonymization;</li>
-<li>linkage attack;</li>
-<li>MIA;</li>
-<li>internal evaluation.</li>
-</ul>
-<p>In particular, <code>record_id</code> must be declared as <code>insensitive_attributes</code> in the runtime config (and removed from quasi-identifiers / sensitive attributes) so that it is not generalized or suppressed during anonymization.</p>
-<hr />
-<h2 id="2-main-execution-scripts">2. Main execution scripts</h2>
-<h3 id="run_anopy"><code>run_ano.py</code></h3>
-<p>Main entry point for anonymization.</p>
-<h4 id="role_1">Role</h4>
-<ul>
-<li>load an experiment configuration;</li>
-<li>prepare the runtime configuration;</li>
-<li>run the anonymization;</li>
-<li>save the produced outputs.</li>
-</ul>
-<h4 id="typical-outputs">Typical outputs</h4>
-<ul>
-<li>executed configuration;</li>
-<li>public anonymized dataset;</li>
-<li>evaluation anonymized dataset;</li>
-<li>metrics.</li>
+<li><strong>Input</strong>: <code>outputs/benchmark_summary.csv</code></li>
+<li><strong>Output</strong>: HTML report file</li>
 </ul>
 <hr />
-<h3 id="run_linkage_attackpy"><code>run_linkage_attack.py</code></h3>
-<p>Main entry point to run the linkage attack.</p>
-<h4 id="role_2">Role</h4>
+<h3 id="plot_classification_resultspy"><code>plot_classification_results.py</code><a class="headerlink" href="#plot_classification_resultspy" title="Permanent link">&para;</a></h3>
+<p>Generates PNG visualizations for a given classification result. Produces side-by-side input/output comparisons with summary metric tables, per-class statistics, and ROC curves (baseline / input / output).</p>
 <ul>
-<li>load the auxiliary base;</li>
-<li>load the anonymized datasets;</li>
-<li>build <code>attacker_knowledge</code>;</li>
-<li>split attributes between phase 1 and phase 2 based on <code>visible_level</code>;</li>
-<li>optionally run the Valentine / Jaccard schema-matching step between the two phases;</li>
-<li>build the phase 1 and phase 2 equivalence classes;</li>
-<li>infer the sensitive attribute;</li>
-<li>save the results and the HTML report.</li>
-</ul>
-<h4 id="current-specificity">Current specificity</h4>
-<p>The script applies a two-phase equivalence class logic based on <code>visible_level</code>, with an optional schema-matching step inserted between phase 1 and phase 2 when <code>--obfuscate-refine-attrs</code> is set.</p>
-<hr />
-<h3 id="run_mia_attackpy"><code>run_mia_attack.py</code></h3>
-<p>Main entry point to run the membership inference attack.</p>
-<h4 id="role_3">Role</h4>
-<ul>
-<li>load the MIA targets;</li>
-<li>load the anonymized datasets;</li>
-<li>build <code>attacker_knowledge</code>;</li>
-<li>split attributes between phase 1 and phase 2;</li>
-<li>compute the compatible candidates via phase 1 / phase 2 equivalence classes;</li>
-<li>predict IN or OUT;</li>
-<li>save the results and the HTML report.</li>
+<li><strong>Input</strong>: <code>outputs/classification/{id}_classification.json</code></li>
+<li><strong>Output</strong>: PNG files</li>
 </ul>
 <hr />
-<h2 id="3-attack-data-preparation-scripts">3. Attack-data preparation scripts</h2>
-<h3 id="make_auxiliary_basepy"><code>make_auxiliary_base.py</code></h3>
-<p>Prepares the auxiliary base used by the linkage attack.</p>
-<h4 id="role_4">Role</h4>
+<h2 id="shared-utilities">Shared utilities<a class="headerlink" href="#shared-utilities" title="Permanent link">&para;</a></h2>
+<h3 id="commonpy"><code>common.py</code><a class="headerlink" href="#commonpy" title="Permanent link">&para;</a></h3>
+<p>Shared utility module used by all other scripts. Provides:</p>
 <ul>
-<li>start from a dataset already prepared with <code>record_id</code>;</li>
-<li>select the attributes known by the attacker;</li>
-<li>sample individuals;</li>
-<li>optionally keep only the individuals still present in <code>anonymized_eval</code> via <code>--released-eval</code>.</li>
-</ul>
-<h4 id="why-it-matters_1">Why it matters</h4>
-<p>In the current version, the linkage attack is used in strict mode: targets must in practice still be present in <code>anonymized_eval</code>.</p>
-<hr />
-<h3 id="make_mia_targetspy"><code>make_mia_targets.py</code></h3>
-<p>Prepares the MIA pre-anonymization split.</p>
-<h4 id="role_5">Role</h4>
-<ul>
-<li>start from the original dataset;</li>
-<li>create a <code>published subset</code>;</li>
-<li>create an <code>OUT holdout pool</code>;</li>
-<li>write a JSON with the split metadata;</li>
-<li>optionally produce a config retargeted to the published subset.</li>
-</ul>
-<h4 id="important-note">Important note</h4>
-<p>This script no longer creates the final IN/OUT targets directly.</p>
-<hr />
-<h3 id="make_mia_targets_post_anopy"><code>make_mia_targets_post_ano.py</code></h3>
-<p>Prepares the final MIA targets after anonymization.</p>
-<h4 id="role_6">Role</h4>
-<ul>
-<li>read the <code>published subset</code>;</li>
-<li>read the <code>OUT holdout pool</code>;</li>
-<li>read <code>anonymized_eval</code>;</li>
-<li>identify the survivors;</li>
-<li>build the attacker base;</li>
-<li>build balanced IN/OUT targets.</li>
-</ul>
-<h4 id="why-it-matters_2">Why it matters</h4>
-<p>It guarantees that IN targets actually correspond to records still present in the final export.</p>
-<hr />
-<h2 id="4-shared-utility-files">4. Shared utility files</h2>
-<h3 id="commonpy"><code>common.py</code></h3>
-<p>General toolbox of the project.</p>
-<h4 id="role_7">Role</h4>
-<ul>
-<li>path handling;</li>
-<li>JSON read/write;</li>
-<li>folder creation;</li>
-<li>helper functions reused across several scripts.</li>
+<li><code>load_json()</code> / <code>save_json()</code> — JSON I/O</li>
+<li><code>ensure_dir()</code> — directory creation</li>
+<li><code>make_experiment_id()</code> — unique experiment naming</li>
+<li><code>iter_qi_subsets()</code> — generate all QI combinations</li>
+<li><code>build_hierarchy_mapping()</code> — map QI names to hierarchy CSV paths</li>
+<li><code>collect_result_metrics()</code> — extract ARX metrics from a result object</li>
+<li><code>sanitize_row_for_csv()</code> — flatten nested objects for CSV export</li>
 </ul>
 <hr />
-<h3 id="attack_commonpy"><code>attack_common.py</code></h3>
-<p>Utilities common to both attacks.</p>
-<h4 id="role_8">Role</h4>
-<ul>
-<li>normalized CSV loading;</li>
-<li>runtime configuration loading;</li>
-<li><code>attacker_knowledge</code> construction;</li>
-<li><code>visible_level</code> inference;</li>
-<li>shared helpers for validation and summary writing.</li>
-</ul>
+<h3 id="patch_recitals_arxpy"><code>patch_recitals_arx.py</code><a class="headerlink" href="#patch_recitals_arxpy" title="Permanent link">&para;</a></h3>
+<p>One-time patch applied to the RECITALS ARX adapter. Converts the <code>suppression_limit</code> from a percentage (e.g. <code>10</code> for 10%) to the decimal format expected by ARX (<code>0.1</code>).</p>
 <hr />
-<h3 id="linkage_helperspy"><code>linkage_helpers.py</code></h3>
-<p>Helpers specific to the linkage attack.</p>
-<h4 id="role_9">Role</h4>
-<ul>
-<li>value-index construction;</li>
-<li>compatibility logic (exact, generalized, suppressed, privJedAI fuzzy);</li>
-<li>refinement (exact or fuzzy) for phase 2;</li>
-<li>summary of the sensitive attribute distributions.</li>
-</ul>
+<h3 id="clean_outputspy"><code>clean_outputs.py</code><a class="headerlink" href="#clean_outputspy" title="Permanent link">&para;</a></h3>
+<p>Deletes all generated output files to allow a clean restart of the benchmark. Clears <code>outputs/anonymized/</code>, <code>outputs/metrics/</code>, <code>outputs/classification/</code>, <code>benchmark_summary.csv</code>, and related files.</p>
 <hr />
-<h3 id="privjedai_utilspy"><code>privjedai_utils.py</code></h3>
-<p>Integration layer with <code>privJedAI</code>.</p>
-<h4 id="role_10">Role</h4>
-<ul>
-<li>fuzzy-mode configuration;</li>
-<li>similarity computation;</li>
-<li>Bloom-filter comparisons for clear-text attributes used in phase 2.</li>
-</ul>
-<hr />
-<h2 id="5-schema-matching-scripts">5. Schema-matching scripts</h2>
-<p>The schema-matching step is inserted between phase 1 and phase 2 of the linkage attack. It is used when the anonymized release has obfuscated column names on the clear-text columns that phase 2 would otherwise rely on.</p>
-<h3 id="schema_matcherpy"><code>schema_matcher.py</code></h3>
-<p>Module providing the schema-matching primitives.</p>
-<h4 id="role_11">Role</h4>
-<ul>
-<li><code>build_valentine_matcher(name)</code> — factory for Valentine matchers: <code>coma</code> (<code>valentine.algorithms.Coma</code>), <code>jaccard</code> (<code>valentine.algorithms.JaccardDistanceMatcher</code>), <code>distribution</code> (<code>valentine.algorithms.DistributionBased</code>);</li>
-<li><code>obfuscate_columns(...)</code> — rename a subset of columns to <code>col_0</code>, <code>col_1</code>, ... and keep the ground-truth mapping aside for evaluation;</li>
-<li><code>recover_column_mapping(...)</code> — run Valentine on the two column subsets and return a one-to-one mapping <code>anon_column -&gt; (kb_column, score)</code>, filtered by a minimum score;</li>
-<li><code>jaccard_baseline(...)</code> — pure-Python greedy Jaccard baseline over unique-value sets, useful as a sanity check against Valentine;</li>
-<li><code>apply_recovered_mapping(...)</code> — rename the obfuscated columns back to the auxiliary-base names so phase 2 can run unchanged;</li>
-<li><code>evaluate_mapping(...)</code> — compare the recovered mapping against the ground truth and return coverage / accuracy / recall metrics.</li>
-</ul>
-<h4 id="why-it-matters_3">Why it matters</h4>
-<p>This is the module that makes the attack robust to a realistic scenario where the attacker does not know the labels of the release's clear-text columns. It is invoked by <code>run_linkage_attack.py</code> when <code>--obfuscate-refine-attrs</code> is set.</p>
-<hr />
-<h3 id="demo_schema_matchingpy"><code>demo_schema_matching.py</code></h3>
-<p>Standalone demo that runs only the schema-matching step.</p>
-<h4 id="role_12">Role</h4>
-<ul>
-<li>load an anonymized public CSV and an auxiliary KB CSV;</li>
-<li>obfuscate a chosen list of <code>refine_attrs</code>;</li>
-<li>run the chosen matcher (<code>coma</code>, <code>jaccard</code>, <code>distribution</code>, or <code>baseline_jaccard</code>);</li>
-<li>print the recovered mapping and the evaluation metrics;</li>
-<li>show how the renamed DataFrame can be plugged back into <code>run_linkage_attack._evaluate_target()</code>.</li>
-</ul>
-<h4 id="why-it-matters_4">Why it matters</h4>
-<p>Useful to calibrate <code>--schema-matcher</code> and <code>--schema-matcher-min-score</code> on new data, outside of the full attack pipeline.</p>
-<hr />
-<h2 id="6-report-generation-scripts">6. Report generation scripts</h2>
-<h3 id="generate_linkage_attack_reportpy"><code>generate_linkage_attack_report.py</code></h3>
-<p>Generates an HTML report for a linkage attack.</p>
-<h4 id="role_13">Role</h4>
-<ul>
-<li>read <code>summary.json</code>;</li>
-<li>read <code>targets.csv</code>;</li>
-<li>optionally read the config and the anonymization metrics;</li>
-<li>produce a synthetic HTML report.</li>
-</ul>
-<hr />
-<h3 id="generate_mia_attack_reportpy"><code>generate_mia_attack_report.py</code></h3>
-<p>Generates an HTML report for a MIA.</p>
-<h4 id="role_14">Role</h4>
-<ul>
-<li>read <code>summary.json</code>;</li>
-<li>read <code>targets.csv</code>;</li>
-<li>compute the classification indicators;</li>
-<li>produce an HTML report.</li>
-</ul>
-<hr />
-<h2 id="7-benchmark-scripts">7. Benchmark scripts</h2>
-<h3 id="run_benchmarkpy"><code>run_benchmark.py</code></h3>
-<p>Automates several anonymization runs.</p>
-<h3 id="run_linkage_benchmarkpy"><code>run_linkage_benchmark.py</code></h3>
-<p>Automates batches of linkage attacks.</p>
-<h3 id="run_mia_benchmarkpy"><code>run_mia_benchmark.py</code></h3>
-<p>Automates batches of MIA attacks.</p>
-<h3 id="run_linkage_phase_curvepy"><code>run_linkage_phase_curve.py</code></h3>
-<p>Sweeps a pool of quasi-identifiers, runs the full pipeline (anonymization → auxiliary base → linkage attack) for each combination, and aggregates phase 1 and phase 2 equivalence-class sizes. Produces a plot of the two curves as a function of the number of generalized attacker-known attributes.</p>
-<p>These scripts are useful to produce several comparable experiments, but they are not the logical core of the attacks themselves.</p>
-<hr />
-<h2 id="logical-organization">Logical organization</h2>
-<h3 id="dataset-preparation-block">Dataset preparation block</h3>
-<ul>
-<li><code>prepare_dataset_with_record_id.py</code></li>
-</ul>
-<h3 id="anonymization-block">Anonymization block</h3>
-<ul>
-<li><code>run_ano.py</code></li>
-</ul>
-<h3 id="linkage-preparation-block">Linkage preparation block</h3>
-<ul>
-<li><code>make_auxiliary_base.py</code></li>
-</ul>
-<h3 id="linkage-attack-block">Linkage attack block</h3>
-<ul>
-<li><code>run_linkage_attack.py</code></li>
-<li><code>linkage_helpers.py</code></li>
-<li><code>privjedai_utils.py</code></li>
-<li><code>schema_matcher.py</code> <em>(optional schema-matching step between phase 1 and phase 2)</em></li>
-<li><code>demo_schema_matching.py</code> <em>(standalone demo)</em></li>
-</ul>
-<h3 id="mia-preparation-block">MIA preparation block</h3>
-<ul>
-<li><code>make_mia_targets.py</code></li>
-<li><code>make_mia_targets_post_ano.py</code></li>
-</ul>
-<h3 id="mia-attack-block">MIA attack block</h3>
-<ul>
-<li><code>run_mia_attack.py</code></li>
-</ul>
-<h3 id="shared-utilities-block">Shared utilities block</h3>
-<ul>
-<li><code>common.py</code></li>
-<li><code>attack_common.py</code></li>
-</ul>
-<h3 id="reports-block">Reports block</h3>
-<ul>
-<li><code>generate_linkage_attack_report.py</code></li>
-<li><code>generate_mia_attack_report.py</code></li>
-</ul>
-<h3 id="benchmarks-block">Benchmarks block</h3>
-<ul>
-<li><code>run_benchmark.py</code></li>
-<li><code>run_linkage_benchmark.py</code></li>
-<li><code>run_mia_benchmark.py</code></li>
-<li><code>run_linkage_phase_curve.py</code></li>
-</ul>
-<hr />
-<h2 id="summary">Summary</h2>
-<p>The current script organization reflects a pipeline structure:</p>
-<ol>
-<li>prepare the dataset;</li>
-<li>anonymize;</li>
-<li>prepare the attack inputs;</li>
-<li>run the attacks (with the optional Valentine / Jaccard schema-matching step for the linkage attack);</li>
-<li>generate the reports.</li>
-</ol>
-<p>The main recent evolutions are:</p>
-<ul>
-<li>the MIA is now split into a pre-anonymization phase and a post-anonymization phase;</li>
-<li>both attacks use an explicit <strong>phase 1 / phase 2 equivalence class</strong> engine driven by <code>visible_level</code>;</li>
-<li>the linkage attack now supports a schema-matching step based on Valentine (<code>coma</code>, <code>jaccard</code>, <code>distribution</code>) or a pure-Python <code>baseline_jaccard</code> to handle obfuscated column names in the release.</li>
-</ul>
+<h2 id="execution-order">Execution order<a class="headerlink" href="#execution-order" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    A[run_benchmark.py] --&gt; B[run_classification_benchmark.py]
+    A --&gt; C[plot_classification_results.py]
+    A --&gt; D[generate_anonymization_report.py]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Script</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Run anonymization benchmark</td>
+<td><code>python scripts/run_benchmark.py --grid configs/benchmark_grid.json</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Run classification evaluation</td>
+<td><code>python scripts/run_classification_benchmark.py</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Generate plots</td>
+<td><code>python scripts/plot_classification_results.py --json outputs/classification/{id}_classification.json</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Generate HTML report</td>
+<td><code>python scripts/generate_anonymization_report.py</code></td>
+</tr>
+</tbody>
+</table>
 
 
 
@@ -2456,6 +1252,12 @@
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
         
       </main>
       
@@ -2486,10 +1288,14 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "navigation.indexes", "toc.integrate", "search.highlight", "search.suggest", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>
